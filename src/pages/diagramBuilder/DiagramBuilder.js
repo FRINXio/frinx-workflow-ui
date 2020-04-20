@@ -1,4 +1,3 @@
-import axios from "axios";
 import { saveAs } from "file-saver";
 import * as _ from "lodash";
 import React, { Component } from "react";
@@ -21,6 +20,7 @@ import Sidemenu from "./Sidemenu/Sidemenu";
 import SidemenuRight from "./Sidemenu/SidemenuRight";
 import WorkflowDefModal from "./WorkflowDefModal/WorkflowDefModal";
 import { WorkflowDiagram } from "./WorkflowDiagram";
+import { HttpClient as http } from "../../common/HttpClient";
 
 class DiagramBuilder extends Component {
   constructor(props) {
@@ -72,13 +72,13 @@ class DiagramBuilder extends Component {
     console.log(this.props);
     this.props.hideHeader();
 
-    axios.get("/api/conductor/metadata/workflow").then((res) => {
+    http.get("/api/conductor/metadata/workflow").then((res) => {
       this.props.storeWorkflows(
         res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
       );
     });
 
-    axios.get("/api/conductor/metadata/taskdefs").then((res) => {
+    http.get("/api/conductor/metadata/taskdefs").then((res) => {
       this.props.storeTasks(
         res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
       );
@@ -107,7 +107,7 @@ class DiagramBuilder extends Component {
 
   createExistingWorkflow() {
     const { name, version } = this.props.match.params;
-    axios
+    http
       .get("/api/conductor/metadata/workflow/" + name + "/" + version)
       .then((res) => {
         this.createDiagramByDefinition(res.result);

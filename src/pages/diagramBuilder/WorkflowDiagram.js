@@ -17,7 +17,7 @@ import { CircleEndNodeModel } from "./NodeModels/EndNode/CircleEndNodeModel";
 import { Application } from "./Application";
 import Workflow2Graph from "../../common/wfegraph";
 import defaultTo from "lodash/fp/defaultTo";
-import axios from 'axios';
+import { HttpClient as http } from "../../common/HttpClient";
 
 const nodeColors = {
   subWorkflow: "rgb(34,144,255)",
@@ -131,7 +131,7 @@ export class WorkflowDiagram {
       const eventHandlers = this.createEventHandlers(eventNodes);
 
       this.registerEventHandlers(eventHandlers).then(() => {
-        axios
+        http
           .put("/api/conductor/metadata", [definition])
           .then(() => {
             resolve(definition);
@@ -152,7 +152,7 @@ export class WorkflowDiagram {
         resolve();
       }
       eventHandlers.forEach(eventHandler => {
-        axios
+        http
           .post("/api/conductor/event", eventHandler)
           .then(res => {
             resolve(res);
@@ -874,7 +874,7 @@ export class WorkflowDiagram {
         return outputLink.targetPort.getNode();
       });
 
-      axios
+      http
         .get("/api/conductor/metadata/workflow/" + name + "/" + version)
         .then(res => {
           const subworkflowDiagram = new WorkflowDiagram(

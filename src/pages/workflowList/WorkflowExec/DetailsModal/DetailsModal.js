@@ -19,7 +19,7 @@ import { withRouter } from "react-router-dom";
 import TaskModal from "../../../../common/TaskModal";
 import "./DetailsModal.css";
 import WorkflowDia from "./WorkflowDia/WorkflowDia";
-import axios from 'axios'
+import { HttpClient as http } from "../../../../common/HttpClient";
 
 new Clipboard(".clp");
 
@@ -54,7 +54,7 @@ class DetailsModal extends Component {
   }
 
   getData() {
-    axios.get("/api/conductor/id/" + this.props.wfId).then(res => {
+    http.get("/api/conductor/id/" + this.props.wfId).then(res => {
       let inputsArray = [
         ...new Set(
           JSON.stringify(res.meta, null, 2).match(
@@ -93,7 +93,7 @@ class DetailsModal extends Component {
 
   executeWorkflow() {
     this.setState({ status: "Executing..." });
-    axios
+    http
       .post("/api/conductor/workflow", JSON.stringify(this.state.input))
       .then(res => {
         this.setState({
@@ -184,31 +184,31 @@ class DetailsModal extends Component {
   }
 
   terminateWfs() {
-    axios.delete("/api/conductor/bulk/terminate", [this.state.wfId]).then(() => {
+    http.delete("/api/conductor/bulk/terminate", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   pauseWfs() {
-    axios.put("/api/conductor/bulk/pause", [this.state.wfId]).then(() => {
+    http.put("/api/conductor/bulk/pause", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   resumeWfs() {
-    axios.put("/api/conductor/bulk/resume", [this.state.wfId]).then(() => {
+    http.put("/api/conductor/bulk/resume", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   retryWfs() {
-    axios.post("/api/conductor/bulk/retry", [this.state.wfId]).then(() => {
+    http.post("/api/conductor/bulk/retry", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   restartWfs() {
-    axios.post("/api/conductor/bulk/restart", [this.state.wfId]).then(() => {
+    http.post("/api/conductor/bulk/restart", [this.state.wfId]).then(() => {
       this.getData();
     });
   }

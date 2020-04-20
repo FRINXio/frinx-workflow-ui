@@ -1,9 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Tab, Tabs } from "react-bootstrap";
 import { hash } from "../builder-utils";
 import GeneralTab from "./GeneralTab";
 import InputsTab from "./InputsTab";
+import { HttpClient as http } from "../../../common/HttpClient";
+
 
 const OBJECT_KEYWORDS = ["template", "body"];
 
@@ -32,7 +33,7 @@ function NodeModal(props) {
       setName(name);
       setVersion(version);
 
-      axios
+      http
         .get("/api/conductor/metadata/workflow/" + name + "/" + version)
         .then(res => {
           setInputParameters(res.result.inputParameters);

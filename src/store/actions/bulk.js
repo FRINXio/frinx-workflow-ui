@@ -1,4 +1,4 @@
-import axios from "axios";
+import { HttpClient as http } from "../../common/HttpClient";
 import { round } from "lodash/math";
 import { fetchNewData, fetchParentWorkflows } from "./searchExecs";
 
@@ -72,7 +72,7 @@ export const performBulkOperation = (operation, workflows, defaultPages) => {
       switch (operation) {
         case "retry":
         case "restart":
-          axios.post(url, workflows).then(res => {
+          http.post(url, workflows).then(res => {
             const { bulkSuccessfulResults, bulkErrorResults } = res.body.text
               ? JSON.parse(res.body.text)
               : [];
@@ -87,7 +87,7 @@ export const performBulkOperation = (operation, workflows, defaultPages) => {
           break;
         case "pause":
         case "resume":
-          axios.put(url, workflows).then(res => {
+          http.put(url, workflows).then(res => {
             const { bulkSuccessfulResults, bulkErrorResults } = res.body.text
               ? JSON.parse(res.body.text)
               : [];
@@ -101,7 +101,7 @@ export const performBulkOperation = (operation, workflows, defaultPages) => {
           });
           break;
         case "terminate":
-          axios.delete(url, workflows).then(res => {
+          http.delete(url, workflows).then(res => {
             const { bulkSuccessfulResults, bulkErrorResults } = res.body.text
               ? JSON.parse(res.body.text)
               : [];
@@ -116,7 +116,7 @@ export const performBulkOperation = (operation, workflows, defaultPages) => {
           break;
         case "delete":
           workflows.map(wf => {
-            axios.delete("/api/conductor/workflow/" + wf).then(() => {
+            http.delete("/api/conductor/workflow/" + wf).then(() => {
               deletedWfs.push(wf);
               dispatch(
                 updateLoadingBar(
