@@ -120,7 +120,7 @@ const systemTasks = type => {
 };
 
 const icons = taskDef => {
-  var task = taskDef.name
+  const task = taskDef.name
   switch (task) {
     case "start":
       return (
