@@ -5,6 +5,7 @@ import { withRouter } from "react-router-dom";
 import { HttpClient as http } from "../../common/HttpClient";
 import WorkflowDefs from "./WorkflowDefs/WorkflowDefs";
 import WorkflowExec from "./WorkflowExec/WorkflowExec";
+import { conductorApiUrlPrefix } from "../../constants";
 
 const JSZip = require("jszip");
 
@@ -28,7 +29,7 @@ const WorkflowList = (props) => {
         let definition = JSON.parse(e.target.result);
         fileList.push(definition);
         if (!--count) {
-          http.put("/api/conductor/metadata", fileList).then(() => {
+          http.put(conductorApiUrlPrefix + "/metadata", fileList).then(() => {
             window.location.reload();
           });
         }
@@ -38,7 +39,7 @@ const WorkflowList = (props) => {
   };
 
   const exportFile = () => {
-    http.get("/api/conductor/metadata/workflow").then((res) => {
+    http.get(conductorApiUrlPrefix + "/metadata/workflow").then((res) => {
       const zip = new JSZip();
       let workflows = res.result || [];
 

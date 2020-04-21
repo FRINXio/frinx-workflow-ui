@@ -19,6 +19,7 @@ import DefinitionModal from "./DefinitonModal/DefinitionModal";
 import DiagramModal from "./DiagramModal/DiagramModal";
 import InputModal from "./InputModal/InputModal";
 import { HttpClient as http } from "../../../common/HttpClient";
+import { conductorApiUrlPrefix } from "../../../constants";
 
 class WorkflowDefs extends Component {
   constructor(props) {
@@ -46,7 +47,7 @@ class WorkflowDefs extends Component {
   }
 
   componentDidMount() {
-    http.get("/api/conductor/metadata/workflow").then(res => {
+    http.get(conductorApiUrlPrefix + "/metadata/workflow").then(res => {
       if (res.result) {
         let size = ~~(res.result.length / this.state.defaultPages);
         let dataset =
@@ -220,8 +221,8 @@ class WorkflowDefs extends Component {
     } else {
       data.description = "- FAVOURITE";
     }
-    http.put("/api/conductor/metadata/", [data]).then(() => {
-      http.get("/api/conductor/metadata/workflow").then(res => {
+    http.put(conductorApiUrlPrefix + "/metadata/", [data]).then(() => {
+      http.get(conductorApiUrlPrefix + "/metadata/workflow").then(res => {
         let dataset =
           res.result.sort((a, b) =>
             a.name > b.name ? 1 : b.name > a.name ? -1 : 0
@@ -286,7 +287,7 @@ class WorkflowDefs extends Component {
     const name = this.state.activeWf.split(" / ")[0];
     const version = this.state.activeWf.split(" / ")[1];
     http
-      .delete("/api/conductor/metadata/workflow/" + name + "/" + version)
+      .delete(conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
       .then(() => {
         this.componentDidMount();
         let table = this.state.table;

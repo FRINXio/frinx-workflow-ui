@@ -4,7 +4,7 @@ import { hash } from "../builder-utils";
 import GeneralTab from "./GeneralTab";
 import InputsTab from "./InputsTab";
 import { HttpClient as http } from "../../../common/HttpClient";
-
+import { conductorApiUrlPrefix } from "../../../constants";
 
 const OBJECT_KEYWORDS = ["template", "body"];
 
@@ -34,7 +34,7 @@ function NodeModal(props) {
       setVersion(version);
 
       http
-        .get("/api/conductor/metadata/workflow/" + name + "/" + version)
+        .get(conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
         .then(res => {
           setInputParameters(res.result.inputParameters);
         });

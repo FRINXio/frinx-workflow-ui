@@ -1,5 +1,7 @@
 import { sortBy } from "lodash";
 import { HttpClient as http } from "../../common/HttpClient";
+import { conductorApiUrlPrefix } from "../../constants";
+
 export const RECEIVE_NEW_DATA = "RECEIVE_NEW_DATA";
 export const HIERARCHY_NEW_DATA = "HIERARCHY_NEW_DATA";
 export const UPDATE_LABEL = "UPDATE_LABEL";
@@ -41,7 +43,7 @@ export const fetchNewData = (viewedPage, defaultPages) => {
     let page = (viewedPage - 1) * defaultPages;
     http
       .get(
-        "/api/conductor/executions/?q=&h=&freeText=" +
+        conductorApiUrlPrefix + "/executions/?q=&h=&freeText=" +
           q +
           "&start=" +
           page +
@@ -74,7 +76,7 @@ export const fetchParentWorkflows = (viewedPage, defaultPages) => {
     let q = createQuery(getState().searchReducer);
     http
       .get(
-        "/api/conductor/hierarchical/?freeText=" +
+        conductorApiUrlPrefix + "/hierarchical/?freeText=" +
           q +
           "&start=" +
           checkedWfs[page] +
