@@ -9,6 +9,7 @@ import buildReducer from "./store/reducers/builder";
 import bulkReducer from "./store/reducers/bulk";
 import mountedDeviceReducer from "./store/reducers/mountedDevices";
 import searchReducer from "./store/reducers/searchExecs";
+import { frontendUrlPrefix } from "./constants";
 
 const rootReducer = combineReducers({
   bulkReducer,
@@ -35,14 +36,14 @@ function App(props) {
         <Switch>
           <Route
             exact
-            path={["/workflows/builder", "/workflows/builder/:name/:version"]}
+            path={[frontendUrlPrefix + "/builder", frontendUrlPrefix + "/builder/:name/:version"]}
             render={(props) => (
               <DiagramBuilder hideHeader={hideHeader} {...props} />
             )}
           />
           <Route
             exact
-            path={["/workflows/:type", "/workflows/:type/:wfid", "/"]}
+            path={[frontendUrlPrefix + "/:type", frontendUrlPrefix + "/:type/:wfid", "/"]}
             component={WorkflowList}
           />
         </Switch>
