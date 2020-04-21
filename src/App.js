@@ -34,6 +34,7 @@ function App(props) {
       <BrowserRouter>
         <Switch>
           <Route
+            exact
             path={["/workflows/builder", "/workflows/builder/:name/:version"]}
             render={(props) => (
               <DiagramBuilder hideHeader={hideHeader} {...props} />
