@@ -21,6 +21,7 @@ import SidemenuRight from "./Sidemenu/SidemenuRight";
 import WorkflowDefModal from "./WorkflowDefModal/WorkflowDefModal";
 import { WorkflowDiagram } from "./WorkflowDiagram";
 import { HttpClient as http } from "../../common/HttpClient";
+import { conductorApiUrlPrefix } from "../../constants";
 
 class DiagramBuilder extends Component {
   constructor(props) {
@@ -72,13 +73,13 @@ class DiagramBuilder extends Component {
     console.log(this.props);
     this.props.hideHeader();
 
-    http.get("/api/conductor/metadata/workflow").then((res) => {
+    http.get(conductorApiUrlPrefix + "/metadata/workflow").then((res) => {
       this.props.storeWorkflows(
         res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
       );
     });
 
-    http.get("/api/conductor/metadata/taskdefs").then((res) => {
+    http.get(conductorApiUrlPrefix + "/metadata/taskdefs").then((res) => {
       this.props.storeTasks(
         res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
       );
@@ -108,7 +109,7 @@ class DiagramBuilder extends Component {
   createExistingWorkflow() {
     const { name, version } = this.props.match.params;
     http
-      .get("/api/conductor/metadata/workflow/" + name + "/" + version)
+      .get(conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
       .then((res) => {
         this.createDiagramByDefinition(res.result);
       })

@@ -13,6 +13,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import { getMountedDevices } from "../../../../store/actions/mountedDevices";
 import { storeWorkflowId } from "../../../../store/actions/builder";
 import { HttpClient as http } from "../../../../common/HttpClient";
+import { conductorApiUrlPrefix } from "../../../../constants";
 
 
 const getInputs = def => {
@@ -74,7 +75,7 @@ function InputModal(props) {
     setVersion(Number(props.wf.split(" / ")[1]));
 
     http
-      .get("/api/conductor/metadata/workflow/" + name + "/" + version)
+      .get(conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
       .then(res => {
         let definition = JSON.stringify(res.result, null, 2);
         let description = res.result?.description?.split("-")[0] || "";
@@ -106,7 +107,7 @@ function InputModal(props) {
       let q = 'status:"RUNNING"';
       http
         .get(
-          "/api/conductor/executions/?q=&h=&freeText=" +
+          conductorApiUrlPrefix + "/executions/?q=&h=&freeText=" +
             q +
             "&start=" +
             0 +
@@ -115,7 +116,7 @@ function InputModal(props) {
         .then(res => {
           let runningWfs = res.result?.hits || [];
           let promises = runningWfs.map(wf => {
-            return http.get("/api/conductor/id/" + wf.workflowId);
+            return http.get(conductorApiUrlPrefix + "/id/" + wf.workflowId);
           });
 
           Promise.all(promises).then(results => {
@@ -186,7 +187,7 @@ function InputModal(props) {
       }
     }
     setStatus("Executing...");
-    http.post("/api/conductor/workflow", JSON.stringify(payload)).then(res => {
+    http.post(conductorApiUrlPrefix + "/workflow", JSON.stringify(payload)).then(res => {
       setStatus(res.statusText);
       setWfId(res.body.text);
 

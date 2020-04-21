@@ -18,6 +18,7 @@ import { Application } from "./Application";
 import Workflow2Graph from "../../common/wfegraph";
 import defaultTo from "lodash/fp/defaultTo";
 import { HttpClient as http } from "../../common/HttpClient";
+import { conductorApiUrlPrefix } from "../../constants";
 
 const nodeColors = {
   subWorkflow: "rgb(34,144,255)",
@@ -132,7 +133,7 @@ export class WorkflowDiagram {
 
       this.registerEventHandlers(eventHandlers).then(() => {
         http
-          .put("/api/conductor/metadata", [definition])
+          .put(conductorApiUrlPrefix + "/metadata", [definition])
           .then(() => {
             resolve(definition);
           })
@@ -153,7 +154,7 @@ export class WorkflowDiagram {
       }
       eventHandlers.forEach(eventHandler => {
         http
-          .post("/api/conductor/event", eventHandler)
+          .post(conductorApiUrlPrefix + "/event", eventHandler)
           .then(res => {
             resolve(res);
           })
@@ -875,7 +876,7 @@ export class WorkflowDiagram {
       });
 
       http
-        .get("/api/conductor/metadata/workflow/" + name + "/" + version)
+        .get(conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
         .then(res => {
           const subworkflowDiagram = new WorkflowDiagram(
             new Application(),
