@@ -60,4 +60,4 @@ export const taskDescriptions = {
   startDelay: "time period before task executes"
 };
 
-export const conductorApiUrlPrefix = '/api/conductor';
+export const conductorApiUrlPrefix = "/api/conductor";

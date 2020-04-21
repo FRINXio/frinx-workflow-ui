@@ -64,7 +64,7 @@ export const checkDeleted = (deletedWfs, workflows, defaultPages) => {
 };
 
 export const performBulkOperation = (operation, workflows, defaultPages) => {
-  const url = `/api/conductor/bulk/${operation}`;
+  const url = conductorApiUrlPrefix + "/bulk/" + operation;
   let deletedWfs = [];
 
   return dispatch => {
