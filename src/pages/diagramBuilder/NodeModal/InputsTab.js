@@ -257,9 +257,14 @@ const InputsTab = props => {
         <Row>
           {Object.entries(props.inputs || []).map(item => {
             if (item[0] === "inputParameters") {
-              return Object.entries(item[1]).map(entry => {
-                if (typeof entry[1] === "object") {
-                  return Object.entries(entry[1]).map(innerEntry => {
+              return Object.entries(item[1]).map((entry) => {
+                if (
+                  typeof entry[1] === "object" &&
+                  !TEXTFIELD_KEYWORDS.find((keyword) =>
+                    entry[0].includes(keyword)
+                  )
+                ) {
+                  return Object.entries(entry[1]).map((innerEntry) => {
                     return handleInputField(innerEntry, entry);
                   });
                 } else {
