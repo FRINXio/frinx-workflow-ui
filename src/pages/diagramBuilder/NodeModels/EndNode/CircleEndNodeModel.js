@@ -1,3 +1,4 @@
+// @flow
 import { NodeModel } from "@projectstorm/react-diagrams";
 import { CircleEndPortModel } from "./CircleEndPortModel";
 import * as _ from "lodash";

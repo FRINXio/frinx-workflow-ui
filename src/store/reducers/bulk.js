@@ -1,3 +1,4 @@
+// @flow
 import {
   IS_FLAT,
   REQUEST_BULK_OPERATION,

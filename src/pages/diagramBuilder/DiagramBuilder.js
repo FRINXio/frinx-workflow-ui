@@ -1,3 +1,4 @@
+// @flow
 import { saveAs } from "file-saver";
 import * as _ from "lodash";
 import React, { Component } from "react";

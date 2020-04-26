@@ -1,3 +1,4 @@
+// @flow
 const request = require("superagent");
 
 const HttpClient = {

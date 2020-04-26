@@ -1,3 +1,4 @@
+// @flow
 import * as SRD from "@projectstorm/react-diagrams";
 import { ForkNode } from "./ForkNode";
 import { ForkNodeModel } from "./ForkNodeModel";

@@ -1,3 +1,4 @@
+// @flow
 import defaultTo from "lodash/fp/defaultTo";
 import React, { Component } from "react";
 import { Col, Row } from "react-bootstrap";

@@ -1,3 +1,4 @@
+// @flow
 import * as SRD from "@projectstorm/react-diagrams";
 import { SimplePortFactory } from "./NodeModels/SimplePortFactory";
 import { CircleStartPortModel } from "./NodeModels/StartNode/CircleStartPortModel";

@@ -1,3 +1,4 @@
+// @flow
 import * as SRD from "@projectstorm/react-diagrams";
 import { JoinNode } from "./JoinNode";
 import { JoinNodeModel } from "./JoinNodeModel";

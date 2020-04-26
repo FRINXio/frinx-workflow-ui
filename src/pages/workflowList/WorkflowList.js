@@ -1,3 +1,4 @@
+// @flow
 import { saveAs } from "file-saver";
 import React from "react";
 import { Button, Container, Tab, Tabs } from "react-bootstrap";

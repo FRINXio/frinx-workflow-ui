@@ -1,3 +1,4 @@
+// @flow
 import clone from "lodash/fp/clone";
 
 class Workflow2Graph {

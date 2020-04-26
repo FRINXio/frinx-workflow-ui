@@ -1,3 +1,4 @@
+// @flow
 import Clipboard from "clipboard";
 import moment from "moment";
 import React, { Component } from "react";

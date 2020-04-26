@@ -1,3 +1,4 @@
+// @flow
 import { MOUNTED_DEVICES } from "../actions/mountedDevices";
 
 const initialState = {

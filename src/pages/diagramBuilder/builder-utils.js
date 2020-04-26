@@ -1,3 +1,4 @@
+// @flow
 import * as _ from "lodash";
 
 export const getWfInputsRegex = wf => {

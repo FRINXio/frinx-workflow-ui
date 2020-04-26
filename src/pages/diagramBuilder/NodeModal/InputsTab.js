@@ -1,3 +1,4 @@
+// @flow
 
 import React, { useState } from "react";
 import AceEditor from "react-ace";

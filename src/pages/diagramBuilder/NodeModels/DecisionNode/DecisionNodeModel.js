@@ -1,3 +1,4 @@
+// @flow
 import { NodeModel } from "@projectstorm/react-diagrams";
 import * as _ from "lodash";
 import { DefaultPortModel } from "@projectstorm/react-diagrams";

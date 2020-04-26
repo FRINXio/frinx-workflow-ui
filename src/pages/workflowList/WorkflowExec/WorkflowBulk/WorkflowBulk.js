@@ -1,3 +1,4 @@
+// @flow
 import _ from "lodash";
 import React, { Component } from "react";
 import {

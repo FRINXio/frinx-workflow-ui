@@ -1,3 +1,4 @@
+// @flow
 import { HttpClient as http } from "../../common/HttpClient";
 import { round } from "lodash/math";
 import { fetchNewData, fetchParentWorkflows } from "./searchExecs";

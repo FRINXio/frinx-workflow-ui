@@ -1,3 +1,4 @@
+// @flow
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import Highlight from "react-highlight.js";
