@@ -1,3 +1,4 @@
+// @flow
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Tab, Tabs, ButtonGroup } from "react-bootstrap";
 import DefaultsDescsTab from "./DefaultsDescsTab";

@@ -1,3 +1,4 @@
+// @flow
 import * as SRD from "@projectstorm/react-diagrams";
 import * as React from "react";
 import { DecisionNode } from "./DecisionNode";

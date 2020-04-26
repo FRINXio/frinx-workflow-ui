@@ -1,3 +1,4 @@
+// @flow
 import {
   LOCK_WORKFLOW_NAME, OPEN_CARD,
   RESET_TO_DEFAULT_WORKFLOW,

@@ -1,3 +1,4 @@
+// @flow
 import {
   RECEIVE_NEW_DATA,
   HIERARCHY_NEW_DATA,

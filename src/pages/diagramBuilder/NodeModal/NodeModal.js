@@ -1,3 +1,4 @@
+// @flow
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Tab, Tabs } from "react-bootstrap";
 import { hash } from "../builder-utils";

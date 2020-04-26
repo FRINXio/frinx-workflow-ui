@@ -1,3 +1,4 @@
+// @flow
 import * as _ from "lodash";
 import { PortModel } from "@projectstorm/react-diagrams";
 import { DiagramEngine } from "@projectstorm/react-diagrams";

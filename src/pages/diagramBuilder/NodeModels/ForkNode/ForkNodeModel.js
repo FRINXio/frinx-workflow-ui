@@ -1,3 +1,4 @@
+// @flow
 import { NodeModel } from "@projectstorm/react-diagrams";
 import { ForkNodePortModel } from "./ForkNodePortModel";
 import * as _ from "lodash";

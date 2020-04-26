@@ -1,3 +1,4 @@
+// @flow
 import React, { useEffect } from "react";
 import logo from "./logo-min.png";
 import x from "./X_icon_RGB-min.png";

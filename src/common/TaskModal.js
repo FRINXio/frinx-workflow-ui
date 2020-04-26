@@ -1,3 +1,4 @@
+// @flow
 import React from "react";
 import { Col, Container, Modal, Row, Tab, Tabs } from "react-bootstrap";
 import Highlight from "react-highlight.js";

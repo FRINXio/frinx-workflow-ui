@@ -1,3 +1,4 @@
+// @flow
 import { HttpClient as http } from "../../common/HttpClient";
 export const MOUNTED_DEVICES = "MOUNTED_DEVICES";
 

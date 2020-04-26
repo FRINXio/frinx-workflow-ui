@@ -1,3 +1,4 @@
+// @flow
 import React, { useState } from "react";
 import { Button, Col, Form, InputGroup } from "react-bootstrap";
 import { getWfInputsRegex } from "../builder-utils";

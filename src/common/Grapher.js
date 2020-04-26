@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from "react";
 import dagreD3 from "dagre-d3";
 import d3 from "d3";

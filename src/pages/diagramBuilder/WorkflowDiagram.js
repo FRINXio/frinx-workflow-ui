@@ -1,3 +1,4 @@
+// @flow
 import * as _ from "lodash";
 import defaultTo from "lodash/fp/defaultTo";
 import { HttpClient as http } from "../../common/HttpClient";

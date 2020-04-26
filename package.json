@@ -40,7 +40,8 @@
     "debug": "PORT=3002 react-scripts --inspect-brk start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "flow": "flow"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -56,6 +57,7 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.5",
     "babel-preset-env": "^1.7.0",
+    "flow-bin": "^0.123.0",
     "jsdoc": "^3.6.3",
     "prettier": "1.18.2"
   }

@@ -1,3 +1,4 @@
+// @flow
 import React from "react";
 import { Form, Col, InputGroup, ButtonGroup, Button } from "react-bootstrap";
 import { taskDescriptions } from "../../../constants";
