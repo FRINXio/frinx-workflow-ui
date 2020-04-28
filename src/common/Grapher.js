@@ -5,6 +5,7 @@ import d3 from "d3";
 import { Row, Col } from "react-bootstrap";
 import Clipboard from "clipboard";
 import TaskModal from "./TaskModal";
+import type {Task} from "./flowtypes";
 
 new Clipboard(".btn");
 
@@ -27,7 +28,7 @@ type StateType = {
   innerGraph:?[],
   subGraph: ?SubGraph,
   showSideBar: boolean,
-  selectedTask: {},
+  selectedTask: Task,
   showSubGraph: boolean,
   subGraphId: string
 };
