@@ -13,7 +13,7 @@ export class CircleEndNodeFactory extends SRD.AbstractNodeFactory {
     diagramEngine: SRD.DiagramEngine,
     node: SRD.NodeModel
   ): JSX.Element {
-    return <CircleNodeEnd node={node} />;
+    return <CircleNodeEnd node={node} diagramEngine={diagramEngine} />;
   }
 
   getNewInstance() {

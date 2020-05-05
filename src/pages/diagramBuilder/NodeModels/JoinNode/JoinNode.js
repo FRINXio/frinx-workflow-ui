@@ -1,6 +1,7 @@
 // @flow
 import * as React from "react";
 import { PortWidget } from "@projectstorm/react-diagrams";
+import { NodeContextMenu, NodeMenuProvider } from "../ContextMenu";
 
 export class JoinNode extends React.Component {
   constructor(props) {
@@ -20,6 +21,7 @@ export class JoinNode extends React.Component {
           height: this.state.size
         }}
       >
+        <NodeMenuProvider node={this.props.node}>
         <svg
           width={this.state.size}
           height={this.state.size}
@@ -34,6 +36,7 @@ export class JoinNode extends React.Component {
         `
           }}
         />
+        </NodeMenuProvider>
 
         <div className="srd-node-glow"
              style={{
@@ -65,6 +68,11 @@ export class JoinNode extends React.Component {
         >
           <PortWidget name="right" node={this.props.node} />
         </div>
+
+        <NodeContextMenu
+          node={this.props.node}
+          diagramEngine={this.props.diagramEngine}
+        />
       </div>
     );
   }

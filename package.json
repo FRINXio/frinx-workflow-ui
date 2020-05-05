@@ -33,7 +33,8 @@
     "@projectstorm/react-diagrams": "^5.3.2",
     "closest": "^0.0.1",
     "pathfinding": "^0.4.18",
-    "paths-js": "^0.4.10"
+    "paths-js": "^0.4.10",
+    "react-contexify": "^4.1.1"
   },
   "scripts": {
     "start": "PORT=3002 react-scripts start",
