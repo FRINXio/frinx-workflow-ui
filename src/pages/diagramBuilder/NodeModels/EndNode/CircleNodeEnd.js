@@ -1,12 +1,12 @@
 // @flow
-import * as React from "react";
-import { PortWidget } from "@projectstorm/react-diagrams";
-import { NodeContextMenu, NodeMenuProvider } from "../ContextMenu";
+import * as React from 'react';
+import {NodeContextMenu, NodeMenuProvider} from '../ContextMenu';
+import {PortWidget} from '@projectstorm/react-diagrams';
 
 export class CircleNodeEnd extends React.Component {
   render() {
     return (
-      <div className={"srd-circle-node"}>
+      <div className={'srd-circle-node'}>
         <NodeMenuProvider node={this.props.node}>
           <svg width="60" height="60">
             <g>
@@ -17,7 +17,7 @@ export class CircleNodeEnd extends React.Component {
             </g>
           </svg>
         </NodeMenuProvider>
-        <div style={{ position: "absolute", zIndex: 10, left: -10, top: 21 }}>
+        <div style={{position: 'absolute', zIndex: 10, left: -10, top: 21}}>
           <PortWidget name="left" node={this.props.node} />
         </div>
         <NodeContextMenu

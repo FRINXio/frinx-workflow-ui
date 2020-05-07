@@ -1,9 +1,8 @@
 // @flow
-import { NodeModel } from "@projectstorm/react-diagrams";
-import * as _ from "lodash";
-import { DefaultPortModel } from "@projectstorm/react-diagrams";
-import { DiagramEngine } from "@projectstorm/react-diagrams";
-import { DecisionNodePortModel } from "./DecisionNodePortModel";
+import * as _ from 'lodash';
+import {DecisionNodePortModel} from './DecisionNodePortModel';
+import {DiagramEngine} from '@projectstorm/react-diagrams';
+import {NodeModel} from '@projectstorm/react-diagrams';
 
 export class DecisionNodeModel extends NodeModel {
   name: string;
@@ -11,18 +10,18 @@ export class DecisionNodeModel extends NodeModel {
   inputs: {};
 
   constructor(
-    name: string = "Untitled",
-    color: string = "rgb(0,192,255)",
-    inputs: {}
+    name: string = 'Untitled',
+    color: string = 'rgb(0,192,255)',
+    inputs: {},
   ) {
-    super("decision");
+    super('decision');
     this.name = name;
     this.color = color;
-    super.extras = { inputs: inputs };
+    super.extras = {inputs: inputs};
 
-    this.addPort(new DecisionNodePortModel(true, "left", "inputPort"));
-    this.addPort(new DecisionNodePortModel(false, "right", "neutralPort"));
-    this.addPort(new DecisionNodePortModel(false, "bottom", "failPort"));
+    this.addPort(new DecisionNodePortModel(true, 'left', 'inputPort'));
+    this.addPort(new DecisionNodePortModel(false, 'right', 'neutralPort'));
+    this.addPort(new DecisionNodePortModel(false, 'bottom', 'failPort'));
   }
 
   deSerialize(object, engine: DiagramEngine) {
@@ -34,7 +33,7 @@ export class DecisionNodeModel extends NodeModel {
   serialize() {
     return _.merge(super.serialize(), {
       name: this.name,
-      color: this.color
+      color: this.color,
     });
   }
 

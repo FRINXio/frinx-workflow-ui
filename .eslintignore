@@ -1,0 +1,10 @@
+!.eslintrc.js
+**/*.min.js
+
+**/node_modules/**
+
+dist/**/*.js
+flow-typed/npm/**/*.js
+**/thrift/gen-nodejs/*.js
+config/webpack.*.js
+tgnms/**/*.js

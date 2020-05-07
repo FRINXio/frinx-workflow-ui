@@ -1,7 +1,7 @@
 // @flow
-import * as React from "react";
-import { DefaultNodeWidget } from "@projectstorm/react-diagrams";
-import { NodeContextMenu, NodeMenuProvider } from "./ContextMenu";
+import * as React from 'react';
+import {DefaultNodeWidget} from '@projectstorm/react-diagrams';
+import {NodeContextMenu, NodeMenuProvider} from './ContextMenu';
 
 export class NodeWithContextWidget extends DefaultNodeWidget {
   render() {
