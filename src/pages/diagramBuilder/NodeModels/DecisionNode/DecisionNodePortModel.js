@@ -1,35 +1,35 @@
 // @flow
-import * as _ from "lodash";
+import * as _ from 'lodash';
 import {
-  LinkModel,
+  DefaultLinkModel,
   DiagramEngine,
+  LinkModel,
   PortModel,
-  DefaultLinkModel
-} from "@projectstorm/react-diagrams";
+} from '@projectstorm/react-diagrams';
 
 export class DecisionNodePortModel extends PortModel {
-  position: string | "top" | "bottom" | "left" | "right";
+  position: string | 'top' | 'bottom' | 'left' | 'right';
 
-  constructor(isInput: boolean, pos: string = "left", name: string = pos) {
-    super(name, "decision");
+  constructor(isInput: boolean, pos: string = 'left', name: string = pos) {
+    super(name, 'decision');
     this.in = isInput;
     this.position = pos;
   }
 
   serialize() {
     return _.merge(super.serialize(), {
-      position: this.position
+      position: this.position,
     });
   }
 
   link(port: PortModel): LinkModel {
-    let link = this.createLinkModel();
+    const link = this.createLinkModel();
     link.setSourcePort(this);
     link.setTargetPort(port);
     return link;
   }
 
-  deSerialize(data: any, engine: DiagramEngine) {
+  deSerialize(data, engine: DiagramEngine) {
     super.deSerialize(data, engine);
     this.position = data.position;
   }
