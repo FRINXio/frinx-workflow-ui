@@ -17,7 +17,7 @@ function EventListeners() {
 
   const getData = () => {
     http.get("/api/conductor/event").then((res) => {
-      setEventListeners(res);
+      setEventListeners(res !== 500 ? res : []);
     });
   };
 
