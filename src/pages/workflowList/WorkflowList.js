@@ -7,6 +7,7 @@ import { HttpClient as http } from "../../common/HttpClient";
 import WorkflowDefs from "./WorkflowDefs/WorkflowDefs";
 import WorkflowExec from "./WorkflowExec/WorkflowExec";
 import { conductorApiUrlPrefix, frontendUrlPrefix } from "../../constants";
+import EventListeners from "./EventListeners/EventListeners";
 
 const JSZip = require("jszip");
 
@@ -106,6 +107,9 @@ const WorkflowList = (props) => {
           <WorkflowExec query={query} />
         </Tab>
         <Tab eventKey="scheduled" title="Scheduled" disabled></Tab>
+        <Tab eventKey="eventlisteners" title="Event Listeners">
+          <EventListeners/>
+        </Tab>
       </Tabs>
     </Container>
   );
