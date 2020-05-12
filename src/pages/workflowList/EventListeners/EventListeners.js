@@ -5,6 +5,7 @@ import AceEditor from "react-ace";
 import { HttpClient as http } from "../../../common/HttpClient";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-tomorrow";
+import { conductorApiUrlPrefix } from "../../../constants";
 
 function EventListeners() {
   const [eventListeners, setEventListeners] = useState([]);
@@ -16,20 +17,26 @@ function EventListeners() {
   }, []);
 
   const getData = () => {
-    http.get("/api/conductor/event").then((res) => {
-      setEventListeners(res !== 500 ? res : []);
+    http.get(conductorApiUrlPrefix + "/event").then((res) => {
+      if (Array.isArray(res)) {
+        setEventListeners(res);
+      }
     });
   };
 
   const editEvent = (state, event) => {
-
     if (state !== null) {
       event.active = state;
     }
 
-    http.post("/api/conductor/event", event).then(() => {
-      getData();
-    });
+    http
+      .post(conductorApiUrlPrefix + "/event", event)
+      .then((res) => {
+        getData();
+      })
+      .catch((err) => {
+        alert(err);
+      });
     setSelectedEvent(null);
   };
 
@@ -41,10 +48,10 @@ function EventListeners() {
     try {
       let parsedJSON = JSON.parse(data);
       setSelectedEvent(parsedJSON);
-    } catch(e) {
-      console.log(e)
+    } catch (e) {
+      console.log(e);
     }
-  }
+  };
 
   const results = !searchTerm
     ? eventListeners
