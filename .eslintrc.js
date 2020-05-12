@@ -13,6 +13,9 @@
 module.exports.extends = ['eslint-config-fbcnms'];
 module.exports.overrides = [
   {
+    env: {
+      node: true,
+    },
     files: ['*'],
     rules: {
       'prettier/prettier': [
