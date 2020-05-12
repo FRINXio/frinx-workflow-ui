@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect } from "react";
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Divider,
   Dropdown,
@@ -8,50 +8,50 @@ import {
   Input,
   Menu,
   Popup,
-  Sidebar
-} from "semantic-ui-react";
+  Sidebar,
+} from 'semantic-ui-react';
 
-import "./Sidemenu.css";
-import { getTaskInputsRegex, getWfInputsRegex, hash } from "../builder-utils";
-import SideMenuItem from "./SideMenuItem";
+import './Sidemenu.css';
+import SideMenuItem from './SideMenuItem';
+import {getTaskInputsRegex, getWfInputsRegex, hash} from '../builder-utils';
 
 const sub_workflow = wf => ({
   name: wf.name,
-  taskReferenceName: wf.name.toLowerCase().trim() + "_ref_" + hash(),
+  taskReferenceName: wf.name.toLowerCase().trim() + '_ref_' + hash(),
   inputParameters: getWfInputsRegex(wf),
-  type: "SUB_WORKFLOW",
+  type: 'SUB_WORKFLOW',
   subWorkflowParam: {
     name: wf.name,
-    version: wf.version
+    version: wf.version,
   },
   optional: false,
-  startDelay: 0
+  startDelay: 0,
 });
 
 const sub_task = t => ({
   name: t.name,
-  taskReferenceName: t.name.toLowerCase().trim() + "_ref_" + hash(),
+  taskReferenceName: t.name.toLowerCase().trim() + '_ref_' + hash(),
   inputParameters: getTaskInputsRegex(t),
-  type: "SIMPLE",
+  type: 'SIMPLE',
   optional: false,
-  startDelay: 0
+  startDelay: 0,
 });
 
 const favorites = props => {
   return props.workflows
     .map((wf, i) => {
-      let wfObject = sub_workflow(wf);
-      if (wf.description && wf.description.includes("FAVOURITE")) {
+      const wfObject = sub_workflow(wf);
+      if (wf.description && wf.description.includes('FAVOURITE')) {
         return (
           <SideMenuItem
             key={`wf${i}`}
             model={{
-              type: "default",
+              type: 'default',
               wfObject,
               name: wf.name,
-              description: wf.hasOwnProperty("description")
+              description: wf.hasOwnProperty('description')
                 ? wf.description
-                : ""
+                : '',
             }}
             name={wf.name}
           />
@@ -63,15 +63,15 @@ const favorites = props => {
 
 const workflows = props => {
   return props.workflows.map((wf, i) => {
-    let wfObject = sub_workflow(wf);
+    const wfObject = sub_workflow(wf);
     return (
       <SideMenuItem
         key={`wf${i}`}
         model={{
-          type: "default",
+          type: 'default',
           wfObject,
           name: wf.name,
-          description: wf.hasOwnProperty("description") ? wf.description : ""
+          description: wf.hasOwnProperty('description') ? wf.description : '',
         }}
         name={wf.name}
       />
@@ -81,17 +81,17 @@ const workflows = props => {
 
 const tasks = props => {
   return props.tasks.map((task, i) => {
-    let wfObject = sub_task(task);
+    const wfObject = sub_task(task);
     return (
       <SideMenuItem
         key={`wf${i}`}
         model={{
-          type: "default",
+          type: 'default',
           wfObject,
           name: task.name,
-          description: task.hasOwnProperty("description")
+          description: task.hasOwnProperty('description')
             ? task.description
-            : ""
+            : '',
         }}
         name={task.name}
       />
@@ -102,18 +102,18 @@ const tasks = props => {
 const custom = (props, custom) => {
   return props.workflows
     .map((wf, i) => {
-      let wfObject = sub_workflow(wf);
+      const wfObject = sub_workflow(wf);
       if (wf.description && wf.description.includes(custom)) {
         return (
           <SideMenuItem
             key={`wf${i}`}
             model={{
-              type: "default",
+              type: 'default',
               wfObject,
               name: wf.name,
-              description: wf.hasOwnProperty("description")
+              description: wf.hasOwnProperty('description')
                 ? wf.description
-                : ""
+                : '',
             }}
             name={wf.name}
           />
@@ -127,16 +127,16 @@ const getCustoms = props => {
   return [
     ...new Set(
       props.workflows
-        .map((wf, i) => {
-          if (wf.hasOwnProperty("description")) {
+        .map(wf => {
+          if (wf.hasOwnProperty('description')) {
             if (wf.description.match(/custom(?:\w+)?\b/gim)) {
               return wf.description.match(/custom(?:\w+)?\b/gim);
             }
           }
         })
         .flat()
-        .filter(item => item !== undefined)
-    )
+        .filter(item => item !== undefined),
+    ),
   ];
 };
 
@@ -147,30 +147,33 @@ const Sidemenu = props => {
   const [customs, setCustoms] = useState([]);
   const [open, setOpen] = useState();
 
+  const getContent = useCallback(
+    which => {
+      switch (which) {
+        case 'Workflows':
+          setContent(workflows(props));
+          break;
+        case 'Favorites':
+          setContent(favorites(props));
+          break;
+        case 'Tasks':
+          setContent(tasks(props));
+          break;
+        default:
+          setContent(custom(props, which));
+          break;
+      }
+    },
+    [props],
+  );
+
   useEffect(() => {
     setTimeout(() => setVisible(true), 1000);
     if (customs.length < 1) {
       setCustoms(getCustoms(props));
     }
     getContent(open);
-  }, [props]);
-
-  const getContent = which => {
-    switch (which) {
-      case "Workflows":
-        setContent(workflows(props));
-        break;
-      case "Favorites":
-        setContent(favorites(props));
-        break;
-      case "Tasks":
-        setContent(tasks(props));
-        break;
-      default:
-        setContent(custom(props, which));
-        break;
-    }
-  };
+  }, [props, customs.length, getContent, open]);
 
   const handleOpen = which => {
     if (which === open) {
@@ -185,8 +188,8 @@ const Sidemenu = props => {
 
   const shortcutsInfo = () => {
     return (
-      <Grid columns="equal" style={{ width: "350px" }}>
-        <Grid.Column style={{ textAlign: "right" }}>
+      <Grid columns="equal" style={{width: '350px'}}>
+        <Grid.Column style={{textAlign: 'right'}}>
           <p>
             Save <kbd>Ctrl</kbd>+<kbd>S</kbd>
           </p>
@@ -200,7 +203,7 @@ const Sidemenu = props => {
             Expand <kbd>Ctrl</kbd>+<kbd>X</kbd>
           </p>
         </Grid.Column>
-        <Grid.Column style={{ textAlign: "right" }}>
+        <Grid.Column style={{textAlign: 'right'}}>
           <p>
             Delete <kbd>LMB</kbd>+<kbd>Delete</kbd>
           </p>
@@ -215,12 +218,12 @@ const Sidemenu = props => {
     );
   };
 
-  const handleLabelChange = (e, { searchQuery, value }) => {
+  const handleLabelChange = (e, {_, value}) => {
     props.updateQuery(null, value);
   };
 
   return (
-    <div style={{ zIndex: 11 }}>
+    <div style={{zIndex: 11}}>
       <Sidebar
         id="sidebar-primary"
         as={Menu}
@@ -228,30 +231,26 @@ const Sidemenu = props => {
         onHide={() => setVisible(true)}
         visible={visible}
         vertical
-        icon
-      >
+        icon>
         <Menu.Item
           as="a"
           title="Workflows"
-          active={open === "Workflows"}
-          onClick={() => handleOpen("Workflows")}
-        >
+          active={open === 'Workflows'}
+          onClick={() => handleOpen('Workflows')}>
           <Icon name="folder open" />
         </Menu.Item>
         <Menu.Item
           as="a"
           title="Tasks"
-          active={open === "Tasks"}
-          onClick={() => handleOpen("Tasks")}
-        >
+          active={open === 'Tasks'}
+          onClick={() => handleOpen('Tasks')}>
           <Icon name="tasks" />
         </Menu.Item>
         <Menu.Item
           as="a"
           title="Favorites"
-          active={open === "Favorites"}
-          onClick={() => handleOpen("Favorites")}
-        >
+          active={open === 'Favorites'}
+          onClick={() => handleOpen('Favorites')}>
           <Icon name="favorite" />
         </Menu.Item>
         {customs.map((custom, i) => (
@@ -259,14 +258,13 @@ const Sidemenu = props => {
             as="a"
             title={`${custom}`}
             active={open === custom}
-            onClick={() => handleOpen(custom)}
-          >
+            onClick={() => handleOpen(custom)}>
             {i + 1}
           </Menu.Item>
         ))}
         <div className="bottom">
           <Popup
-            style={{ transform: "translate3d(60px, 82vh, 0px)" }}
+            style={{transform: 'translate3d(60px, 82vh, 0px)'}}
             basic
             content={shortcutsInfo}
             on="click"
@@ -281,11 +279,10 @@ const Sidemenu = props => {
             title="Help"
             onClick={() =>
               window.open(
-                "https://docs.frinx.io/frinx-machine/workflow-builder/workflow-builder.html",
-                "_blank"
+                'https://docs.frinx.io/frinx-machine/workflow-builder/workflow-builder.html',
+                '_blank',
               )
-            }
-          >
+            }>
             <Icon name="help circle" />
           </Menu.Item>
           <Menu.Item>
@@ -300,8 +297,7 @@ const Sidemenu = props => {
         animation="overlay"
         direction="left"
         vertical
-        visible={expanded}
-      >
+        visible={expanded}>
         <div className="sidebar-header">
           <h3>{open}</h3>
           <Input
@@ -320,27 +316,27 @@ const Sidemenu = props => {
             onChange={handleLabelChange}
             options={[
               ...new Set(
-                [open === "Tasks" ? props.tasks : props.workflows]
+                [open === 'Tasks' ? props.tasks : props.workflows]
                   .flat()
                   .map(wf => {
                     return wf.description
                       ? wf.description
-                          .split("-")
+                          .split('-')
                           .pop()
-                          .replace(/\s/g, "")
-                          .split(",")
+                          .replace(/\s/g, '')
+                          .split(',')
                       : null;
                   })
                   .flat()
-                  .filter(item => item !== null)
-              )
+                  .filter(item => item !== null),
+              ),
             ].map((label, i) => {
-              return { key: i, text: label, value: label };
+              return {key: i, text: label, value: label};
             })}
           />
           <small>
-            Combine search and labels to find{" "}
-            {open ? open.toLowerCase() : "workflows"}
+            Combine search and labels to find{' '}
+            {open ? open.toLowerCase() : 'workflows'}
           </small>
         </div>
         <Divider horizontal section>
