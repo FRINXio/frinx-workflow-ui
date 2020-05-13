@@ -40,6 +40,17 @@ function EventListeners() {
     setSelectedEvent(null);
   };
 
+  const deleteEvent = (name) => {
+    http
+      .delete(conductorApiUrlPrefix + "/event/" + name)
+      .then(() => {
+        getData();
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
+
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -135,6 +146,9 @@ function EventListeners() {
                 <Table.Cell style={{ textAlign: "center" }}>
                   <Button size="mini" onClick={() => setSelectedEvent(e)}>
                     Edit
+                  </Button>
+                  <Button size="mini" icon negative onClick={() => deleteEvent(e.name)}>
+                    <Icon name="trash"/>
                   </Button>
                 </Table.Cell>
               </Table.Row>
