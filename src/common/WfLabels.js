@@ -15,8 +15,8 @@ const WfLabels = props => {
         if (props.search) props.search();
       }}
       circular
-      size="tiny"
-      style={{ backgroundColor: color, color: "white" }}
+      size="mini"
+      style={{ backgroundColor: color, color: "white", cursor: "pointer" }}
       {...props}
     >
       <p>{props.label}</p>

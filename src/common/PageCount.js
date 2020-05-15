@@ -12,6 +12,17 @@ class PageCount extends Component {
     return (
       <Pagination style={{ float: "left" }}>
         <Pagination.Item
+          active={this.props.defaultPages === 10}
+          onClick={e => {
+            let dataSize = this.props.dataSize;
+            let size = ~~(dataSize / 10);
+            let pagesCount = dataSize === 0 ? 0 : dataSize % 10 ? ++size : size;
+            this.props.handler(10, pagesCount);
+          }}
+        >
+          10{" "}
+        </Pagination.Item>
+        <Pagination.Item
           active={this.props.defaultPages === 20}
           onClick={e => {
             let dataSize = this.props.dataSize;
@@ -27,23 +38,12 @@ class PageCount extends Component {
           onClick={e => {
             let dataSize = this.props.dataSize;
             let size = ~~(dataSize / 50);
-            let pagesCount = dataSize === 0 ? 0 : dataSize % 50 ? ++size : size;
+            let pagesCount =
+              dataSize === 0 ? 0 : dataSize % 50 ? ++size : size;
             this.props.handler(50, pagesCount);
           }}
         >
           50{" "}
-        </Pagination.Item>
-        <Pagination.Item
-          active={this.props.defaultPages === 100}
-          onClick={e => {
-            let dataSize = this.props.dataSize;
-            let size = ~~(dataSize / 100);
-            let pagesCount =
-              dataSize === 0 ? 0 : dataSize % 100 ? ++size : size;
-            this.props.handler(100, pagesCount);
-          }}
-        >
-          100{" "}
         </Pagination.Item>
       </Pagination>
     );

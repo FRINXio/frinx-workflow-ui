@@ -7,17 +7,19 @@ import {
   Row,
   Col,
   ToggleButton,
-  ToggleButtonGroup
+  ToggleButtonGroup,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { getMountedDevices } from "../../../../store/actions/mountedDevices";
 import { storeWorkflowId } from "../../../../store/actions/builder";
 import { HttpClient as http } from "../../../../common/HttpClient";
-import { conductorApiUrlPrefix, frontendUrlPrefix } from "../../../../constants";
+import {
+  conductorApiUrlPrefix,
+  frontendUrlPrefix,
+} from "../../../../constants";
 
-
-const getInputs = def => {
+const getInputs = (def) => {
   let matchArray = def.match(/(?<=workflow\.input\.)([a-zA-Z0-9-_]+)/gim);
   return [...new Set(matchArray)];
 };
@@ -55,51 +57,39 @@ const getDetails = (def, inputsArray) => {
 
 function InputModal(props) {
   const dispatch = useDispatch();
-  const devices = useSelector(state => state.mountedDeviceReducer.devices);
-  const [wfdesc, setWfDescs] = useState();
+  const devices = useSelector((state) => state.mountedDeviceReducer.devices);
   const [wfId, setWfId] = useState();
-  const [name, setName] = useState();
-  const [version, setVersion] = useState();
   const [warning, setWarning] = useState([]);
   const [status, setStatus] = useState("Execute");
   const [workflowForm, setWorkflowForm] = useState({
     labels: [],
     descs: [],
-    values: []
+    values: [],
   });
   const [waitingWfs, setWaitingWfs] = useState([]);
+  const name = props.wf.name;
+  const version = Number(props.wf.version);
+  const wfdesc = props.wf.description?.split("-")[0] || "";
 
   useEffect(() => {
-    let name = props.wf.split(" / ")[0];
-    let version = props.wf.split(" / ")[1];
-    setName(name);
-    setVersion(Number(props.wf.split(" / ")[1]));
+    let definition = JSON.stringify(props.wf, null, 2);
+    let labels = getInputs(definition);
+    let { descs, values } = getDetails(definition, labels);
 
-    http
-      .get(conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
-      .then(res => {
-        let definition = JSON.stringify(res.result, null, 2);
-        let description = res.result?.description?.split("-")[0] || "";
-        let labels = getInputs(definition);
-        let { descs, values } = getDetails(definition, labels);
-
-        if (definition.match(/\bEVENT_TASK\b/)) {
-          getWaitingWorkflows().then(waitingWfs => {
-            setWaitingWfs(waitingWfs);
-          });
-        }
-
-        setWfDescs(description);
-        setWorkflowForm({
-          labels,
-          descs,
-          values
-        });
-
-        if (descs.some(rx => rx && rx.match(/.*#node_id.*/g))) {
-          dispatch(getMountedDevices());
-        }
+    if (definition.match(/\bEVENT_TASK\b/)) {
+      getWaitingWorkflows().then((waitingWfs) => {
+        setWaitingWfs(waitingWfs);
       });
+    }
+    setWorkflowForm({
+      labels,
+      descs,
+      values,
+    });
+
+    if (descs.some((rx) => rx && rx.match(/.*#node_id.*/g))) {
+      dispatch(getMountedDevices());
+    }
   }, [props]);
 
   const getWaitingWorkflows = () => {
@@ -108,29 +98,30 @@ function InputModal(props) {
       let q = 'status:"RUNNING"';
       http
         .get(
-          conductorApiUrlPrefix + "/executions/?q=&h=&freeText=" +
+          conductorApiUrlPrefix +
+            "/executions/?q=&h=&freeText=" +
             q +
             "&start=" +
             0 +
             "&size="
         )
-        .then(res => {
+        .then((res) => {
           let runningWfs = res.result?.hits || [];
-          let promises = runningWfs.map(wf => {
+          let promises = runningWfs.map((wf) => {
             return http.get(conductorApiUrlPrefix + "/id/" + wf.workflowId);
           });
 
-          Promise.all(promises).then(results => {
-            results.forEach(r => {
+          Promise.all(promises).then((results) => {
+            results.forEach((r) => {
               let workflow = r.result;
               const waitTasks = workflow?.tasks
-                .filter(task => task.taskType === "WAIT")
-                .map(t => t.referenceTaskName);
+                .filter((task) => task.taskType === "WAIT")
+                .map((t) => t.referenceTaskName);
               if (waitTasks.length > 0) {
                 let waitingWf = {
                   id: workflow.workflowId,
                   name: workflow.workflowName,
-                  waitingTasks: waitTasks
+                  waitingTasks: waitTasks,
                 };
                 waitingWfs.push(waitingWf);
               }
@@ -177,7 +168,7 @@ function InputModal(props) {
     let payload = {
       name: name,
       version: version,
-      input
+      input,
     };
 
     for (let i = 0; i < labels.length; i++) {
@@ -188,17 +179,19 @@ function InputModal(props) {
       }
     }
     setStatus("Executing...");
-    http.post(conductorApiUrlPrefix + "/workflow", JSON.stringify(payload)).then(res => {
-      setStatus(res.statusText);
-      setWfId(res.body.text);
+    http
+      .post(conductorApiUrlPrefix + "/workflow", JSON.stringify(payload))
+      .then((res) => {
+        setStatus(res.statusText);
+        setWfId(res.body.text);
 
-      dispatch(storeWorkflowId(res.body.text));
-      timeoutBtn();
+        dispatch(storeWorkflowId(res.body.text));
+        timeoutBtn();
 
-      if (props.fromBuilder) {
-        handleClose();
-      }
-    });
+        if (props.fromBuilder) {
+          handleClose();
+        }
+      });
   };
 
   const timeoutBtn = () => {
@@ -211,17 +204,17 @@ function InputModal(props) {
         return (
           <Typeahead
             id={`input-${type}`}
-            onChange={e => handleTypeahead(e, i)}
+            onChange={(e) => handleTypeahead(e, i)}
             placeholder="Enter or select workflow id"
-            options={waitingWfs.map(w => w.id)}
+            options={waitingWfs.map((w) => w.id)}
             defaultSelected={workflowForm.values[i] || ""}
-            onInputChange={e => handleTypeahead(e, i)}
-            renderMenuItemChildren={option => (
+            onInputChange={(e) => handleTypeahead(e, i)}
+            renderMenuItemChildren={(option) => (
               <div>
                 {option}
                 <div>
                   <small>
-                    name: {waitingWfs.find(w => w.id === option)?.name}
+                    name: {waitingWfs.find((w) => w.id === option)?.name}
                   </small>
                 </div>
               </div>
@@ -232,18 +225,18 @@ function InputModal(props) {
         return (
           <Typeahead
             id={`input-${type}`}
-            onChange={e => handleTypeahead(e, i)}
+            onChange={(e) => handleTypeahead(e, i)}
             placeholder="Enter or select task reference name"
-            options={waitingWfs.map(w => w.waitingTasks).flat()}
-            onInputChange={e => handleTypeahead(e, i)}
-            renderMenuItemChildren={option => (
+            options={waitingWfs.map((w) => w.waitingTasks).flat()}
+            onInputChange={(e) => handleTypeahead(e, i)}
+            renderMenuItemChildren={(option) => (
               <div>
                 {option}
                 <div>
                   <small>
                     name:{" "}
                     {
-                      waitingWfs.find(w => w.waitingTasks.includes(option))
+                      waitingWfs.find((w) => w.waitingTasks.includes(option))
                         ?.name
                     }
                   </small>
@@ -256,14 +249,14 @@ function InputModal(props) {
         return (
           <Typeahead
             id={`input-${i}`}
-            onChange={e => handleTypeahead(e, i)}
+            onChange={(e) => handleTypeahead(e, i)}
             placeholder="Enter the node id"
             multiple={!!type.match(/node_ids/g)}
             options={devices}
             selected={devices.filter(
-              device => device === workflowForm.values[i]
+              (device) => device === workflowForm.values[i]
             )}
-            onInputChange={e => handleTypeahead(e, i)}
+            onInputChange={(e) => handleTypeahead(e, i)}
           />
         );
       case /template/g.test(type):
@@ -272,7 +265,7 @@ function InputModal(props) {
             type="input"
             as="textarea"
             rows="2"
-            onChange={e => handleInput(e, i)}
+            onChange={(e) => handleInput(e, i)}
             placeholder="Enter the input"
             value={workflowForm.values[i] || ""}
             isInvalid={warning[i]}
@@ -284,11 +277,11 @@ function InputModal(props) {
             type="radio"
             value={workflowForm.values[i] === "true"}
             name={`switch-${i}`}
-            onChange={e => handleSwitch(e, i)}
+            onChange={(e) => handleSwitch(e, i)}
             style={{
               height: "calc(1.5em + .75rem + 2px)",
               width: "100%",
-              paddingTop: ".375rem"
+              paddingTop: ".375rem",
             }}
           >
             <ToggleButton size="sm" variant="outline-primary" value={true}>
@@ -303,7 +296,7 @@ function InputModal(props) {
         return (
           <Form.Control
             type="input"
-            onChange={e => handleInput(e, i)}
+            onChange={(e) => handleInput(e, i)}
             placeholder="Enter the input"
             value={workflowForm.values[i] || ""}
             isInvalid={warning[i]}
@@ -333,7 +326,7 @@ function InputModal(props) {
                           color: "red",
                           fontSize: "12px",
                           float: "right",
-                          marginTop: "5px"
+                          marginTop: "5px",
                         }}
                       >
                         Unnecessary space

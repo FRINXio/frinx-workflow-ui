@@ -1,15 +1,7 @@
 // @flow
 import React, { Component } from "react";
-import {
-  Accordion,
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Row,
-  Table
-} from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
+import { Table, Header, Button, Label, Popup } from "semantic-ui-react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { withRouter } from "react-router-dom";
@@ -30,16 +22,15 @@ class WorkflowDefs extends Component {
       labels: [],
       data: [],
       table: [],
-      activeRow: null,
       activeWf: null,
       defModal: false,
       diagramModal: false,
-      defaultPages: 20,
+      inputModal: false,
+      defaultPages: 10,
       pagesCount: 1,
       viewedPage: 1,
-      allLabels: []
+      allLabels: [],
     };
-    this.table = React.createRef();
     this.onEditSearch = this.onEditSearch.bind(this);
   }
 
@@ -48,7 +39,7 @@ class WorkflowDefs extends Component {
   }
 
   componentDidMount() {
-    http.get(conductorApiUrlPrefix + "/metadata/workflow").then(res => {
+    http.get(conductorApiUrlPrefix + "/metadata/workflow").then((res) => {
       if (res.result) {
         let size = ~~(res.result.length / this.state.defaultPages);
         let dataset =
@@ -60,7 +51,7 @@ class WorkflowDefs extends Component {
           data: dataset,
           pagesCount:
             res.result.length % this.state.defaultPages ? ++size : size,
-          allLabels: allLabels
+          allLabels: allLabels,
         });
       }
     });
@@ -81,7 +72,7 @@ class WorkflowDefs extends Component {
     });
     let allLabels = [...new Set([].concat(...labelsArr))];
     return allLabels
-      .filter(e => {
+      .filter((e) => {
         return e !== "";
       })
       .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
@@ -91,8 +82,6 @@ class WorkflowDefs extends Component {
     this.setState(
       {
         keywords: event.target.value,
-        activeWf: null,
-        activeRow: null
       },
       () => {
         this.search();
@@ -104,8 +93,6 @@ class WorkflowDefs extends Component {
     this.setState(
       {
         labels: event,
-        activeWf: null,
-        activeRow: null
       },
       () => {
         this.searchLabel();
@@ -125,7 +112,7 @@ class WorkflowDefs extends Component {
             .pop()
             .replace(/\s/g, "")
             .split(",");
-          if (this.state.labels.every(elem => tags.indexOf(elem) > -1)) {
+          if (this.state.labels.every((elem) => tags.indexOf(elem) > -1)) {
             toBeRendered.push(rows[i]);
           }
         }
@@ -137,20 +124,18 @@ class WorkflowDefs extends Component {
     this.setState({
       table: toBeRendered,
       pagesCount: toBeRendered.length % this.state.defaultPages ? ++size : size,
-      viewedPage: 1
+      viewedPage: 1,
     });
     return null;
   }
 
   searchFavourites() {
     let labels = this.state.labels;
-    let index = labels.findIndex(label => label === "FAVOURITE");
+    let index = labels.findIndex((label) => label === "FAVOURITE");
     index > -1 ? labels.splice(index, 1) : labels.push("FAVOURITE");
     this.setState(
       {
         labels: labels,
-        activeWf: null,
-        activeRow: null
       },
       () => {
         this.searchLabel();
@@ -188,18 +173,7 @@ class WorkflowDefs extends Component {
     this.setState({
       table: toBeRendered,
       pagesCount: toBeRendered.length % this.state.defaultPages ? ++size : size,
-      viewedPage: 1
-    });
-  }
-
-  changeActiveRow(i) {
-    let dataset =
-      this.state.keywords === "" && this.state.labels.length < 1
-        ? this.state.data
-        : this.state.table;
-    this.setState({
-      activeRow: this.state.activeRow === i ? null : i,
-      activeWf: dataset[i]["name"] + " / " + dataset[i]["version"]
+      viewedPage: 1,
     });
   }
 
@@ -223,7 +197,7 @@ class WorkflowDefs extends Component {
       data.description = "- FAVOURITE";
     }
     http.put(conductorApiUrlPrefix + "/metadata/", [data]).then(() => {
-      http.get(conductorApiUrlPrefix + "/metadata/workflow").then(res => {
+      http.get(conductorApiUrlPrefix + "/metadata/workflow").then((res) => {
         let dataset =
           res.result.sort((a, b) =>
             a.name > b.name ? 1 : b.name > a.name ? -1 : 0
@@ -231,7 +205,7 @@ class WorkflowDefs extends Component {
         let allLabels = this.getLabels(dataset);
         this.setState({
           data: dataset,
-          allLabels: allLabels
+          allLabels: allLabels,
         });
       });
     });
@@ -241,13 +215,13 @@ class WorkflowDefs extends Component {
     this.setState({
       defaultPages: defaultPages,
       pagesCount: pagesCount,
-      viewedPage: 1
+      viewedPage: 1,
     });
   }
 
   setViewPage(page) {
     this.setState({
-      viewedPage: page
+      viewedPage: page,
     });
   }
 
@@ -260,9 +234,9 @@ class WorkflowDefs extends Component {
     let wfLabels = str.replace(/\s/g, "").split(",");
     wfLabels.forEach((label, i) => {
       if (label !== "") {
-        let index = this.state.allLabels.findIndex(lab => lab === label);
+        let index = this.state.allLabels.findIndex((lab) => lab === label);
         let newLabels =
-          this.state.labels.findIndex(lbl => lbl === label) < 0
+          this.state.labels.findIndex((lbl) => lbl === label) < 0
             ? [...this.state.labels, label]
             : this.state.labels;
         labels.push(
@@ -278,26 +252,23 @@ class WorkflowDefs extends Component {
     return labels;
   };
 
-  editWorkflow() {
-    const name = this.state.activeWf.split(" / ")[0];
-    const version = this.state.activeWf.split(" / ")[1];
-    this.props.history.push(`${frontendUrlPrefix}/builder/${name}/${version}`);
-  }
-
-  deleteWorkflow() {
-    const name = this.state.activeWf.split(" / ")[0];
-    const version = this.state.activeWf.split(" / ")[1];
+  deleteWorkflow(workflow) {
     http
-      .delete(conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
+      .delete(
+        conductorApiUrlPrefix +
+          "/metadata/workflow/" +
+          workflow.name +
+          "/" +
+          workflow.version
+      )
       .then(() => {
         this.componentDidMount();
         let table = this.state.table;
         if (table.length) {
-          table.splice(table.findIndex(wf => wf.name === name), 1);
+          table.splice(table.findIndex((wf) => wf.name === workflow.name), 1);
         }
         this.setState({
-          activeRow: null,
-          table: table
+          table: table,
         });
       });
   }
@@ -316,117 +287,124 @@ class WorkflowDefs extends Component {
         i < viewedPage * defaultPages
       ) {
         output.push(
-          <div className="wfRow" key={i}>
-            <Accordion.Toggle
-              id={`wf${i}`}
-              onClick={this.changeActiveRow.bind(this, i)}
-              className="clickable wfDef"
-              as={Card.Header}
-              variant="link"
-              eventKey={i}
-            >
-              <b>{dataset[i]["name"]}</b>
-              <br />
-              <div className="description">
-                {"version " + dataset[i]["version"] + ": "}
-                {dataset[i]["description"]
-                  ? dataset[i]["description"].split("-")[0]
-                  : null}
-                {this.createLabels(dataset[i])}
-              </div>
-            </Accordion.Toggle>
-            <Accordion.Collapse eventKey={i}>
-              <Card.Body style={{ padding: "0px" }}>
-                <div
-                  style={{
-                    background:
-                      "linear-gradient(-120deg, rgb(0, 147, 255) 0%, rgb(0, 118, 203) 100%)",
-                    padding: "15px",
-                    marginBottom: "10px"
-                  }}
-                >
-                  <Button
-                    variant="outline-light noshadow"
-                    onClick={this.showInputModal.bind(this)}
-                  >
-                    Execute
-                  </Button>
-                  <Button
-                    variant="outline-light noshadow"
-                    onClick={this.showDefinitionModal.bind(this)}
-                  >
-                    Definition
-                  </Button>
-                  <Button
-                    variant="outline-light noshadow"
-                    onClick={this.editWorkflow.bind(this)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outline-light noshadow"
-                    onClick={this.showDiagramModal.bind(this)}
-                  >
-                    Diagram
-                  </Button>
-                  <Button
-                    variant="outline-light noshadow"
-                    onClick={this.updateFavourite.bind(this, dataset[i])}
-                  >
-                    <i
-                      className={
-                        dataset[i]["description"] &&
-                        dataset[i]["description"].includes("FAVOURITE")
-                          ? "fa fa-star"
-                          : "far fa-star"
-                      }
-                      style={{ cursor: "pointer" }}
-                    />
-                  </Button>
-                  <Button
-                    variant="outline-danger noshadow"
-                    style={{ float: "right" }}
-                    onClick={this.deleteWorkflow.bind(this)}
-                  >
-                    <i className="fas fa-trash-alt" />
-                  </Button>
-                </div>
-                <div className="accordBody">
-                  <b>Tasks</b>
-                  <br />
-                  <p>
-                    {JSON.stringify(
-                      dataset[i]["tasks"].map(task => {
-                        return task.name;
-                      })
-                    )}
-                  </p>
-                </div>
-              </Card.Body>
-            </Accordion.Collapse>
-          </div>
+          <Table.Row>
+            <Table.Cell>
+              <Header as="h4">
+                <Header.Content>
+                  {dataset[i].name} / {dataset[i].version}
+                  <Header.Subheader>
+                    {dataset[i]?.description?.split("-")[0] || "no description"}
+                  </Header.Subheader>
+                </Header.Content>
+              </Header>
+            </Table.Cell>
+            <Table.Cell>{this.createLabels(dataset[i])}</Table.Cell>
+            <Table.Cell width={1} textAlign="center">
+              <Popup
+                disabled={this.getDependencies(dataset[i]).length === 0}
+                trigger={
+                  <Label
+                    as="a"
+                    basic={true}
+                    content={this.getDependencies(dataset[i]).length}
+                  />
+                }
+                header={
+                  <h4>
+                    Used in following worflows:
+                  </h4>
+                }
+                content={this.getDependencies(dataset[i]).usedInWfs.map(wf => <p>{wf.name}</p>)}
+                basic
+              />
+            </Table.Cell>
+            <Table.Cell singleLine textAlign="center">
+              <Button
+                title="Delete"
+                basic
+                negative
+                circular
+                icon="trash"
+                onClick={this.deleteWorkflow.bind(this, dataset[i])}
+              />
+              <Button
+                title="Favourite"
+                basic
+                circular
+                icon={
+                  dataset[i]?.description?.includes("FAVOURITE")
+                    ? "star"
+                    : "star outline"
+                }
+                onClick={this.updateFavourite.bind(this, dataset[i])}
+              />
+              <Button
+                title="Diagram"
+                basic
+                circular
+                icon="fork"
+                onClick={this.showDiagramModal.bind(this, dataset[i])}
+              />
+              <Button
+                title="Definition"
+                basic
+                circular
+                icon="file code"
+                onClick={this.showDefinitionModal.bind(this, dataset[i])}
+              />
+              <Button
+                title="Edit"
+                basic
+                circular
+                icon="edit"
+                onClick={() =>
+                  this.props.history.push(
+                    `${frontendUrlPrefix}/builder/${dataset[i].name}/${dataset[i].version}`
+                  )
+                }
+              />
+              <Button
+                title="Execute"
+                primary
+                circular
+                icon="play"
+                onClick={this.showInputModal.bind(this, dataset[i])}
+              />
+            </Table.Cell>
+          </Table.Row>
         );
       }
     }
     return output;
   }
 
-  showDefinitionModal() {
+  showDefinitionModal(workflow) {
     this.setState({
-      defModal: !this.state.defModal
+      defModal: !this.state.defModal,
+      activeWf: workflow,
     });
   }
 
-  showInputModal() {
+  showInputModal(workflow) {
     this.setState({
-      inputModal: !this.state.inputModal
+      inputModal: !this.state.inputModal,
+      activeWf: workflow,
     });
   }
 
-  showDiagramModal() {
+  showDiagramModal(workflow) {
     this.setState({
-      diagramModal: !this.state.diagramModal
+      diagramModal: !this.state.diagramModal,
+      activeWf: workflow,
     });
+  }
+
+  getDependencies(workflow) {
+    const usedInWfs = this.state.data.filter((wf) => {
+      let wfJSON = JSON.stringify(wf, null, 2);
+      return wfJSON.includes(workflow.name) && wf.name !== workflow.name;
+    });
+    return {length: usedInWfs.length, usedInWfs};
   }
 
   render() {
@@ -461,21 +439,15 @@ class WorkflowDefs extends Component {
         {diagramModal}
         <Row>
           <Button
-            style={{ marginBottom: "15px", marginLeft: "15px" }}
+            primary
+            style={{ margin: "0 0 15px 15px" }}
             onClick={this.searchFavourites.bind(this)}
             title="Favourites"
-          >
-            <i
-              className={
-                this.state.labels.length
-                  ? this.state.labels.includes("FAVOURITE")
-                    ? "fa fa-star"
-                    : "far fa-star"
-                  : "far fa-star"
-              }
-              style={{ cursor: "pointer" }}
-            />
-          </Button>
+            icon={
+              this.state.labels.includes("FAVOURITE") ? "star" : "star outline"
+            }
+            size="tiny"
+          />
           <Col>
             <Typeahead
               id="typeaheadDefs"
@@ -498,43 +470,39 @@ class WorkflowDefs extends Component {
             </Form.Group>
           </Col>
         </Row>
-        <div className="scrollWrapper" style={{ maxHeight: "650px" }}>
-          <Table ref={this.table}>
-            <thead>
-              <tr>
-                <th>Name/Version</th>
-              </tr>
-            </thead>
-            <tbody>
-              <Accordion activeKey={this.state.activeRow}>
-                {this.repeat()}
-              </Accordion>
-            </tbody>
-          </Table>
-        </div>
-        <Container style={{ marginTop: "5px" }}>
-          <Row>
-            <Col sm={2}>
-              <PageCount
-                dataSize={
-                  this.state.keywords === "" || this.state.table.length > 0
-                    ? this.state.table.length
-                    : this.state.data.length
-                }
-                defaultPages={this.state.defaultPages}
-                handler={this.setCountPages.bind(this)}
-              />
-            </Col>
-            <Col sm={8} />
-            <Col sm={2}>
-              <PageSelect
-                viewedPage={this.state.viewedPage}
-                count={this.state.pagesCount}
-                handler={this.setViewPage.bind(this)}
-              />
-            </Col>
-          </Row>
-        </Container>
+        <Table celled compact color="blue">
+          <Table.Header fullWidth>
+            <Table.Row>
+              <Table.HeaderCell>Name/Version</Table.HeaderCell>
+              <Table.HeaderCell>Labels</Table.HeaderCell>
+              <Table.HeaderCell textAlign="center">
+                Included in
+              </Table.HeaderCell>
+              <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>{this.repeat()}</Table.Body>
+          <Table.Footer>
+            <Table.Row>
+              <Table.HeaderCell colSpan="4">
+                <PageCount
+                  dataSize={
+                    this.state.keywords === "" || this.state.table.length > 0
+                      ? this.state.table.length
+                      : this.state.data.length
+                  }
+                  defaultPages={this.state.defaultPages}
+                  handler={this.setCountPages.bind(this)}
+                />
+                <PageSelect
+                  viewedPage={this.state.viewedPage}
+                  count={this.state.pagesCount}
+                  handler={this.setViewPage.bind(this)}
+                />
+              </Table.HeaderCell>
+            </Table.Row>
+          </Table.Footer>
+        </Table>
       </div>
     );
   }
