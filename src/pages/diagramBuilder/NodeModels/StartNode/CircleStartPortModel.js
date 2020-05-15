@@ -1,35 +1,35 @@
 // @flow
-import * as _ from "lodash";
+import * as _ from 'lodash';
 import {
-  LinkModel,
-  DiagramEngine,
   DefaultLinkModel,
-  PortModel
-} from "@projectstorm/react-diagrams";
+  DiagramEngine,
+  LinkModel,
+  PortModel,
+} from '@projectstorm/react-diagrams';
 
 export class CircleStartPortModel extends PortModel {
-  position: string | "top" | "bottom" | "left" | "right";
+  position: string | 'top' | 'bottom' | 'left' | 'right';
 
-  constructor(isInput: boolean, pos: string = "right") {
-    super(pos, "start");
+  constructor(isInput: boolean, pos: string = 'right') {
+    super(pos, 'start');
     this.in = isInput;
     this.position = pos;
   }
 
   serialize() {
     return _.merge(super.serialize(), {
-      position: this.position
+      position: this.position,
     });
   }
 
   link(port: PortModel): LinkModel {
-    let link = this.createLinkModel();
+    const link = this.createLinkModel();
     link.setSourcePort(this);
     link.setTargetPort(port);
     return link;
   }
 
-  deSerialize(data: any, engine: DiagramEngine) {
+  deSerialize(data, engine: DiagramEngine) {
     super.deSerialize(data, engine);
     this.position = data.position;
   }

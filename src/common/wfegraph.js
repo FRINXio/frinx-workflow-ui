@@ -1,12 +1,18 @@
 // @flow
 import clone from "lodash/fp/clone";
 
+type Wfe = {};
+type Meta = {};
+
 class Workflow2Graph {
-  convert(wfe, meta) {
+  edges: [];
+  vertices: [];
+
+  convert(wfe: Wfe, meta: Meta) {
     this._convert(wfe, meta);
     return { edges: this.edges, vertices: this.vertices, id: wfe.workflowId };
   }
-  _convert(wfe = {}, meta = {}) {
+  _convert(wfe: Wfe = {}, meta: Meta = {}) {
     const subworkflows = {};
     const metaTasks = (meta.tasks && clone(meta.tasks)) || [];
     metaTasks.push({

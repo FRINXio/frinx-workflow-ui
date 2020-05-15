@@ -1,22 +1,22 @@
 // @flow
-import React from "react";
-import { Form, Col, InputGroup, ButtonGroup, Button } from "react-bootstrap";
-import { taskDescriptions } from "../../../constants";
+import React from 'react';
+import {Button, ButtonGroup, Col, Form, InputGroup} from 'react-bootstrap';
+import {taskDescriptions} from '../../../constants';
 
 const NOT_GENERAL = [
-  "type",
-  "subWorkflowParam",
-  "joinOn",
-  "name",
-  "taskReferenceName",
-  "forkTasks",
-  "inputParameters",
-  "defaultCase"
+  'type',
+  'subWorkflowParam',
+  'joinOn',
+  'name',
+  'taskReferenceName',
+  'forkTasks',
+  'inputParameters',
+  'defaultCase',
 ];
 
 const GeneralTab = props => {
-  const taskName = props.inputs?.name || "";
-  const taskRefName = props?.inputs?.taskReferenceName || "";
+  const taskName = props.inputs?.name || '';
+  const taskRefName = props?.inputs?.taskReferenceName || '';
   const decisionCases = [];
   const caseValueParam = [];
 
@@ -28,12 +28,12 @@ const GeneralTab = props => {
         </InputGroup.Prepend>
         <Form.Control
           type="input"
-          disabled={props.inputs?.type === "SIMPLE"}
-          onChange={e => props.handleInput(e.target.value, "name")}
+          disabled={props.inputs?.type === 'SIMPLE'}
+          onChange={e => props.handleInput(e.target.value, 'name')}
           value={item}
         />
       </InputGroup>
-      <Form.Text className="text-muted">{taskDescriptions["name"]}</Form.Text>
+      <Form.Text className="text-muted">{taskDescriptions['name']}</Form.Text>
     </Form.Group>
   );
 
@@ -45,12 +45,12 @@ const GeneralTab = props => {
         </InputGroup.Prepend>
         <Form.Control
           type="input"
-          onChange={e => props.handleInput(e.target.value, "taskReferenceName")}
+          onChange={e => props.handleInput(e.target.value, 'taskReferenceName')}
           value={item}
         />
       </InputGroup>
       <Form.Text className="text-muted">
-        {taskDescriptions["taskReferenceName"]}
+        {taskDescriptions['taskReferenceName']}
       </Form.Text>
     </Form.Group>
   );
@@ -66,14 +66,12 @@ const GeneralTab = props => {
           <ButtonGroup>
             <Button
               variant="outline-primary"
-              onClick={() => props.handleInput(left[1], item[0])}
-            >
+              onClick={() => props.handleInput(left[1], item[0])}>
               {left[0]}
             </Button>
             <Button
               variant="outline-primary"
-              onClick={() => props.handleInput(right[1], item[0])}
-            >
+              onClick={() => props.handleInput(right[1], item[0])}>
               {right[0]}
             </Button>
           </ButtonGroup>
@@ -97,7 +95,7 @@ const GeneralTab = props => {
       <Form.Row>
         {Object.entries(props.inputs).map((item, i) => {
           if (!NOT_GENERAL.includes(item[0])) {
-            if (item[0] === "decisionCases") {
+            if (item[0] === 'decisionCases') {
               return Object.entries(item[1]).forEach((entry, i) => {
                 decisionCases.push(
                   <Col sm={6} key={`colGeneral-${i}`}>
@@ -118,17 +116,17 @@ const GeneralTab = props => {
                         {taskDescriptions[item[0]]}
                       </Form.Text>
                     </Form.Group>
-                  </Col>
+                  </Col>,
                 );
               });
             } else {
-              if (item[0] === "optional") {
+              if (item[0] === 'optional') {
                 return (
                   <Col sm={6} key={`colGeneral-${i}`}>
-                    {buttonWrappedField(item, ["<", !item[1]], [">", !item[1]])}
+                    {buttonWrappedField(item, ['<', !item[1]], ['>', !item[1]])}
                   </Col>
                 );
-              } else if (item[0] === "caseValueParam") {
+              } else if (item[0] === 'caseValueParam') {
                 caseValueParam.push(
                   <Col sm={6} key={`colGeneral-${i}`}>
                     <Form.Group>
@@ -148,7 +146,7 @@ const GeneralTab = props => {
                         {taskDescriptions[item[0]]}
                       </Form.Text>
                     </Form.Group>
-                  </Col>
+                  </Col>,
                 );
               } else {
                 return (
