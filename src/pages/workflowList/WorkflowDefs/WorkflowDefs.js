@@ -311,7 +311,7 @@ class WorkflowDefs extends Component {
                 }
                 header={
                   <h4>
-                    Used in following worflows:
+                    Used in following workflows:
                   </h4>
                 }
                 content={this.getDependencies(dataset[i]).usedInWfs.map(wf => <p>{wf.name}</p>)}
