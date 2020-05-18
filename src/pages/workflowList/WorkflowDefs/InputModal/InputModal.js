@@ -41,7 +41,7 @@ const getDetails = (def, inputsArray) => {
         values[i] = null;
       } else {
         tmpDesc[i] = tmpDesc[i][0].match(/[^[\]"]+/);
-        tmpValue[i] = tmpValue[i][0].match(/[^[\]*]+/);
+        tmpValue[i] = tmpValue[i][0].match(/[^[\]]+/);
         descs[i] = tmpDesc[i] ? tmpDesc[i][0] : null;
         values[i] = tmpValue[i] ? tmpValue[i][0].replace(/\\/g, "") : null;
       }
