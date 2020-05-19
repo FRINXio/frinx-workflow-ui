@@ -1,17 +1,25 @@
 {
   "name": "frinx-workflow-ui",
   "version": "1.1.0",
-  "private": true,
   "proxy": "http://localhost:3001",
+  "main": "lib/App.js",
+  "author": "frinx",
+  "license": "MIT",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
     "ace-builds": "^1.4.9",
     "axios": "^0.19.2",
     "babel-polyfill": "^6.26.0",
     "clipboard": "^2.0.4",
+    "css-loader": "^3.5.3",
     "d3": "^3.5.16",
     "dagre-d3": "^0.4.17",
+    "file-loader": "^6.0.0",
     "file-saver": "^2.0.2",
     "framer-motion": "^1.6.17",
+    "html-loader": "^1.1.0",
     "jszip": "^3.2.2",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
@@ -33,14 +41,22 @@
     "superagent": "^5.2.2",
     "@projectstorm/react-diagrams": "^5.3.2",
     "closest": "^0.0.1",
+    "node-sass": "^4.14.1",
     "pathfinding": "^0.4.18",
     "paths-js": "^0.4.10",
-    "react-contexify": "^4.1.1"
+    "react-contexify": "^4.1.1",
+    "sass-loader": "^8.0.2",
+    "style-loader": "^1.2.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   },
   "scripts": {
-    "start": "PORT=3002 react-scripts start",
+    "start": "webpack-dev-server --history-api-fallback --hot --inline --open --mode development",
+    "transpile": "babel src -d lib --copy-files",
     "debug": "PORT=3002 react-scripts --inspect-brk start",
     "build": "react-scripts build",
+    "build-webpack": "webpack --progress",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "flow": "flow"
@@ -55,14 +71,12 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^8.0.5",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-flow": "^7.9.0",
+    "@babel/preset-react": "^7.9.4",
+    "babel-loader": "^8.1.0",
     "babel-preset-env": "^1.7.0",
-    "flow-bin": "^0.123.0",
-    "jsdoc": "^3.6.3",
-    "prettier": "1.18.2",
-    "babel-eslint": "^10.1.0",
     "eslint": "^6.0.1",
     "eslint-config-fb-strict": "^24.3.0",
     "eslint-config-fbcnms": "^0.1.0",
@@ -79,6 +93,10 @@
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-react-hooks": "^2.0.1",
     "eslint-plugin-relay": "^1.5.0",
-    "eslint-plugin-sort-imports-es6-autofix": "^0.5.0"
+    "eslint-plugin-sort-imports-es6-autofix": "^0.5.0",
+    "flow-bin": "^0.123.0",
+    "flow-remove-types": "^2.125.1",
+    "jsdoc": "^3.6.3",
+    "prettier": "1.18.2"
   }
 }

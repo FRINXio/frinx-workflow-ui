@@ -5,7 +5,7 @@ import './css/neat.css';
 import './css/mono-blue.min.css';
 import React from "react";
 import { Provider } from "react-redux";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import thunk from "redux-thunk";
 import DiagramBuilder from "./pages/diagramBuilder/DiagramBuilder";
@@ -51,6 +51,7 @@ function App(props : { setBuilderActive?: (param: boolean) => void }) {
             path={[frontendUrlPrefix + "/:type", frontendUrlPrefix + "/:type/:wfid", "/"]}
             component={WorkflowList}
           />
+          <Redirect from={frontendUrlPrefix} to={frontendUrlPrefix + "/defs"} />
         </Switch>
       </BrowserRouter>
     </Provider>
