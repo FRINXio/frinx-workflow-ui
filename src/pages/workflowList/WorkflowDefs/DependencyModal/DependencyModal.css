@@ -1,0 +1,15 @@
+.tree-node {
+    display: inline-block;
+    border: 1px solid black;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.root-node {
+    border: 2px solid black
+}
+
+.tree-node:hover {
+    background-color: rgb(218, 241, 255);
+}

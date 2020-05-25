@@ -22,7 +22,7 @@ const WfLabels = (props: Props) => {
       }}
       circular
       size="tiny"
-      style={{ backgroundColor: color, color: "white" }}
+      style={{ backgroundColor: color, color: "white", cursor: "pointer" }}
       {...(props: any)}
     >
       <p>{props.label}</p>

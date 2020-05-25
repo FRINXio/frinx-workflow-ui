@@ -1,41 +1,23 @@
 // @flow
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button, Modal } from "react-bootstrap";
 import Highlight from "react-highlight.js";
-import { HttpClient as http } from "../../../../common/HttpClient";
-import { conductorApiUrlPrefix } from "../../../../constants";
 
 const DefinitionModal = (props) => {
-  const [definition, setDefinition] = useState("");
-
-  useEffect(() => {
-    const name = props.wf.split(" / ")[0];
-    const version = props.wf.split(" / ")[1];
-    http
-      .get(conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
-      .then((res) => {
-        setDefinition(JSON.stringify(res.result, null, 2));
-      });
-  }, []);
-
-  const handleClose = () => {
-    props.modalHandler();
-  };
-
   return (
-    <Modal size="xl" show={props.show} onHide={handleClose}>
+    <Modal size="xl" show={props.show} onHide={props.modalHandler}>
       <Modal.Header>
-        <Modal.Title>{props.wf}</Modal.Title>
+        <Modal.Title>{props.wf.name}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
         <code style={{ fontSize: "17px" }}>
           <pre style={{ maxHeight: "600px" }}>
-            <Highlight language="json">{definition}</Highlight>
+            <Highlight language="json">
+              {JSON.stringify(props.wf, null, 2)}
+            </Highlight>
           </pre>
         </code>
-      </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="secondary" onClick={props.modalHandler}>
           Close
         </Button>
       </Modal.Footer>
