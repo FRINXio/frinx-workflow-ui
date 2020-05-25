@@ -19,6 +19,7 @@ class WorkflowBulk extends Component {
     this.state = {
       showBulk: null
     };
+    this.backendApiUrlPrefix = props.backendApiUrlPrefix;
   }
 
   performOperation(e) {
@@ -29,7 +30,7 @@ class WorkflowBulk extends Component {
     }
 
     let operation = e.target.value;
-    performBulkOperation(operation, selectedWfs, this.props.pageCount);
+    performBulkOperation(operation, selectedWfs, this.props.pageCount, this.backendApiUrlPrefix);
     this.props.bulkOperation();
     this.props.selectAllWfs();
   }
@@ -189,8 +190,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    performBulkOperation: (operation, wfs, defaultPages) =>
-      dispatch(bulkActions.performBulkOperation(operation, wfs, defaultPages)),
+    performBulkOperation: (operation, wfs, defaultPages, backendApiUrlPrefix) =>
+      dispatch(bulkActions.performBulkOperation(operation, wfs, defaultPages, backendApiUrlPrefix)),
     setView: value => dispatch(bulkActions.setView(value))
   };
 };

@@ -3,11 +3,12 @@ import React from "react";
 import { Button } from "semantic-ui-react";
 import { Modal } from "react-bootstrap";
 import { Tree, TreeNode } from "react-organizational-chart";
-import { frontendUrlPrefix } from "../../../../constants";
 import { withRouter } from "react-router-dom";
 import "./DependencyModal.css";
 
 const DependencyModal = (props) => {
+  const frontendUrlPrefix = props.frontendUrlPrefix;
+
   const createDepTree = (rootWorkflow) => {
     let tree = [];
     let parents = getWorkflowParents(rootWorkflow);

@@ -3,7 +3,6 @@ import * as _ from "lodash";
 import defaultTo from "lodash/fp/defaultTo";
 import { HttpClient as http } from "../../common/HttpClient";
 import Workflow2Graph from "../../common/wfegraph";
-import { conductorApiUrlPrefix } from "../../constants";
 import { Application } from "./Application";
 import {
   getEndNode,
@@ -41,12 +40,13 @@ export class WorkflowDiagram {
    * @param definition - workflow definition object
    * @param startPos - position for first node in diagram
    */
-  constructor(app = null, definition = null, startPos = null) {
+  constructor(app = null, definition = null, startPos = null, backendApiUrlPrefix = null) {
     this.app = app;
     this.definition = definition;
     this.diagramEngine = app.getDiagramEngine();
     this.diagramModel = app.getDiagramEngine().getDiagramModel();
     this.startPos = startPos;
+    this.backendApiUrlPrefix = backendApiUrlPrefix;
   }
 
   setDefinition(definition) {
@@ -136,7 +136,7 @@ export class WorkflowDiagram {
 
       this.registerEventHandlers(eventHandlers).then(() => {
         http
-          .put(conductorApiUrlPrefix + "/metadata", [definition])
+          .put(this.backendApiUrlPrefix + "/metadata", [definition])
           .then(() => {
             resolve(definition);
           })
@@ -157,7 +157,7 @@ export class WorkflowDiagram {
       }
       eventHandlers.forEach((eventHandler) => {
         http
-          .post(conductorApiUrlPrefix + "/event", eventHandler)
+          .post(this.backendApiUrlPrefix + "/event", eventHandler)
           .then((res) => {
             resolve(res);
           })
@@ -904,13 +904,14 @@ export class WorkflowDiagram {
 
       http
         .get(
-          conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version
+          this.backendApiUrlPrefix + "/metadata/workflow/" + name + "/" + version
         )
         .then((res) => {
           const subworkflowDiagram = new WorkflowDiagram(
             new Application(),
             res.result,
-            selectedNode
+            selectedNode,
+            this.backendApiUrlPrefix,
           );
 
           subworkflowDiagram.createDiagram();

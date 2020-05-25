@@ -21,7 +21,6 @@ import TaskModal from "../../../../common/TaskModal";
 import "./DetailsModal.css";
 import WorkflowDia from "./WorkflowDia/WorkflowDia";
 import { HttpClient as http } from "../../../../common/HttpClient";
-import { conductorApiUrlPrefix, frontendUrlPrefix } from "../../../../constants";
 
 new Clipboard(".clp");
 
@@ -45,6 +44,9 @@ class DetailsModal extends Component {
       taskDetail: {},
       taskModal: false
     };
+
+    this.backendApiUrlPrefix = props.backendApiUrlPrefix;
+    this.frontendUrlPrefix = props.frontendUrlPrefix;
   }
 
   componentDidMount() {
@@ -56,7 +58,7 @@ class DetailsModal extends Component {
   }
 
   getData() {
-    http.get(conductorApiUrlPrefix + "/id/" + this.props.wfId).then(res => {
+    http.get(this.backendApiUrlPrefix + "/id/" + this.props.wfId).then(res => {
       let inputsArray = [
         ...new Set(
           JSON.stringify(res.meta, null, 2).match(
@@ -96,7 +98,7 @@ class DetailsModal extends Component {
   executeWorkflow() {
     this.setState({ status: "Executing..." });
     http
-      .post(conductorApiUrlPrefix + "/workflow", JSON.stringify(this.state.input))
+      .post(this.backendApiUrlPrefix + "/workflow", JSON.stringify(this.state.input))
       .then(res => {
         this.setState({
           status: res.statusText
@@ -155,7 +157,7 @@ class DetailsModal extends Component {
                   Object.keys(this.state.subworkflows).map(item => {
                     return item === row["referenceTaskName"]
                       ? this.props.history.push(
-                          `${frontendUrlPrefix}/exec/${this.state.subworkflows[item].wfe.workflowId}`
+                          `${this.frontendUrlPrefix}/exec/${this.state.subworkflows[item].wfe.workflowId}`
                         )
                       : null;
                   });
@@ -186,31 +188,31 @@ class DetailsModal extends Component {
   }
 
   terminateWfs() {
-    http.delete(conductorApiUrlPrefix + "/bulk/terminate", [this.state.wfId]).then(() => {
+    http.delete(this.backendApiUrlPrefix + "/bulk/terminate", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   pauseWfs() {
-    http.put(conductorApiUrlPrefix + "/bulk/pause", [this.state.wfId]).then(() => {
+    http.put(this.backendApiUrlPrefix + "/bulk/pause", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   resumeWfs() {
-    http.put(conductorApiUrlPrefix + "/bulk/resume", [this.state.wfId]).then(() => {
+    http.put(this.backendApiUrlPrefix + "/bulk/resume", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   retryWfs() {
-    http.post(conductorApiUrlPrefix + "/bulk/retry", [this.state.wfId]).then(() => {
+    http.post(this.backendApiUrlPrefix + "/bulk/retry", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   restartWfs() {
-    http.post(conductorApiUrlPrefix + "/bulk/restart", [this.state.wfId]).then(() => {
+    http.post(this.backendApiUrlPrefix + "/bulk/restart", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
@@ -445,7 +447,7 @@ class DetailsModal extends Component {
             style={{ margin: "2px", display: "inline" }}
             onClick={() =>
               this.props.history.push(
-                `${frontendUrlPrefix}/exec/${this.state.parentWfId}`
+                `${this.frontendUrlPrefix}/exec/${this.state.parentWfId}`
               )
             }
           >
@@ -532,7 +534,7 @@ class DetailsModal extends Component {
         <Modal.Footer>
           <a
             style={{ float: "left", marginRight: "50px" }}
-            href={`${frontendUrlPrefix}/exec/${this.state.wfIdRerun}`}
+            href={`${this.frontendUrlPrefix}/exec/${this.state.wfIdRerun}`}
           >
             {this.state.wfIdRerun}
           </a>
