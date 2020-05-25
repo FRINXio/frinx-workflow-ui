@@ -2,6 +2,19 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 
 
 module.exports = {
+  devServer: {
+    historyApiFallback: true,
+    inline: true,
+    hot: true,
+    open: true,
+    port: 3000,
+    proxy: {
+      '/': {
+        target: 'http://localhost:3001',
+        secure: false
+      }
+    }
+  },
   output: {
     publicPath: '/',
   },

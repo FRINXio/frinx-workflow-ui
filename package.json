@@ -53,7 +53,7 @@
     "webpack-dev-server": "^3.10.3"
   },
   "scripts": {
-    "start": "webpack-dev-server --history-api-fallback --hot --inline --open --mode development",
+    "start": "webpack-dev-server --mode development",
     "transpile": "babel src -d lib --copy-files",
     "debug": "PORT=3002 react-scripts --inspect-brk start",
     "build": "react-scripts build",
