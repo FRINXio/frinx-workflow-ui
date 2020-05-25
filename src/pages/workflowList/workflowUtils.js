@@ -30,6 +30,7 @@ const exportFile = () => {
 export const exportButton = () => {
   return (
       <Button
+          key='export-btn'
           variant="outline-primary"
           style={{ marginLeft: "5px" }}
           onClick={exportFile}>

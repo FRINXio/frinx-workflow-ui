@@ -45,9 +45,8 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      title: "Workflow User Interface",
-      hash: false,
-      favicon: "public/favicon.ico"
+      template: "./public/index.html",
+      filename: "./index.html"
     })
   ]
 };
