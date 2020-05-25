@@ -194,6 +194,7 @@ const functional = props => {
   return props.functional.map((task, i) => {
     return (
       <Menu.Item
+        key={'right-menu-item-' + i}
         as="a"
         title={task.name.toUpperCase() + ' - ' + task.description}
         id={`functionalNode${i}`}

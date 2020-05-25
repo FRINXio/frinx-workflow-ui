@@ -12,6 +12,7 @@ import EventListeners from "./EventListeners/EventListeners";
 const workflowModifyButtons = (openFileUpload, history) => {
   return [
     <Button
+        key='builder-btn'
         variant="outline-primary"
         style={{ marginLeft: "30px" }}
         onClick={() => history.push(frontendUrlPrefix + "/builder")}
@@ -20,6 +21,7 @@ const workflowModifyButtons = (openFileUpload, history) => {
       &nbsp;&nbsp;New
     </Button>,
     <Button
+        key='import-btn'
         variant="outline-primary"
         style={{ marginLeft: "5px" }}
         onClick={openFileUpload}

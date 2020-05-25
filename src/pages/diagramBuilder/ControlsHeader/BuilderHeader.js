@@ -103,6 +103,7 @@ const ControlsButton = props => (
         transition={{ duration: 0.8, delay: 1.1 }}
       >
         <Button
+          key='zoom-out-btn'
           title="Zoom out"
           onClick={() =>
             props.setZoomLevel(props.workflowDiagram.getZoomLevel() - 10)
@@ -110,6 +111,7 @@ const ControlsButton = props => (
           icon="zoom-out"
         />
         <Dropdown
+          key='zoom-lvl-dropdow'
           text={props.workflowDiagram.getZoomLevel().toFixed(1) + "%"}
           button
           style={{ paddingLeft: "10px", paddingRight: "10px" }}
@@ -117,7 +119,7 @@ const ControlsButton = props => (
           <Dropdown.Menu>
             {[25, 50, 75, 100, 125].map(level => {
               return (
-                <Dropdown.Item onClick={() => props.setZoomLevel(level)}>
+                <Dropdown.Item key={'zoom-lvl-item-' + level} onClick={() => props.setZoomLevel(level)}>
                   <span className="text">{level}</span>
                 </Dropdown.Item>
               );
@@ -125,6 +127,7 @@ const ControlsButton = props => (
           </Dropdown.Menu>
         </Dropdown>
         <Button
+          key='zoom-in-btn'
           title="Zoom in"
           onClick={() =>
             props.setZoomLevel(props.workflowDiagram.getZoomLevel() + 10)
@@ -145,6 +148,7 @@ const ControlsButton = props => (
         <Popup
           trigger={
             <Button
+              key='expand-btn'
               id="expand"
               onClick={props.expandNodeToWorkflow}
               icon="expand"
@@ -161,6 +165,7 @@ const ControlsButton = props => (
         <Popup
           trigger={
             <Button
+              key='delete-btn'
               id="delete"
               onClick={() => props.workflowDiagram.deleteSelected()}
               icon="trash"
@@ -177,6 +182,7 @@ const ControlsButton = props => (
         <Popup
           trigger={
             <Button
+              key='set-locked-btn'
               onClick={props.setLocked}
               icon={props.workflowDiagram.isLocked() ? <Icon className="lock" style={{color: "red"}}/>  : "unlock"}
             />
@@ -217,6 +223,7 @@ const ControlsButton = props => (
           basic
         />
         <Popup
+          key='show-def-popup'
           trigger={
             <Button onClick={props.showDefinitionModal} icon="file code" />
           }
@@ -310,6 +317,7 @@ const BuilderHeader = props => {
       <input id="upload-file" type="file" hidden />
       <Navbar.Collapse className="justify-content-end">
         <Button
+          key='exit-btn'
           basic
           inverted
           animated="vertical"
