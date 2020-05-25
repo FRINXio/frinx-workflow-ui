@@ -506,9 +506,9 @@ class WorkflowDefs extends Component {
               </tr>
             </thead>
             <tbody>
-              <Accordion activeKey={this.state.activeRow}>
-                {this.repeat()}
-              </Accordion>
+            <tr><td style={{padding: "0"}}><Accordion activeKey={this.state.activeRow}>
+              {this.repeat()}
+            </Accordion></td></tr>
             </tbody>
           </Table>
         </div>

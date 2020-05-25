@@ -100,6 +100,7 @@ const GeneralParamsTab = props => {
           />
         </InputGroup>
         <Typeahead
+          id='new-label-typehead'
           allowNew
           multiple
           clearButton
