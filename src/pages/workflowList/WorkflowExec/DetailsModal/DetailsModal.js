@@ -57,13 +57,18 @@ class DetailsModal extends Component {
 
   getData() {
     http.get(conductorApiUrlPrefix + "/id/" + this.props.wfId).then(res => {
-      let inputsArray = [
-        ...new Set(
-          JSON.stringify(res.meta, null, 2).match(
-            /(?<=workflow\.input\.)([a-zA-Z0-9-_]+)/gim
-          )
-        )
-      ];
+
+      let inputCaptureRegex = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim
+      let def = JSON.stringify(res)
+      let match = inputCaptureRegex.exec(def)
+      let inputsArray = [];
+    
+      while (match != null) {
+        inputsArray.push(match[1])
+        match = inputCaptureRegex.exec(def);
+      }
+    
+      inputsArray = [...new Set(inputsArray)];
 
       this.setState({
         meta: res.meta,
