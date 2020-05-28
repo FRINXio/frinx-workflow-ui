@@ -12,10 +12,10 @@ import DefinitionModal from "./DefinitonModal/DefinitionModal";
 import DiagramModal from "./DiagramModal/DiagramModal";
 import InputModal from "./InputModal/InputModal";
 import DependencyModal from "./DependencyModal/DependencyModal";
+import SchedulingModal from "../Scheduling/SchedulingModal/SchedulingModal";
 import { HttpClient as http } from "../../../common/HttpClient";
-import { conductorApiUrlPrefix, frontendUrlPrefix } from "../../../constants";
 
-class WorkflowDefs extends Component {
+export class WorkflowDefs extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,12 +28,16 @@ class WorkflowDefs extends Component {
       diagramModal: false,
       inputModal: false,
       dependencyModal: false,
+      schedulingModal: false,
       defaultPages: 10,
       pagesCount: 1,
       viewedPage: 1,
       allLabels: [],
     };
     this.onEditSearch = this.onEditSearch.bind(this);
+    this.backendApiUrlPrefix = props.backendApiUrlPrefix;
+    this.frontendUrlPrefix = props.frontendUrlPrefix;
+    this.enableScheduling = props.enableScheduling
   }
 
   componentWillMount() {
@@ -41,7 +45,7 @@ class WorkflowDefs extends Component {
   }
 
   componentDidMount() {
-    http.get(conductorApiUrlPrefix + "/metadata/workflow").then((res) => {
+    http.get(this.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
       if (res.result) {
         let size = ~~(res.result.length / this.state.defaultPages);
         let dataset =
@@ -198,8 +202,8 @@ class WorkflowDefs extends Component {
     } else {
       data.description = "- FAVOURITE";
     }
-    http.put(conductorApiUrlPrefix + "/metadata/", [data]).then(() => {
-      http.get(conductorApiUrlPrefix + "/metadata/workflow").then((res) => {
+    http.put(this.backendApiUrlPrefix + "/metadata/", [data]).then(() => {
+      http.get(this.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
         let dataset =
           res.result.sort((a, b) =>
             a.name > b.name ? 1 : b.name > a.name ? -1 : 0
@@ -257,7 +261,7 @@ class WorkflowDefs extends Component {
   deleteWorkflow(workflow) {
     http
       .delete(
-        conductorApiUrlPrefix +
+        this.backendApiUrlPrefix +
           "/metadata/workflow/" +
           workflow.name +
           "/" +
@@ -273,6 +277,103 @@ class WorkflowDefs extends Component {
           table: table,
         });
       });
+  }
+
+  repeatEditButton(dataset) {
+    return (
+      <Button
+        title="Edit"
+        basic
+        circular
+        icon="edit"
+        onClick={() =>
+          this.props.history.push(
+            `${this.frontendUrlPrefix}/builder/${dataset.name}/${dataset.version}`
+          )
+        }
+      />
+    );
+  }
+
+  repeatFavouriteButton(dataset) {
+    return (
+      <Button
+        title="Favourite"
+        basic
+        circular
+        icon={
+          dataset?.description?.includes("FAVOURITE")
+            ? "star"
+            : "star outline"
+        }
+        onClick={this.updateFavourite.bind(this, dataset)}
+      />
+    );
+  }
+
+  repeatExecuteButton(dataset) {
+    return (
+      <Button
+        title="Execute"
+        id={`executeBtn-${dataset.name}`}
+        primary
+        circular
+        icon="play"
+        onClick={this.showInputModal.bind(this, dataset)}
+      />
+    );
+  }
+
+  repeatDeleteButton(dataset) {
+    return (
+      <Button
+        title="Delete"
+        basic
+        negative
+        circular
+        icon="trash"
+        onClick={this.deleteWorkflow.bind(this, dataset)}
+      />
+    );
+  }
+
+  repeatScheduleButton(dataset) {
+    return (
+      <Button
+        title={dataset.hasSchedule ? 'Edit schedule' : 'Create schedule'}
+        basic
+        circular
+        icon="clock"
+        disabled={!this.enableScheduling}
+        onClick={this.showSchedulingModal.bind(this, dataset)}
+      />
+    );
+  }
+
+  repeatButtons(dataset) {
+    return (
+      <Table.Cell singleLine textAlign="center">
+        {this.repeatDeleteButton(dataset)}
+        {this.repeatFavouriteButton(dataset)}
+        <Button
+          title="Diagram"
+          basic
+          circular
+          icon="fork"
+          onClick={this.showDiagramModal.bind(this, dataset)}
+        />
+        <Button
+          title="Definition"
+          basic
+          circular
+          icon="file code"
+          onClick={this.showDefinitionModal.bind(this, dataset)}
+        />
+        {this.repeatEditButton(dataset)}
+        {this.repeatScheduleButton(dataset)}
+        {this.repeatExecuteButton(dataset)}
+      </Table.Cell>
+    );
   }
 
   repeat() {
@@ -328,60 +429,7 @@ class WorkflowDefs extends Component {
                 basic
               />
             </Table.Cell>
-            <Table.Cell singleLine textAlign="center">
-              <Button
-                title="Delete"
-                basic
-                negative
-                circular
-                icon="trash"
-                onClick={this.deleteWorkflow.bind(this, dataset[i])}
-              />
-              <Button
-                title="Favourite"
-                basic
-                circular
-                icon={
-                  dataset[i]?.description?.includes("FAVOURITE")
-                    ? "star"
-                    : "star outline"
-                }
-                onClick={this.updateFavourite.bind(this, dataset[i])}
-              />
-              <Button
-                title="Diagram"
-                basic
-                circular
-                icon="fork"
-                onClick={this.showDiagramModal.bind(this, dataset[i])}
-              />
-              <Button
-                title="Definition"
-                basic
-                circular
-                icon="file code"
-                onClick={this.showDefinitionModal.bind(this, dataset[i])}
-              />
-              <Button
-                title="Edit"
-                basic
-                circular
-                icon="edit"
-                onClick={() =>
-                  this.props.history.push(
-                    `${frontendUrlPrefix}/builder/${dataset[i].name}/${dataset[i].version}`
-                  )
-                }
-              />
-              <Button
-                title="Execute"
-                id={`executeBtn-${dataset[i].name}`}
-                primary
-                circular
-                icon="play"
-                onClick={this.showInputModal.bind(this, dataset[i])}
-              />
-            </Table.Cell>
+            {this.repeatButtons(dataset[i])}
           </Table.Row>
         );
       }
@@ -410,11 +458,32 @@ class WorkflowDefs extends Component {
     });
   }
 
+  onSchedulingModalClose() {
+    this.setState({
+      schedulingModal: false
+    });
+    this.componentDidMount();
+  }
+  
+  showSchedulingModal(workflow) {
+    this.setState({
+      schedulingModal: !this.state.schedulingModal,
+      activeWf: workflow,
+    });
+  }
+
   showDependencyModal(workflow) {
     this.setState({
       dependencyModal: !this.state.dependencyModal,
       activeWf: workflow,
     });
+  }
+
+  getActiveWfScheduleName() {
+    if (this.state.activeWf != null && this.state.activeWf.expectedScheduleName != null) {
+      return this.state.activeWf.expectedScheduleName;
+    }
+    return null;
   }
 
   getDependencies(workflow) {
@@ -425,112 +494,160 @@ class WorkflowDefs extends Component {
     return { length: usedInWfs.length, usedInWfs };
   }
 
-  render() {
-    let definitionModal = this.state.defModal ? (
+  renderDefinitionModal() {
+    return this.state.defModal ? (
       <DefinitionModal
         wf={this.state.activeWf}
         modalHandler={this.showDefinitionModal.bind(this)}
         show={this.state.defModal}
+        backendApiUrlPrefix={this.backendApiUrlPrefix}
       />
     ) : null;
+  }
 
-    let inputModal = this.state.inputModal ? (
+  renderInputModal() {
+    return this.state.inputModal ? (
       <InputModal
         wf={this.state.activeWf}
         modalHandler={this.showInputModal.bind(this)}
         show={this.state.inputModal}
+        backendApiUrlPrefix={this.backendApiUrlPrefix}
+        frontendUrlPrefix={this.frontendUrlPrefix}
       />
     ) : null;
+  }
 
-    let diagramModal = this.state.diagramModal ? (
+  renderDiagramModal() {
+    return this.state.diagramModal ? (
       <DiagramModal
         wf={this.state.activeWf}
         modalHandler={this.showDiagramModal.bind(this)}
         show={this.state.diagramModal}
+        backendApiUrlPrefix={this.backendApiUrlPrefix}
       />
     ) : null;
+  }
 
-    let dependencyModal = this.state.dependencyModal ? (
+  renderSchedulingModal() {
+    return (
+      <SchedulingModal
+        name={this.getActiveWfScheduleName()}
+        workflowName={this.state.activeWf?.name}
+        workflowVersion={this.state.activeWf?.version}
+        onClose={this.onSchedulingModalClose.bind(this)}
+        show={this.state.schedulingModal}
+        backendApiUrlPrefix={this.backendApiUrlPrefix}
+      />
+    );
+  }
+
+  renderDependencyModal() {
+    return this.state.dependencyModal ? (
       <DependencyModal
         wf={this.state.activeWf}
         modalHandler={this.showDependencyModal.bind(this)}
         show={this.state.dependencyModal}
         data={this.state.data}
+        backendApiUrlPrefix={this.backendApiUrlPrefix}
+        frontendUrlPrefix={this.frontendUrlPrefix}
       />
     ) : null;
+  }
 
+  renderFavouritesHeader() {
+    return (
+      <Button
+        primary
+        style={{ margin: "0 0 15px 15px" }}
+        onClick={this.searchFavourites.bind(this)}
+        title="Favourites"
+        icon={this.state.labels.includes("FAVOURITE") ? "star" : "star outline"}
+        size="tiny"
+      />
+    );
+  }
+
+  renderSearchByLabel() {
+    return (
+      <Col>
+        <Typeahead
+          id="typeaheadDefs"
+          selected={this.state.labels}
+          onChange={this.onLabelSearch.bind(this)}
+          clearButton
+          labelKey="name"
+          multiple
+          options={this.state.allLabels}
+          placeholder="Search by label."
+        />
+      </Col>
+    );
+  }
+
+  renderSearchByKeyword() {
+    return (
+      <Col>
+        <Form.Group>
+          <Form.Control
+            value={this.state.keywords}
+            onChange={this.onEditSearch}
+            placeholder="Search by keyword."
+          />
+        </Form.Group>
+      </Col>
+    );
+  }
+
+  renderWorkflowTable() {
+    return (
+      <Table celled compact color="blue">
+        <Table.Header fullWidth>
+          <Table.Row>
+            <Table.HeaderCell>Name/Version</Table.HeaderCell>
+            <Table.HeaderCell>Labels</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">Included in</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>{this.repeat()}</Table.Body>
+        <Table.Footer>
+          <Table.Row>
+            <Table.HeaderCell colSpan="4">
+              <PageCount
+                dataSize={
+                  this.state.keywords === "" || this.state.table.length > 0
+                    ? this.state.table.length
+                    : this.state.data.length
+                }
+                defaultPages={this.state.defaultPages}
+                handler={this.setCountPages.bind(this)}
+              />
+              <PageSelect
+                viewedPage={this.state.viewedPage}
+                count={this.state.pagesCount}
+                handler={this.setViewPage.bind(this)}
+              />
+            </Table.HeaderCell>
+          </Table.Row>
+        </Table.Footer>
+      </Table>
+    );
+  }
+
+  render() {
     return (
       <div>
-        {definitionModal}
-        {inputModal}
-        {diagramModal}
-        {dependencyModal}
+        {this.renderDefinitionModal()}
+        {this.renderInputModal()}
+        {this.renderDiagramModal()}
+        {this.renderDependencyModal()}
+        {this.renderSchedulingModal()}
         <Row>
-          <Button
-            primary
-            style={{ margin: "0 0 15px 15px" }}
-            onClick={this.searchFavourites.bind(this)}
-            title="Favourites"
-            icon={
-              this.state.labels.includes("FAVOURITE") ? "star" : "star outline"
-            }
-            size="tiny"
-          />
-          <Col>
-            <Typeahead
-              id="typeaheadDefs"
-              selected={this.state.labels}
-              onChange={this.onLabelSearch.bind(this)}
-              clearButton
-              labelKey="name"
-              multiple
-              options={this.state.allLabels}
-              placeholder="Search by label."
-            />
-          </Col>
-          <Col>
-            <Form.Group>
-              <Form.Control
-                value={this.state.keywords}
-                onChange={this.onEditSearch}
-                placeholder="Search by keyword."
-              />
-            </Form.Group>
-          </Col>
+          {this.renderFavouritesHeader()}
+          {this.renderSearchByLabel()}
+          {this.renderSearchByKeyword()}
         </Row>
-        <Table celled compact color="blue">
-          <Table.Header fullWidth>
-            <Table.Row>
-              <Table.HeaderCell>Name/Version</Table.HeaderCell>
-              <Table.HeaderCell>Labels</Table.HeaderCell>
-              <Table.HeaderCell textAlign="center">
-                Included in
-              </Table.HeaderCell>
-              <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>{this.repeat()}</Table.Body>
-          <Table.Footer>
-            <Table.Row>
-              <Table.HeaderCell colSpan="4">
-                <PageCount
-                  dataSize={
-                    this.state.keywords === "" || this.state.table.length > 0
-                      ? this.state.table.length
-                      : this.state.data.length
-                  }
-                  defaultPages={this.state.defaultPages}
-                  handler={this.setCountPages.bind(this)}
-                />
-                <PageSelect
-                  viewedPage={this.state.viewedPage}
-                  count={this.state.pagesCount}
-                  handler={this.setViewPage.bind(this)}
-                />
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Footer>
-        </Table>
+        {this.renderWorkflowTable()}
       </div>
     );
   }

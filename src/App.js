@@ -14,7 +14,6 @@ import buildReducer from "./store/reducers/builder";
 import bulkReducer from "./store/reducers/bulk";
 import mountedDeviceReducer from "./store/reducers/mountedDevices";
 import searchReducer from "./store/reducers/searchExecs";
-import { frontendUrlPrefix } from "./constants";
 
 const rootReducer = combineReducers({
   bulkReducer,
@@ -41,17 +40,29 @@ function App(props : { setBuilderActive?: (param: boolean) => void }) {
         <Switch>
           <Route
             exact
-            path={[frontendUrlPrefix + "/builder", frontendUrlPrefix + "/builder/:name/:version"]}
-            render={(props) => (
-              <DiagramBuilder hideHeader={hideHeader} {...props} />
+            path={[props.frontendUrlPrefix + "/builder", props.frontendUrlPrefix + "/builder/:name/:version"]}
+            render={(pp) => (
+              <DiagramBuilder 
+                frontendUrlPrefix={props.frontendUrlPrefix} 
+                backendApiUrlPrefix={props.backendApiUrlPrefix} 
+                hideHeader={hideHeader} 
+                {...pp}
+              />
             )}
           />
           <Route
             exact
-            path={[frontendUrlPrefix + "/:type", frontendUrlPrefix + "/:type/:wfid", "/"]}
-            component={WorkflowList}
+            path={[props.frontendUrlPrefix + "/:type", props.frontendUrlPrefix + "/:type/:wfid", "/"]}
+            render={(pp) => (
+              <WorkflowList
+                frontendUrlPrefix={props.frontendUrlPrefix}
+                backendApiUrlPrefix={props.backendApiUrlPrefix}
+                enableScheduling={props.enableScheduling}
+                {...pp}
+              />
+            )}
           />
-          <Redirect from={frontendUrlPrefix} to={frontendUrlPrefix + "/defs"} />
+          <Redirect from={props.frontendUrlPrefix} to={props.frontendUrlPrefix + "/defs"} />
         </Switch>
       </BrowserRouter>
     </Provider>

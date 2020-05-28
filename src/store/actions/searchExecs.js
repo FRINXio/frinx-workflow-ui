@@ -1,7 +1,5 @@
-// @flow
 import { sortBy } from "lodash";
 import { HttpClient as http } from "../../common/HttpClient";
-import { conductorApiUrlPrefix } from "../../constants";
 
 export const RECEIVE_NEW_DATA = "RECEIVE_NEW_DATA";
 export const HIERARCHY_NEW_DATA = "HIERARCHY_NEW_DATA";
@@ -38,13 +36,13 @@ const createQuery = ({ query, label }) => {
   return q;
 };
 
-export const fetchNewData = (viewedPage, defaultPages) => {
+export const fetchNewData = (viewedPage, defaultPages, backendApiUrlPrefix) => {
   return (dispatch, getState) => {
     let q = createQuery(getState().searchReducer);
     let page = (viewedPage - 1) * defaultPages;
     http
       .get(
-        conductorApiUrlPrefix + "/executions/?q=&h=&freeText=" +
+        backendApiUrlPrefix + "/executions/?q=&h=&freeText=" +
           q +
           "&start=" +
           page +
@@ -69,7 +67,7 @@ export const receiveNewData = data => {
   return { type: RECEIVE_NEW_DATA, data };
 };
 
-export const fetchParentWorkflows = (viewedPage, defaultPages) => {
+export const fetchParentWorkflows = (viewedPage, defaultPages, backendApiUrlPrefix) => {
   return (dispatch, getState) => {
     let page = viewedPage - 1;
 
@@ -77,7 +75,7 @@ export const fetchParentWorkflows = (viewedPage, defaultPages) => {
     let q = createQuery(getState().searchReducer);
     http
       .get(
-        conductorApiUrlPrefix + "/hierarchical/?freeText=" +
+        backendApiUrlPrefix + "/hierarchical/?freeText=" +
           q +
           "&start=" +
           checkedWfs[page] +

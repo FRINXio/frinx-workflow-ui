@@ -3,7 +3,6 @@ import GeneralTab from './GeneralTab';
 import InputsTab from './InputsTab';
 import React, {useEffect, useState} from 'react';
 import {Button, Modal, Tab, Tabs} from 'react-bootstrap';
-import {conductorApiUrlPrefix} from '../../../constants';
 import {hash} from '../builder-utils';
 import {HttpClient as http} from '../../../common/HttpClient';
 
@@ -22,7 +21,9 @@ function NodeModal(props) {
   const [name, setName] = useState();
   const [version, setVersion] = useState();
   const [inputParameters, setInputParameters] = useState([]);
-
+  
+  const backendApiUrlPrefix = props.backendApiUrlPrefix;
+  
   useEffect(() => {
     setName(props.inputs.inputs.name);
     setInputs(props.inputs.inputs);
@@ -36,13 +37,13 @@ function NodeModal(props) {
 
       http
         .get(
-          conductorApiUrlPrefix + '/metadata/workflow/' + name + '/' + version,
+          backendApiUrlPrefix + '/metadata/workflow/' + name + '/' + version,
         )
         .then(res => {
           setInputParameters(res.result.inputParameters);
         });
     }
-  }, [props.inputs]);
+  }, [props.inputs, backendApiUrlPrefix]);
 
   function handleSave() {
     props.saveInputs(inputs, props.inputs.id);

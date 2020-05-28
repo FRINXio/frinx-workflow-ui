@@ -1,4 +1,3 @@
-// @flow
 import moment from "moment";
 import React, { Component } from "react";
 import {
@@ -43,15 +42,18 @@ class WorkflowExec extends Component {
       sort: [2, 2, 2]
     };
     this.table = React.createRef();
+    this.backendApiUrlPrefix = props.backendApiUrlPrefix;
+    this.frontendUrlPrefix = props.frontendUrlPrefix;
   }
 
   componentWillMount() {
     if (this.props.query) this.props.updateByQuery(this.props.query);
     this.state.allData
-      ? this.props.fetchNewData(this.state.viewedPage, this.state.defaultPages)
+      ? this.props.fetchNewData(this.state.viewedPage, this.state.defaultPages, this.backendApiUrlPrefix)
       : this.props.fetchParentWorkflows(
           this.state.viewedPage,
-          this.state.defaultPages
+          this.state.defaultPages,
+          this.backendApiUrlPrefix
         );
   }
 
@@ -94,12 +96,13 @@ class WorkflowExec extends Component {
       this.props.query !== prevProps.query
     ) {
       if (this.state.allData) {
-        this.props.fetchNewData(this.state.viewedPage, this.state.defaultPages);
+        this.props.fetchNewData(this.state.viewedPage, this.state.defaultPages, this.backendApiUrlPrefix);
       } else {
         this.props.checkedWorkflows([0]);
         this.props.fetchParentWorkflows(
           this.state.viewedPage,
-          this.state.defaultPages
+          this.state.defaultPages,
+          this.backendApiUrlPrefix
         );
         this.update([], []);
       }
@@ -197,11 +200,11 @@ class WorkflowExec extends Component {
 
   setCountPages(defaultPages, pagesCount) {
     if (this.state.allData) {
-      this.props.fetchNewData(1, defaultPages);
+      this.props.fetchNewData(1, defaultPages, this.backendApiUrlPrefix);
     } else {
       this.props.updateSize(1);
       this.props.checkedWorkflows([0]);
-      this.props.fetchParentWorkflows(1, defaultPages);
+      this.props.fetchParentWorkflows(1, defaultPages, this.backendApiUrlPrefix);
       this.state.openParentWfs.forEach(parent =>
         this.showChildrenWorkflows(parent, null, null)
       );
@@ -216,9 +219,9 @@ class WorkflowExec extends Component {
 
   setViewPage(page) {
     if (this.state.allData) {
-      this.props.fetchNewData(page, this.state.defaultPages);
+      this.props.fetchNewData(page, this.state.defaultPages, this.backendApiUrlPrefix);
     } else {
-      this.props.fetchParentWorkflows(page, this.state.defaultPages);
+      this.props.fetchParentWorkflows(page, this.state.defaultPages, this.backendApiUrlPrefix);
       this.state.openParentWfs.forEach(parent =>
         this.showChildrenWorkflows(parent, null, null)
       );
@@ -421,8 +424,8 @@ class WorkflowExec extends Component {
     if (this.timeout) clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       this.state.allData
-        ? this.props.fetchNewData(1, this.state.defaultPages)
-        : this.props.fetchParentWorkflows(1, this.state.defaultPages);
+        ? this.props.fetchNewData(1, this.state.defaultPages, this.backendApiUrlPrefix)
+        : this.props.fetchParentWorkflows(1, this.state.defaultPages, this.backendApiUrlPrefix);
     }, 300);
 
     this.setState({
@@ -434,7 +437,7 @@ class WorkflowExec extends Component {
   changeLabels(e) {
     this.props.updateByLabel(e[0]);
     if (this.state.allData) {
-      this.props.fetchNewData(1, this.state.defaultPages);
+      this.props.fetchNewData(1, this.state.defaultPages, this.backendApiUrlPrefix);
     } else {
       this.state.openParentWfs.forEach(parent =>
         this.showChildrenWorkflows(parent, null, null)
@@ -442,7 +445,7 @@ class WorkflowExec extends Component {
       this.update([], []);
       this.props.updateSize(1);
       this.props.checkedWorkflows([0]);
-      this.props.fetchParentWorkflows(1, this.state.defaultPages);
+      this.props.fetchParentWorkflows(1, this.state.defaultPages, this.backendApiUrlPrefix);
     }
     this.setState({
       viewedPage: 1,
@@ -480,14 +483,17 @@ class WorkflowExec extends Component {
         modalHandler={this.showDetailsModal.bind(this)}
         refreshTable={
           this.state.allData
-            ? this.props.fetchNewData.bind(this, 1, this.state.defaultPages)
+            ? this.props.fetchNewData.bind(this, 1, this.state.defaultPages, this.backendApiUrlPrefix)
             : this.props.fetchParentWorkflows.bind(
                 this,
                 1,
-                this.state.defaultPages
+                this.state.defaultPages,
+                this.backendApiUrlPrefix,
               )
         }
         show={this.state.detailsModal}
+        backendApiUrlPrefix={this.backendApiUrlPrefix}
+        frontendUrlPrefix={this.frontendUrlPrefix}
       />
     ) : null;
 
@@ -500,6 +506,7 @@ class WorkflowExec extends Component {
           pageCount={this.state.defaultPages}
           selectAllWfs={this.selectAllWfs.bind(this)}
           bulkOperation={this.clearView.bind(this)}
+          backendApiUrlPrefix={this.backendApiUrlPrefix}
         />
 
         <hr style={{ marginTop: "-20px" }} />
@@ -643,10 +650,10 @@ const mapDispatchToProps = dispatch => {
   return {
     updateByQuery: query => dispatch(searchActions.updateQuery(query)),
     updateByLabel: label => dispatch(searchActions.updateLabel(label)),
-    fetchNewData: (viewedPage, defaultPages) =>
-      dispatch(searchActions.fetchNewData(viewedPage, defaultPages)),
-    fetchParentWorkflows: (viewedPage, defaultPages) =>
-      dispatch(searchActions.fetchParentWorkflows(viewedPage, defaultPages)),
+    fetchNewData: (viewedPage, defaultPages, backendApiUrlPrefix) =>
+      dispatch(searchActions.fetchNewData(viewedPage, defaultPages, backendApiUrlPrefix)),
+    fetchParentWorkflows: (viewedPage, defaultPages, backendApiUrlPrefix) =>
+      dispatch(searchActions.fetchParentWorkflows(viewedPage, defaultPages, backendApiUrlPrefix)),
     updateParents: children => dispatch(searchActions.updateParents(children)),
     deleteParents: children => dispatch(searchActions.deleteParents(children)),
     updateSize: size => dispatch(searchActions.updateSize(size)),
