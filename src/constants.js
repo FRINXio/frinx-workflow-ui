@@ -59,6 +59,3 @@ export const taskDescriptions = {
   optional: "when set to true - workflow continues even if the task fails.",
   startDelay: "time period before task executes"
 };
-
-export const conductorApiUrlPrefix = "/api/conductor";
-export const frontendUrlPrefix = "/workflows";
