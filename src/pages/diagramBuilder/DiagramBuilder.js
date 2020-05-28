@@ -240,6 +240,7 @@ class DiagramBuilder extends Component {
 
   // GENERAL INFO MODAL
   showGeneralInfoModal() {
+    this.parseDiagramToJSON();
     this.setState({
       showGeneralInfoModal: !this.state.showGeneralInfoModal,
     });
@@ -247,6 +248,7 @@ class DiagramBuilder extends Component {
 
   // WORKFLOW EXECUTION INPUT MODAL
   showInputModal() {
+    this.parseDiagramToJSON();
     this.setState({
       showInputModal: true,
     });
@@ -359,11 +361,7 @@ class DiagramBuilder extends Component {
   render() {
     let inputsModal = this.state.showInputModal ? (
       <InputModal
-        wf={
-          this.props.finalWorkflow.name +
-          " / " +
-          this.props.finalWorkflow.version
-        }
+        wf={this.props.finalWorkflow}
         modalHandler={this.closeInputModal}
         fromBuilder
         show={this.state.showInputModal}
