@@ -16,8 +16,16 @@ import { storeWorkflowId } from "../../../../store/actions/builder";
 import { HttpClient as http } from "../../../../common/HttpClient";
 
 const getInputs = (def) => {
-  let matchArray = def.match(/(?<=workflow\.input\.)([a-zA-Z0-9-_]+)/gim);
-  return [...new Set(matchArray)];
+  let inputCaptureRegex = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim
+  let match = inputCaptureRegex.exec(def)
+  let inputsArray = [];
+
+  while (match != null) {
+    inputsArray.push(match[1])
+    match = inputCaptureRegex.exec(def);
+  }
+
+  return [...new Set(inputsArray)];
 };
 
 const getDetails = (def, inputsArray) => {

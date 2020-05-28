@@ -179,12 +179,8 @@ export class WorkflowDiagram {
       let wfName = this.definition.name;
       let taskRefName = node.extras.inputs.taskReferenceName;
 
-      let targetWorkflowIdPlaceholder = targetWorkflowId.match(
-        /(?<=workflow\.input\.)([a-zA-Z0-9-_]+)/gim
-      )?.[0];
-      let targetTaskRefNamePlaceholder = targetTaskRefName.match(
-        /(?<=workflow\.input\.)([a-zA-Z0-9-_]+)/gim
-      )?.[0];
+      let targetWorkflowIdPlaceholder = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim.exec(targetWorkflowId)?.[1]
+      let targetTaskRefNamePlaceholder = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim.exec(targetTaskRefName)?.[1]
 
       targetWorkflowId = targetWorkflowIdPlaceholder
         ? `\$\{${targetWorkflowIdPlaceholder}\}`
@@ -201,9 +197,7 @@ export class WorkflowDiagram {
             entry[0]
           )
         ) {
-          let outputPlaceholder = entry[1].match(
-            /(?<=workflow\.input\.)([a-zA-Z0-9-_]+)/gim
-          )?.[0];
+          let outputPlaceholder = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim.exec(entry[1])?.[1];
 
           output[entry[0]] = outputPlaceholder
             ? `\$\{${outputPlaceholder}\}`
