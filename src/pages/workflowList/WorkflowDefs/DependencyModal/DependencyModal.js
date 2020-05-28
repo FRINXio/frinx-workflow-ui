@@ -39,7 +39,7 @@ const DependencyModal = (props) => {
   const getWorkflowParents = (workflow) => {
     const usedInWfs = props.data.filter((wf) => {
       let wfJSON = JSON.stringify(wf, null, 2);
-      return wfJSON.includes(workflow.name) && wf.name !== workflow.name;
+      return wfJSON.includes(`"name": "${workflow.name}"`) && wf.name !== workflow.name;
     });
     return usedInWfs;
   };
