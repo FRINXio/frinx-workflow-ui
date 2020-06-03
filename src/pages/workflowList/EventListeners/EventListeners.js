@@ -131,7 +131,7 @@ function EventListeners(props) {
         <Table.Body>
           {results.map((e) => {
             return (
-              <Table.Row>
+              <Table.Row key={e.event}>
                 <Table.Cell style={{ textAlign: "center" }}>
                   <Checkbox
                     toggle

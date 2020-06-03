@@ -204,9 +204,9 @@ const Scheduling = props => {
             </tr>
           </thead>
           <tbody>
-            <Accordion activeKey={activeRow}>
-              {repeat()}
-            </Accordion>
+          <tr><td style={{padding: "0"}}><Accordion activeKey={activeRow}>
+            {repeat()}
+          </Accordion></td></tr>
           </tbody>
         </Table>
       </div>
