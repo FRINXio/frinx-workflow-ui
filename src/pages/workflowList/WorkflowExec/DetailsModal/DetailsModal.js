@@ -419,7 +419,8 @@ class DetailsModal extends Component {
         key > -1 ? values.push(Object.values(input)[key]) : values.push("");
       });
       let descs = iPam.map(param => {
-        return param.match(/\[(.*?)]/)[1];
+        if (param.match(/\[(.*?)]/)) return param.match(/\[(.*?)]/)[1];
+        else return '';
       });
       return labels.map((label, i) => {
         return (
