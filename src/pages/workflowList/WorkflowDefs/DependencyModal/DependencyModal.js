@@ -3,11 +3,12 @@ import React from "react";
 import { Button } from "semantic-ui-react";
 import { Modal } from "react-bootstrap";
 import { Tree, TreeNode } from "react-organizational-chart";
-import { frontendUrlPrefix } from "../../../../constants";
 import { withRouter } from "react-router-dom";
 import "./DependencyModal.css";
 
 const DependencyModal = (props) => {
+  const frontendUrlPrefix = props.frontendUrlPrefix;
+
   const createDepTree = (rootWorkflow) => {
     let tree = [];
     let parents = getWorkflowParents(rootWorkflow);
@@ -38,7 +39,7 @@ const DependencyModal = (props) => {
   const getWorkflowParents = (workflow) => {
     const usedInWfs = props.data.filter((wf) => {
       let wfJSON = JSON.stringify(wf, null, 2);
-      return wfJSON.includes(workflow.name) && wf.name !== workflow.name;
+      return wfJSON.includes(`"name": "${workflow.name}"`) && wf.name !== workflow.name;
     });
     return usedInWfs;
   };

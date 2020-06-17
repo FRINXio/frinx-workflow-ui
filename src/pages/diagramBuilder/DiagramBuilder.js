@@ -22,12 +22,14 @@ import SidemenuRight from "./Sidemenu/SidemenuRight";
 import WorkflowDefModal from "./WorkflowDefModal/WorkflowDefModal";
 import { WorkflowDiagram } from "./WorkflowDiagram";
 import { HttpClient as http } from "../../common/HttpClient";
-import { conductorApiUrlPrefix, frontendUrlPrefix } from "../../constants";
 import closest from "closest";
 
 class DiagramBuilder extends Component {
   constructor(props) {
     super(props);
+    this.backendApiUrlPrefix = props.backendApiUrlPrefix;
+    this.frontendUrlPrefix = props.frontendUrlPrefix;
+
     this.state = {
       showNodeModal: false,
       showDefinitionModal: false,
@@ -42,7 +44,8 @@ class DiagramBuilder extends Component {
       workflowDiagram: new WorkflowDiagram(
         new Application(),
         this.props.finalWorkflow,
-        { x: 600, y: 300 }
+        { x: 600, y: 300 },
+        this.backendApiUrlPrefix
       ),
     };
 
@@ -67,21 +70,21 @@ class DiagramBuilder extends Component {
     this.showGeneralInfoModal = this.showGeneralInfoModal.bind(this);
     this.saveNodeInputsHandler = this.saveNodeInputsHandler.bind(this);
     this.createDiagramByDefinition = this.createDiagramByDefinition.bind(this);
+  
   }
 
   componentDidMount() {
     document.addEventListener("dblclick", this.doubleClickListener.bind(this));
 
-    console.log(this.props);
     this.props.hideHeader();
 
-    http.get(conductorApiUrlPrefix + "/metadata/workflow").then((res) => {
+    http.get(this.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
       this.props.storeWorkflows(
         res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
       );
     });
 
-    http.get(conductorApiUrlPrefix + "/metadata/taskdefs").then((res) => {
+    http.get(this.backendApiUrlPrefix + "/metadata/taskdefs").then((res) => {
       this.props.storeTasks(
         res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
       );
@@ -111,7 +114,7 @@ class DiagramBuilder extends Component {
   createExistingWorkflow() {
     const { name, version } = this.props.match.params;
     http
-      .get(conductorApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
+      .get(this.backendApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
       .then((res) => {
         this.createDiagramByDefinition(res.result);
       })
@@ -240,6 +243,7 @@ class DiagramBuilder extends Component {
 
   // GENERAL INFO MODAL
   showGeneralInfoModal() {
+    this.parseDiagramToJSON();
     this.setState({
       showGeneralInfoModal: !this.state.showGeneralInfoModal,
     });
@@ -247,6 +251,7 @@ class DiagramBuilder extends Component {
 
   // WORKFLOW EXECUTION INPUT MODAL
   showInputModal() {
+    this.parseDiagramToJSON();
     this.setState({
       showInputModal: true,
     });
@@ -325,12 +330,12 @@ class DiagramBuilder extends Component {
   }
 
   redirectOnExit() {
-    this.props.history.push(frontendUrlPrefix + "/defs");
+    this.props.history.push(this.frontendUrlPrefix + "/defs");
     window.location.reload();
   }
 
   redirectOnNew() {
-    this.props.history.push(frontendUrlPrefix + "/builder");
+    this.props.history.push(this.frontendUrlPrefix + "/builder");
     window.location.reload();
   }
 
@@ -359,14 +364,12 @@ class DiagramBuilder extends Component {
   render() {
     let inputsModal = this.state.showInputModal ? (
       <InputModal
-        wf={
-          this.props.finalWorkflow.name +
-          " / " +
-          this.props.finalWorkflow.version
-        }
+        wf={this.props.finalWorkflow}
         modalHandler={this.closeInputModal}
         fromBuilder
         show={this.state.showInputModal}
+        backendApiUrlPrefix={this.backendApiUrlPrefix}
+        frontendUrlPrefix={this.frontendUrlPrefix}
       />
     ) : null;
 
@@ -374,6 +377,8 @@ class DiagramBuilder extends Component {
       <DetailsModal
         wfId={this.props.workflowId}
         modalHandler={this.showDetailsModal}
+        backendApiUrlPrefix={this.backendApiUrlPrefix}
+        frontendUrlPrefix={this.frontendUrlPrefix}
       />
     ) : null;
 
@@ -383,6 +388,7 @@ class DiagramBuilder extends Component {
         inputs={this.state.modalInputs}
         saveInputs={this.saveNodeInputsHandler}
         show={this.state.showNodeModal}
+        backendApiUrlPrefix={this.backendApiUrlPrefix}
       />
     ) : null;
 

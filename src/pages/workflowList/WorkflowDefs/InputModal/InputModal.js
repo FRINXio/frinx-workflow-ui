@@ -14,14 +14,18 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import { getMountedDevices } from "../../../../store/actions/mountedDevices";
 import { storeWorkflowId } from "../../../../store/actions/builder";
 import { HttpClient as http } from "../../../../common/HttpClient";
-import {
-  conductorApiUrlPrefix,
-  frontendUrlPrefix,
-} from "../../../../constants";
 
 const getInputs = (def) => {
-  let matchArray = def.match(/(?<=workflow\.input\.)([a-zA-Z0-9-_]+)/gim);
-  return [...new Set(matchArray)];
+  let inputCaptureRegex = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim
+  let match = inputCaptureRegex.exec(def)
+  let inputsArray = [];
+
+  while (match != null) {
+    inputsArray.push(match[1])
+    match = inputCaptureRegex.exec(def);
+  }
+
+  return [...new Set(inputsArray)];
 };
 
 const getDetails = (def, inputsArray) => {
@@ -70,6 +74,9 @@ function InputModal(props) {
   const name = props.wf.name;
   const version = Number(props.wf.version);
   const wfdesc = props.wf.description?.split("-")[0] || "";
+  
+  const backendApiUrlPrefix = props.backendApiUrlPrefix;
+  const frontendUrlPrefix = props.frontendUrlPrefix;
 
   useEffect(() => {
     let definition = JSON.stringify(props.wf, null, 2);
@@ -98,8 +105,7 @@ function InputModal(props) {
       let q = 'status:"RUNNING"';
       http
         .get(
-          conductorApiUrlPrefix +
-            "/executions/?q=&h=&freeText=" +
+          backendApiUrlPrefix + "/executions/?q=&h=&freeText=" +
             q +
             "&start=" +
             0 +
@@ -108,7 +114,7 @@ function InputModal(props) {
         .then((res) => {
           let runningWfs = res.result?.hits || [];
           let promises = runningWfs.map((wf) => {
-            return http.get(conductorApiUrlPrefix + "/id/" + wf.workflowId);
+            return http.get(backendApiUrlPrefix + "/id/" + wf.workflowId);
           });
 
           Promise.all(promises).then((results) => {
@@ -180,11 +186,10 @@ function InputModal(props) {
     }
     setStatus("Executing...");
     http
-      .post(conductorApiUrlPrefix + "/workflow", JSON.stringify(payload))
+      .post(backendApiUrlPrefix + "/workflow", JSON.stringify(payload))
       .then((res) => {
         setStatus(res.statusText);
         setWfId(res.body.text);
-
         dispatch(storeWorkflowId(res.body.text));
         timeoutBtn();
 

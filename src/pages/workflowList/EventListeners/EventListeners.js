@@ -5,19 +5,20 @@ import AceEditor from "react-ace";
 import { HttpClient as http } from "../../../common/HttpClient";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-tomorrow";
-import { conductorApiUrlPrefix } from "../../../constants";
 
-function EventListeners() {
+function EventListeners(props) {
   const [eventListeners, setEventListeners] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const backendApiUrlPrefix = props.backendApiUrlPrefix;
 
   useEffect(() => {
     getData();
   }, []);
 
   const getData = () => {
-    http.get(conductorApiUrlPrefix + "/event").then((res) => {
+    http.get(backendApiUrlPrefix + "/event").then((res) => {
       if (Array.isArray(res)) {
         setEventListeners(res);
       }
@@ -30,7 +31,7 @@ function EventListeners() {
     }
 
     http
-      .post(conductorApiUrlPrefix + "/event", event)
+      .post(backendApiUrlPrefix + "/event", event)
       .then((res) => {
         getData();
       })
@@ -42,7 +43,7 @@ function EventListeners() {
 
   const deleteEvent = (name) => {
     http
-      .delete(conductorApiUrlPrefix + "/event/" + name)
+      .delete(backendApiUrlPrefix + "/event/" + name)
       .then(() => {
         getData();
       })
@@ -130,7 +131,7 @@ function EventListeners() {
         <Table.Body>
           {results.map((e) => {
             return (
-              <Table.Row>
+              <Table.Row key={e.event}>
                 <Table.Cell style={{ textAlign: "center" }}>
                   <Checkbox
                     toggle
