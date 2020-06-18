@@ -217,6 +217,8 @@ class Grapher extends Component<Props, StateType> {
       } else if (vertices[v].tooltip != null) {
         let data = vertices[v].data;
 
+        if (data.taskType === 'final' || data.taskType === 'start') return;
+
         p.setState({
           selectedTask: data.task,
           showSideBar: true,
