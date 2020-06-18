@@ -52,7 +52,7 @@ function App(props : { setBuilderActive?: (param: boolean) => void }) {
           />
           <Route
             exact
-            path={[props.frontendUrlPrefix + "/:type", props.frontendUrlPrefix + "/:type/:wfid", "/"]}
+            path={[props.frontendUrlPrefix + "/:type", props.frontendUrlPrefix + "/:type/:wfid"]}
             render={(pp) => (
               <WorkflowList
                 frontendUrlPrefix={props.frontendUrlPrefix}
@@ -62,7 +62,7 @@ function App(props : { setBuilderActive?: (param: boolean) => void }) {
               />
             )}
           />
-          <Redirect from={props.frontendUrlPrefix} to={props.frontendUrlPrefix + "/defs"} />
+          <Redirect to={props.frontendUrlPrefix + "/defs"}/>
         </Switch>
       </BrowserRouter>
     </Provider>
