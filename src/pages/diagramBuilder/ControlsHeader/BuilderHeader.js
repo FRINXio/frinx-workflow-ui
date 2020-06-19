@@ -294,7 +294,7 @@ const BuilderHeader = props => {
   return (
     <Navbar id="builder-header" className="builder-header">
       <Navbar.Brand>
-        <NavLink to="/">
+        <NavLink to="/workflows/defs">
           <XLetter />
           <Logo />
         </NavLink>
