@@ -15,7 +15,6 @@ import {
   Table,
   Tabs
 } from "react-bootstrap";
-import Highlight from "react-highlight.js";
 import { withRouter } from "react-router-dom";
 import TaskModal from "../../../../common/TaskModal";
 import "./DetailsModal.css";
@@ -361,9 +360,7 @@ class DetailsModal extends Component {
           </h4>
           <code>
             <pre id="wfinput" className="heightWrapper">
-              <Highlight children={""} language="json">
-                {JSON.stringify(this.state.result.input, null, 2)}
-              </Highlight>
+              {JSON.stringify(this.state.result.input, null, 2)}
             </pre>
           </code>
         </Col>
@@ -379,9 +376,7 @@ class DetailsModal extends Component {
           </h4>
           <code>
             <pre id="wfoutput" className="heightWrapper">
-              <Highlight language="json">
-                {JSON.stringify(this.state.result.output, null, 2)}
-              </Highlight>
+              {JSON.stringify(this.state.result.output, null, 2)}
             </pre>
           </code>
         </Col>
