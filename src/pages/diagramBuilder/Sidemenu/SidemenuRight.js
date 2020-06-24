@@ -73,20 +73,19 @@ const systemTasks = type => {
     }
     case 'http': {
       return {
-        name: 'HTTP_REQUEST_TASK',
+        name: 'HTTP_task',
         taskReferenceName: 'httpRequestTaskRef_' + hash(),
         inputParameters: {
           http_request: {
             uri: '${workflow.input.uri}',
             method: 'GET',
+            body: '',
             contentType: 'application/json',
-            accept: 'application/json',
             headers: {},
-            connectionTimeOut: '3600',
-            readTimeOut: '3600',
+            timeout: '3600',
           },
         },
-        type: 'HTTP',
+        type: 'SIMPLE',
         startDelay: 0,
         optional: false,
       };
