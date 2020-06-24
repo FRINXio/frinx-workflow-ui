@@ -42,7 +42,8 @@ class DetailsModal extends Component {
       parentWfId: "",
       inputsArray: [],
       taskDetail: {},
-      taskModal: false
+      taskModal: false,
+      wfIdRerun: ""
     };
 
     this.backendApiUrlPrefix = props.backendApiUrlPrefix;
@@ -106,7 +107,8 @@ class DetailsModal extends Component {
       .post(this.backendApiUrlPrefix + "/workflow", JSON.stringify(this.state.input))
       .then(res => {
         this.setState({
-          status: res.statusText
+          status: res.statusText,
+          wfIdRerun: res.body.text
         });
         setTimeout(() => {
           this.setState({ status: "Execute" });
