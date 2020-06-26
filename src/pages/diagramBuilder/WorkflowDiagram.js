@@ -500,7 +500,6 @@ export class WorkflowDiagram {
         switch (edge.type) {
           case "simple": {
             const fromNode = this.getMatchingTaskRefNode(edge.from);
-            console.log(fromNode)
             const toNode = this.getMatchingTaskRefNode(edge.to);
             this.diagramModel.addLink(this.linkNodes(fromNode, toNode));
             break;
