@@ -500,6 +500,7 @@ export class WorkflowDiagram {
         switch (edge.type) {
           case "simple": {
             const fromNode = this.getMatchingTaskRefNode(edge.from);
+            console.log(fromNode)
             const toNode = this.getMatchingTaskRefNode(edge.to);
             this.diagramModel.addLink(this.linkNodes(fromNode, toNode));
             break;
@@ -778,6 +779,7 @@ export class WorkflowDiagram {
         const { x, y } = this.calculatePosition(branchX, branchY);
         const rawTask = {
           name: "RAW",
+          taskReferenceName: task.taskReferenceName,
           inputParameters: {
             raw: JSON.stringify(task)
           }
