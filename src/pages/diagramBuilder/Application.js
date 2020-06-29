@@ -13,9 +13,9 @@ import { JoinNodePortModel } from "./NodeModels/JoinNode/JoinNodePortModel";
 import { JoinNodeFactory } from "./NodeModels/JoinNode/JoinNodeFactory";
 import { DecisionNodePortModel } from "./NodeModels/DecisionNode/DecisionNodePortModel";
 import { DecisionNodeFactory } from "./NodeModels/DecisionNode/DecisionNodeFactory";
+import { DynamicNodePortModel } from "./NodeModels/DynamicForkNode/DynamicNodePortModel"  
+import { DynamicNodeFactory } from "./NodeModels/DynamicForkNode/DynamicNodeFactory"  
 
-import { DefaultNodeFactory } from "@projectstorm/react-diagrams";
-import { DefaultLinkFactory } from "@projectstorm/react-diagrams";
 import { DefaultLabelFactory } from "@projectstorm/react-diagrams";
 import { DefaultPortModel } from "./NodeModels/DefaultNodeModel/DefaultPortModel";
 
@@ -47,6 +47,9 @@ export class Application {
     this.diagramEngine.registerPortFactory(
       new SimplePortFactory("decision", config => new DecisionNodePortModel())
     );
+    this.diagramEngine.registerPortFactory(
+      new SimplePortFactory("dynamic", config => new DynamicNodePortModel())
+    );
 
     this.diagramEngine.registerNodeFactory(new NodeWithContextFactory());
     this.diagramEngine.registerNodeFactory(new CircleStartNodeFactory());
@@ -54,6 +57,7 @@ export class Application {
     this.diagramEngine.registerNodeFactory(new ForkNodeFactory());
     this.diagramEngine.registerNodeFactory(new JoinNodeFactory());
     this.diagramEngine.registerNodeFactory(new DecisionNodeFactory());
+    this.diagramEngine.registerNodeFactory(new DynamicNodeFactory());
   }
 
   getActiveDiagram() {
