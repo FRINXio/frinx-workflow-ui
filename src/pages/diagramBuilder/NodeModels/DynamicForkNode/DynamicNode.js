@@ -29,10 +29,10 @@ export class DynamicNode extends React.Component {
             dangerouslySetInnerHTML={{
               __html: `
                 <text x="60" y="17" fill="white" font-size="13px" text-align="center">Dynamic fork</text>
-                <text x="0" y="65" fill="lightblue" font-size="10px" text-align="center">name: ${this
-                  .props.node?.extras?.inputs?.inputParameters?.validName}</text>
+                <text x="0" y="65" fill="lightblue" font-size="10px" text-align="center">${this
+                  .props.node?.extras?.inputs?.inputParameters?.expectedName}</text>
                 <text x="0" y="80" fill="lightblue" font-size="10px">type: ${this
-                  .props.node?.extras?.inputs?.inputParameters?.validType}</text>
+                  .props.node?.extras?.inputs?.inputParameters?.expectedType}</text>
               `,
             }}
           />

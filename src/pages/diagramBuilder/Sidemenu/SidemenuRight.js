@@ -127,15 +127,15 @@ const systemTasks = type => {
         name: 'DYNAMIC_FORK',
         taskReferenceName: 'dynamicForkRef' + hash(),
         inputParameters: {
-          validName: "${workflow.input.validName}",
-          validType: "${workflow.input.validType}",
+          expectedName: "${workflow.input.expectedName}",
+          expectedType: "SIMPLE",
           dynamic_tasks: "${workflow.input.dynamic_tasks}",
           dynamic_tasks_i: "${workflow.input.dynamic_tasks_i}"
         },
         type: "SUB_WORKFLOW",
         startDelay: 0,
         subWorkflowParam: {
-          name: "dynamicfork_test",
+          name: "Dynamic_fork_validated",
           version: 1
         },
         optional: false,
@@ -206,7 +206,7 @@ const icons = taskDef => {
       );
     case 'dynamic_fork':
       return (
-        <div className="fork-icon">{task.substring(0, 1).toUpperCase()}</div>
+        <div className="fork-icon">{task.substring(0, 1).toUpperCase()}F</div>
       );
     default:
       break;

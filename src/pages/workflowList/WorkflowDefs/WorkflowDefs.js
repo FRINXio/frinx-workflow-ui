@@ -489,7 +489,9 @@ export class WorkflowDefs extends Component {
   getDependencies(workflow) {
     const usedInWfs = this.state.data.filter((wf) => {
       let wfJSON = JSON.stringify(wf, null, 2);
-      return wfJSON.includes(`"name": "${workflow.name}"`) && wf.name !== workflow.name;
+      let wfMatch = `"name": "${workflow.name}"`;
+      let wfMatchDF = `"expectedName": "${workflow.name}"`;
+      return (wfJSON.includes(wfMatch) || wfJSON.includes(wfMatchDF)) && wf.name !== workflow.name;
     });
     return { length: usedInWfs.length, usedInWfs };
   }
