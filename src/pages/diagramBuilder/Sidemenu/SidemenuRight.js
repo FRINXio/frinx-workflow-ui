@@ -135,7 +135,7 @@ const systemTasks = type => {
         type: "SUB_WORKFLOW",
         startDelay: 0,
         subWorkflowParam: {
-          name: "Dynamic_fork_validated",
+          name: "Dynamic_fork",
           version: 1
         },
         optional: false,
@@ -206,7 +206,7 @@ const icons = taskDef => {
       );
     case 'dynamic_fork':
       return (
-        <div className="fork-icon">{task.substring(0, 1).toUpperCase()}F</div>
+        <div className="dynamicFork-icon">{task.substring(0, 1).toUpperCase()}F</div>
       );
     default:
       break;
