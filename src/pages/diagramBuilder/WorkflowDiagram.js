@@ -797,6 +797,7 @@ export class WorkflowDiagram {
         const { x, y } = this.calculatePosition(branchX, branchY);
         const rawTask = {
           name: "RAW",
+          taskReferenceName: task.taskReferenceName,
           inputParameters: {
             raw: JSON.stringify(task)
           }

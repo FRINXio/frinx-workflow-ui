@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from "react";
-import { Col, Form, Row } from "react-bootstrap";
-import { Table, Header, Button, Label, Popup } from "semantic-ui-react";
+import { Col, Form, Row, Modal } from "react-bootstrap";
+import { Table, Header, Button, Popup } from "semantic-ui-react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { withRouter } from "react-router-dom";
@@ -29,6 +29,7 @@ export class WorkflowDefs extends Component {
       inputModal: false,
       dependencyModal: false,
       schedulingModal: false,
+      confirmDeleteModal: false,
       defaultPages: 10,
       pagesCount: 1,
       viewedPage: 1,
@@ -37,7 +38,7 @@ export class WorkflowDefs extends Component {
     this.onEditSearch = this.onEditSearch.bind(this);
     this.backendApiUrlPrefix = props.backendApiUrlPrefix;
     this.frontendUrlPrefix = props.frontendUrlPrefix;
-    this.enableScheduling = props.enableScheduling
+    this.enableScheduling = props.enableScheduling;
   }
 
   componentWillMount() {
@@ -275,6 +276,7 @@ export class WorkflowDefs extends Component {
         }
         this.setState({
           table: table,
+          confirmDeleteModal: false
         });
       });
   }
@@ -302,9 +304,7 @@ export class WorkflowDefs extends Component {
         basic
         circular
         icon={
-          dataset?.description?.includes("FAVOURITE")
-            ? "star"
-            : "star outline"
+          dataset?.description?.includes("FAVOURITE") ? "star" : "star outline"
         }
         onClick={this.updateFavourite.bind(this, dataset)}
       />
@@ -332,7 +332,7 @@ export class WorkflowDefs extends Component {
         negative
         circular
         icon="trash"
-        onClick={this.deleteWorkflow.bind(this, dataset)}
+        onClick={this.showConfirmDeleteModal.bind(this, dataset)}
       />
     );
   }
@@ -340,7 +340,7 @@ export class WorkflowDefs extends Component {
   repeatScheduleButton(dataset) {
     return (
       <Button
-        title={dataset.hasSchedule ? 'Edit schedule' : 'Create schedule'}
+        title={dataset.hasSchedule ? "Edit schedule" : "Create schedule"}
         basic
         circular
         icon="clock"
@@ -460,11 +460,11 @@ export class WorkflowDefs extends Component {
 
   onSchedulingModalClose() {
     this.setState({
-      schedulingModal: false
+      schedulingModal: false,
     });
     this.componentDidMount();
   }
-  
+
   showSchedulingModal(workflow) {
     this.setState({
       schedulingModal: !this.state.schedulingModal,
@@ -479,8 +479,18 @@ export class WorkflowDefs extends Component {
     });
   }
 
+  showConfirmDeleteModal(workflow) {
+    this.setState({
+      confirmDeleteModal: !this.state.confirmDeleteModal,
+      activeWf: workflow,
+    });
+  }
+
   getActiveWfScheduleName() {
-    if (this.state.activeWf != null && this.state.activeWf.expectedScheduleName != null) {
+    if (
+      this.state.activeWf != null &&
+      this.state.activeWf.expectedScheduleName != null
+    ) {
       return this.state.activeWf.expectedScheduleName;
     }
     return null;
@@ -489,9 +499,10 @@ export class WorkflowDefs extends Component {
   getDependencies(workflow) {
     const usedInWfs = this.state.data.filter((wf) => {
       let wfJSON = JSON.stringify(wf, null, 2);
-      let wfMatch = `"name": "${workflow.name}"`;
-      let wfMatchDF = `"expectedName": "${workflow.name}"`;
-      return (wfJSON.includes(wfMatch) || wfJSON.includes(wfMatchDF)) && wf.name !== workflow.name;
+      return (
+        wfJSON.includes(`"name": "${workflow.name}"`) &&
+        wf.name !== workflow.name
+      );
     });
     return { length: usedInWfs.length, usedInWfs };
   }
@@ -553,6 +564,23 @@ export class WorkflowDefs extends Component {
         backendApiUrlPrefix={this.backendApiUrlPrefix}
         frontendUrlPrefix={this.frontendUrlPrefix}
       />
+    ) : null;
+  }
+
+  renderConfirmDeleteModal() {
+    return this.state.confirmDeleteModal ? (
+      <Modal size="mini" show={this.state.confirmDeleteModal} onHide={this.showConfirmDeleteModal.bind(this)}>
+      <Modal.Header>
+        <Modal.Title>Delete Workflow</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>Do you want to delete workflow <b>{this.state.activeWf.name}</b> ?</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button content='Delete' negative icon='trash' onClick={this.deleteWorkflow.bind(this, this.state.activeWf)}/>  
+        <Button content='Cancel' onClick={this.showConfirmDeleteModal.bind(this)}/>
+      </Modal.Footer>
+    </Modal>
     ) : null;
   }
 
@@ -644,6 +672,7 @@ export class WorkflowDefs extends Component {
         {this.renderDiagramModal()}
         {this.renderDependencyModal()}
         {this.renderSchedulingModal()}
+        {this.renderConfirmDeleteModal()}
         <Row>
           {this.renderFavouritesHeader()}
           {this.renderSearchByLabel()}
