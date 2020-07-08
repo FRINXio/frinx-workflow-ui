@@ -8,8 +8,9 @@
 }
 
 #sidebar-primary .bottom {
+    max-width: 50px;
     position: absolute;
-    bottom: 5%;
+    bottom: 7%;
 }
 
 #sidebar-secondary {

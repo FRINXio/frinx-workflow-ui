@@ -14,6 +14,7 @@ import {
 import './Sidemenu.css';
 import SideMenuItem from './SideMenuItem';
 import {getTaskInputsRegex, getWfInputsRegex, hash} from '../builder-utils';
+import { version } from "../../../../package.json";
 
 const sub_workflow = wf => ({
   name: wf.name,
@@ -285,8 +286,8 @@ const Sidemenu = props => {
             }>
             <Icon name="help circle" />
           </Menu.Item>
-          <Menu.Item>
-            <small>{process.env.REACT_APP_VERSION}</small>
+          <Menu.Item style={{wordWrap: "break-word", padding: "10px 0 10px 0"}}>
+            <small>{version}</small>
           </Menu.Item>
         </div>
       </Sidebar>
