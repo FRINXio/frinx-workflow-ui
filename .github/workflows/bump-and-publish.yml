@@ -15,12 +15,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@master
         with:
-          node-version: 10.0.0
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
       - name: install babel
         run: |
           npm install --save-dev @babel/core @babel/cli
       - name: npm run transpile
         run: |
+          npm config set registry http://registry.npmjs.org
           npm run transpile
       - name: copy files
         run: |
@@ -31,8 +33,7 @@ jobs:
           cd build
           ls -l
           npm version patch
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-          npm publish
+          npm publish --access public
         env:
           CI: true 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
