@@ -16,7 +16,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12'
-          registry-url: 'https://registry.npmjs.org/'          
       - name: install babel
         run: |
           npm install --save-dev @babel/core @babel/cli
@@ -32,9 +31,10 @@ jobs:
           cd build
           ls -l
           npm version patch
-          npm publish --access public
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI: true 
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} 
   bump-version:
     name: "Bump version"
