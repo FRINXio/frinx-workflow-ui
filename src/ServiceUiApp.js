@@ -12,6 +12,7 @@ import buildReducer from "./store/reducers/builder";
 import bulkReducer from "./store/reducers/bulk";
 import mountedDeviceReducer from "./store/reducers/mountedDevices";
 import searchReducer from "./store/reducers/searchExecs";
+import Header from './common/header/Header'
 
 const rootReducer = combineReducers({
   bulkReducer,
@@ -23,30 +24,33 @@ const rootReducer = combineReducers({
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
-    rootReducer,
-    composeEnhancers(applyMiddleware(thunk))
+  rootReducer,
+  composeEnhancers(applyMiddleware(thunk))
 );
 
 function App(props) {
   return (
-      <Provider store={store}>
-        <BrowserRouter>
-          <Switch>
-            <Route
-              exact
-              path={[props.frontendUrlPrefix + "/:type", props.frontendUrlPrefix + "/:type/:wfid", "/"]}
-              render={(pp) => (
+    <Provider store={store}>
+      <BrowserRouter>
+        <Switch>
+          <Route
+            exact
+            path={[props.frontendUrlPrefix + "/:type", props.frontendUrlPrefix + "/:type/:wfid", "/"]}
+            render={(pp) =>
+              <>
+                <Header />
                 <WorkflowListReadOnly
                   frontendUrlPrefix={props.frontendUrlPrefix}
                   backendApiUrlPrefix={props.backendApiUrlPrefix}
                   {...pp}
                 />
-              )}
-            />
-            <Redirect from={props.frontendUrlPrefix} to={props.frontendUrlPrefix + "/defs"} />
-          </Switch>
-        </BrowserRouter>
-      </Provider>
+              </>
+            }
+          />
+          <Redirect from={props.frontendUrlPrefix} to={props.frontendUrlPrefix + "/defs"} />
+        </Switch>
+      </BrowserRouter>
+    </Provider>
   );
 }
 

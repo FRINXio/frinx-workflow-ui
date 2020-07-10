@@ -76,8 +76,6 @@ class DiagramBuilder extends Component {
   componentDidMount() {
     document.addEventListener("dblclick", this.doubleClickListener.bind(this));
 
-    this.props.hideHeader();
-
     http.get(this.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
       this.props.storeWorkflows(
         res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []

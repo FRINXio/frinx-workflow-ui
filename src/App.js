@@ -5,7 +5,7 @@ import './css/neat.css';
 import './css/mono-blue.min.css';
 import React from "react";
 import { Provider } from "react-redux";
-import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import thunk from "redux-thunk";
 import DiagramBuilder from "./pages/diagramBuilder/DiagramBuilder";
@@ -14,6 +14,7 @@ import buildReducer from "./store/reducers/builder";
 import bulkReducer from "./store/reducers/bulk";
 import mountedDeviceReducer from "./store/reducers/mountedDevices";
 import searchReducer from "./store/reducers/searchExecs";
+import Header from './common/header/Header'
 
 const rootReducer = combineReducers({
   bulkReducer,
@@ -29,11 +30,7 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk))
 );
 
-function App(props : { setBuilderActive?: (param: boolean) => void }) {
-  const hideHeader = () => {
-    return props?.setBuilderActive ? props.setBuilderActive(true) : null;
-  };
-
+function App(props) {
   return (
     <Provider store={store}>
       <BrowserRouter>
@@ -42,10 +39,9 @@ function App(props : { setBuilderActive?: (param: boolean) => void }) {
             exact
             path={[props.frontendUrlPrefix + "/builder", props.frontendUrlPrefix + "/builder/:name/:version"]}
             render={(pp) => (
-              <DiagramBuilder 
-                frontendUrlPrefix={props.frontendUrlPrefix} 
-                backendApiUrlPrefix={props.backendApiUrlPrefix} 
-                hideHeader={hideHeader} 
+              <DiagramBuilder
+                frontendUrlPrefix={props.frontendUrlPrefix}
+                backendApiUrlPrefix={props.backendApiUrlPrefix}
                 {...pp}
               />
             )}
@@ -53,14 +49,17 @@ function App(props : { setBuilderActive?: (param: boolean) => void }) {
           <Route
             exact
             path={[props.frontendUrlPrefix + "/:type", props.frontendUrlPrefix + "/:type/:wfid"]}
-            render={(pp) => (
-              <WorkflowList
-                frontendUrlPrefix={props.frontendUrlPrefix}
-                backendApiUrlPrefix={props.backendApiUrlPrefix}
-                enableScheduling={props.enableScheduling}
-                {...pp}
-              />
-            )}
+            render={(pp) =>
+              <>
+                <Header />
+                <WorkflowList
+                  frontendUrlPrefix={props.frontendUrlPrefix}
+                  backendApiUrlPrefix={props.backendApiUrlPrefix}
+                  enableScheduling={props.enableScheduling}
+                  {...pp}
+                />
+              </>
+            }
           />
           <Redirect to={props.frontendUrlPrefix + "/defs"}/>
         </Switch>
