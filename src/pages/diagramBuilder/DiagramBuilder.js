@@ -18,7 +18,6 @@ import "./DiagramBuilder.css";
 import GeneralInfoModal from "./GeneralInfoModal/GeneralInfoModal";
 import NodeModal from "./NodeModal/NodeModal";
 import Sidemenu from "./Sidemenu/Sidemenu";
-import SidemenuRight from "./Sidemenu/SidemenuRight";
 import WorkflowDefModal from "./WorkflowDefModal/WorkflowDefModal";
 import { WorkflowDiagram } from "./WorkflowDiagram";
 import { HttpClient as http } from "../../common/HttpClient";
@@ -500,10 +499,10 @@ class DiagramBuilder extends Component {
             <Sidemenu
               workflows={this.props.workflows}
               tasks={this.props.tasks}
+              system={this.props.system}
               updateQuery={this.props.updateQuery}
               openCard={this.props.openCard}
             />
-            <SidemenuRight functional={this.props.functional} />
 
             <CustomAlert
               showCustomAlert={this.props.showCustomAlert}
@@ -535,7 +534,7 @@ const mapStateToProps = (state) => {
   return {
     workflows: state.buildReducer.workflows,
     tasks: state.buildReducer.tasks,
-    functional: state.buildReducer.functional,
+    system: state.buildReducer.system,
     finalWorkflow: state.buildReducer.finalWorkflow,
     customAlert: state.buildReducer.customAlert,
     isWfNameLocked: state.buildReducer.workflowNameLock,

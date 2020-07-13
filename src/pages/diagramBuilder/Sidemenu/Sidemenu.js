@@ -16,6 +16,47 @@ import SideMenuItem from './SideMenuItem';
 import {getTaskInputsRegex, getWfInputsRegex, hash} from '../builder-utils';
 import { version } from "../../../../package.json";
 
+const icons = taskDef => {
+  const task = taskDef.name;
+  switch (task) {
+    case 'start':
+      return (
+        <div className="circle-icon">{task.substring(0, 1).toUpperCase()}</div>
+      );
+    case 'end':
+      return (
+        <div className="circle-icon">{task.substring(0, 1).toUpperCase()}</div>
+      );
+    case 'terminate':
+    case 'http':
+    case 'raw':
+    case 'event':
+    case 'wait':
+    case 'lambda':
+      return (
+        <div className="default-icon">{task.substring(0, 1).toUpperCase()}</div>
+      );
+    case 'fork':
+      return (
+        <div className="fork-icon">{task.substring(0, 1).toUpperCase()}</div>
+      );
+    case 'join':
+      return (
+        <div className="join-icon">{task.substring(0, 1).toUpperCase()}</div>
+      );
+    case 'decision':
+      return (
+        <div className="decision-icon">{task.substring(0, 1).toUpperCase()}</div>
+      );
+    case 'dynamic_fork':
+      return (
+        <div className="dynamicFork-icon">{task.substring(0, 1).toUpperCase()}F</div>
+      );
+    default:
+      break;
+  }
+};
+
 const sub_workflow = wf => ({
   name: wf.name,
   taskReferenceName: wf.name.toLowerCase().trim() + '_ref_' + hash(),
@@ -37,6 +78,148 @@ const sub_task = t => ({
   optional: false,
   startDelay: 0,
 });
+
+const systemTasks = type => {
+  switch (type) {
+    case 'fork': {
+      return {
+        name: 'forkTask',
+        taskReferenceName: 'forkTaskRef_' + hash(),
+        type: 'FORK_JOIN',
+        forkTasks: [],
+        optional: false,
+        startDelay: 0,
+      };
+    }
+    case 'join': {
+      return {
+        name: 'joinTask',
+        taskReferenceName: 'joinTaskRef_' + hash(),
+        type: 'JOIN',
+        joinOn: [],
+        optional: false,
+        startDelay: 0,
+      };
+    }
+    case 'decision': {
+      return {
+        name: 'decisionTask',
+        taskReferenceName: 'decisionTaskRef_' + hash(),
+        inputParameters: {
+          param: 'true',
+        },
+        type: 'DECISION',
+        caseValueParam: 'param',
+        decisionCases: {
+          false: [],
+        },
+        defaultCase: [],
+        optional: false,
+        startDelay: 0,
+      };
+    }
+    case 'lambda': {
+      return {
+        name: 'LAMBDA_TASK',
+        taskReferenceName: 'lambdaTaskRef_' + hash(),
+        type: 'LAMBDA',
+        inputParameters: {
+          lambdaValue: '${workflow.input.lambdaValue}',
+          scriptExpression:
+            'if ($.lambdaValue == 1) {\n  return {testvalue: true} \n} else { \n  return {testvalue: false}\n}',
+        },
+        optional: false,
+        startDelay: 0,
+      };
+    }
+    case 'terminate': {
+      return {
+        name: 'TERMINATE_TASK',
+        taskReferenceName: 'terminateTaskRef_' + hash(),
+        inputParameters: {
+          terminationStatus: 'COMPLETED',
+          workflowOutput: 'Expected workflow output',
+        },
+        type: 'TERMINATE',
+        startDelay: 0,
+        optional: false,
+      };
+    }
+    case 'http': {
+      return {
+        name: 'HTTP_task',
+        taskReferenceName: 'httpRequestTaskRef_' + hash(),
+        inputParameters: {
+          http_request: {
+            uri: '${workflow.input.uri}',
+            method: 'GET',
+            body: '',
+            contentType: 'application/json',
+            headers: {},
+            timeout: '3600',
+          },
+        },
+        type: 'SIMPLE',
+        startDelay: 0,
+        optional: false,
+      };
+    }
+    case 'event': {
+      return {
+        name: 'EVENT_TASK',
+        taskReferenceName: 'eventTaskRef' + hash(),
+        inputParameters: {
+          targetWorkflowId: '${workflow.input.targetWorkflowId}',
+          targetTaskRefName: '${workflow.input.targetTaskRefName}',
+          action: 'complete_task',
+        },
+        type: 'EVENT',
+        sink: 'conductor',
+        startDelay: 0,
+        optional: false,
+      };
+    }
+    case 'wait': {
+      return {
+        name: 'WAIT_TASK',
+        taskReferenceName: 'waitTaskRef' + hash(),
+        type: 'WAIT',
+        startDelay: 0,
+        optional: false,
+      };
+    }
+    case 'raw': {
+      return {
+        name: 'RAW',
+        inputParameters: {
+          raw: '',
+        },
+      };
+    }
+    case 'dynamic_fork': {
+      return {
+        name: 'DYNAMIC_FORK',
+        taskReferenceName: 'dynamicForkRef' + hash(),
+        inputParameters: {
+          expectedName: "${workflow.input.expectedName}",
+          expectedType: "SIMPLE",
+          dynamic_tasks: "${workflow.input.dynamic_tasks}",
+          dynamic_tasks_i: "${workflow.input.dynamic_tasks_i}"
+        },
+        type: "SUB_WORKFLOW",
+        startDelay: 0,
+        subWorkflowParam: {
+          name: "Dynamic_fork",
+          version: 1
+        },
+        optional: false,
+        asyncComplete: false
+      }
+    }
+    default:
+      break;
+  }
+};
 
 const favorites = props => {
   return props.workflows
@@ -100,6 +283,25 @@ const tasks = props => {
   });
 };
 
+const system = props => {
+  return props.system.map((task, i) => {
+    const wfObject = systemTasks(task.name)
+    return (
+      <SideMenuItem
+        key={`st${i}`}
+        model={{
+          type: task.name,
+          wfObject,
+          name: task.name,
+          description: task.hasOwnProperty('description') ? task.description : '',
+        }}
+        name={task.name.toUpperCase()}
+        icon={icons(task)}
+        />
+    );
+  });
+};
+
 const custom = (props, custom) => {
   return props.workflows
     .map((wf, i) => {
@@ -159,6 +361,9 @@ const Sidemenu = props => {
           break;
         case 'Tasks':
           setContent(tasks(props));
+          break;
+        case 'System Tasks': 
+          setContent(system(props));
           break;
         default:
           setContent(custom(props, which));
@@ -246,6 +451,13 @@ const Sidemenu = props => {
           active={open === 'Tasks'}
           onClick={() => handleOpen('Tasks')}>
           <Icon name="tasks" />
+        </Menu.Item>
+        <Menu.Item
+          as="a"
+          title="System Tasks"
+          active={open === 'System Tasks'}
+          onClick={() => handleOpen('System Tasks')}>
+          <Icon name="code" />
         </Menu.Item>
         <Menu.Item
           as="a"

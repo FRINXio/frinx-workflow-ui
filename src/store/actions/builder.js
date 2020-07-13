@@ -14,6 +14,7 @@ export const STORE_WORKFLOW_ID = "STORE_WORKFLOW_ID";
 export const SHOW_CUSTOM_ALERT = "SHOW_CUSTOM_ALERT";
 export const OPEN_CARD = "OPEN_CARD";
 export const UPDATE_TASKS = "UPDATE_TASKS";
+export const UPDATE_SYSTEM = "UPDATE_SYSTEM";
 
 export const storeWorkflows = originalWorkflows => {
   return {
@@ -81,6 +82,10 @@ export const updateTasks = tasks => {
   return { type: UPDATE_TASKS, tasks };
 };
 
+export const updateSystem = system => {
+  return { type: UPDATE_SYSTEM, system };
+};
+
 export const updateFinalWorkflow = finalWorkflow => {
   return { type: UPDATE_FINAL_WORKFLOW, finalWorkflow };
 };
@@ -90,11 +95,19 @@ export const requestUpdateByQuery = (queryIn, labelsIn) => {
     let {
       originalTasks,
       originalWorkflows,
+      originalSystem,
       openCard,
       query,
       labels
     } = getState().buildReducer;
-    let data = openCard === "Tasks" ? originalTasks : originalWorkflows;
+
+    let data = [];
+    switch(openCard) {
+      case "Tasks": data = originalTasks; break;
+      case "Workflows": data = originalWorkflows; break;
+      case "System Tasks": data = originalSystem; break;
+    }
+
     let withLabels = [];
     let toBeUpdated = [];
 
@@ -144,10 +157,11 @@ export const requestUpdateByQuery = (queryIn, labelsIn) => {
       toBeUpdated = withLabels;
     }
 
-    if (openCard === "Tasks") {
-      dispatch(updateTasks(toBeUpdated));
-    } else {
-      dispatch(updateWorkflows(toBeUpdated));
+    switch(openCard) {
+      case "Tasks": return dispatch(updateTasks(toBeUpdated));
+      case "Workflows": return dispatch(updateWorkflows(toBeUpdated));
+      case "System Tasks": return dispatch(updateSystem(toBeUpdated));
     }
+    
   };
 };

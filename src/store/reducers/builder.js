@@ -8,7 +8,7 @@ import {
   SWITCH_SMART_ROUTING, UPDATE_BUILDER_LABELS,
   UPDATE_BUILDER_QUERY,
   UPDATE_FINAL_WORKFLOW, UPDATE_TASKS,
-  UPDATE_WORKFLOWS
+  UPDATE_WORKFLOWS, UPDATE_SYSTEM
 } from "../actions/builder";
 
 const finalWorkflowTemplate = {
@@ -31,7 +31,21 @@ const initialState = {
   query: "",
   labels: [],
   openCard: null,
-  functional: [
+  system: [
+    { name: "start", description: "Starting point of every workflow" },
+    { name: "end", description: "Successful finish of a workflow" },
+    { name: "terminate", description: "Unsuccessful termination of a workflow" },
+    { name: "decision", description: "Conditional branching point in a workflow" },
+    { name: "fork", description: "Concurrent execution fork in a workflow" },
+    { name: "join", description: "Concurrent execution join in a workflow" },
+    { name: "dynamic_fork", description: "Dynamic concurrent execution fork in a workflow. Tasks and inputs are provided in runtime." },
+    { name: "http", description: "HTTP execution task" },
+    { name: "lambda", description: "Arbitrary javascript code execution task" },
+    { name: "wait", description: "Wait for a specific event before continuing" },
+    { name: "event", description: "Publish a specific event (other workflow might be waiting for)" },
+    { name: "raw", description: "Specify a task in JSON" },
+  ],
+  originalSystem: [
     { name: "start", description: "Starting point of every workflow" },
     { name: "end", description: "Successful finish of a workflow" },
     { name: "terminate", description: "Unsuccessful termination of a workflow" },
@@ -95,6 +109,10 @@ const reducer = (state = initialState, action) => {
     case UPDATE_TASKS: {
       const { tasks } = action;
       return { ...state, tasks };
+    }
+    case UPDATE_SYSTEM: {
+      const { system } = action;
+      return { ...state, system };
     }
     case RESET_TO_DEFAULT_WORKFLOW: {
       return {
