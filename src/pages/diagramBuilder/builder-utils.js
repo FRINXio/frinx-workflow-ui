@@ -180,6 +180,7 @@ export const handleForkNode = forkNode => {
           tmpBranch.push(decideNode.extras.inputs);
           current = firstNeutralNode;
           break;
+        case "dynamic":
         case "default":
           tmpBranch.push(current.extras.inputs);
           parent = current;

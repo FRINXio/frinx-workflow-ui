@@ -1,0 +1,39 @@
+.dynamicNode-shape {
+    position: relative;
+    width: 100px;
+    height: 60px;
+    line-height: 55px;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    background-color: rgb(11,60,139);
+    color: white;
+    text-align: center;
+    font-size: 12px;
+}
+
+.dynamicNode-title {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+}
+
+.dynamicNode-meta {
+    width: 100px;
+    text-align: center;
+    word-wrap: break-word;
+    color: lightblue;
+    font-size: 10px;
+}
+
+.dynamicNode-portLeft {
+    position: absolute;
+    z-index: 10;
+    top: 17px;
+    left: -10px;
+}
+
+.dynamicNode-portRight {
+    position: absolute;
+    z-index: 10;
+    top: 17px;
+    left: 85px;
+}

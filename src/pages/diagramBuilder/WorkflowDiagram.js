@@ -20,6 +20,7 @@ import { CircleEndNodeModel } from "./NodeModels/EndNode/CircleEndNodeModel";
 import { ForkNodeModel } from "./NodeModels/ForkNode/ForkNodeModel";
 import { JoinNodeModel } from "./NodeModels/JoinNode/JoinNodeModel";
 import { CircleStartNodeModel } from "./NodeModels/StartNode/CircleStartNodeModel";
+import { DynamicNodeModel } from "./NodeModels/DynamicForkNode/DynamicNodeModel";
 
 const nodeColors = {
   subWorkflow: "rgb(34,144,255)",
@@ -297,6 +298,9 @@ export class WorkflowDiagram {
       case "wait":
         node = this.placeWaitNode(task, points.x, points.y);
         break;
+      case "dynamic_fork":
+        node = this.placeDynamicForkNode(task, points.x, points.y);
+        break;
       default:
         break;
     }
@@ -409,6 +413,12 @@ export class WorkflowDiagram {
     return node;
   };
 
+  placeDynamicForkNode = (task, x, y) => {
+    let node = new DynamicNodeModel(task.name, nodeColors.systemTask, task);
+    node.setPosition(x, y);
+    return node;
+  };
+
   placeJoinNode = (task, x, y) => {
     let node = new JoinNodeModel(task.name, nodeColors.systemTask, task);
     node.setPosition(x, y);
@@ -494,6 +504,7 @@ export class WorkflowDiagram {
    */
   linkAllNodes() {
     const { edges } = this.getGraphState(this.definition);
+    console.log(edges)
 
     edges.forEach((edge) => {
       if (edge.from !== "start" && edge.to !== "final") {
@@ -542,7 +553,8 @@ export class WorkflowDiagram {
     if (
       node1.type === "fork" ||
       node1.type === "join" ||
-      node1.type === "start"
+      node1.type === "start" ||
+      node1.type === "dynamic"
     ) {
       const fork_join_start_outPort = node1.getPort("right");
 
@@ -552,7 +564,7 @@ export class WorkflowDiagram {
       if (node2.type === "decision") {
         return fork_join_start_outPort.link(node2.getPort("inputPort"));
       }
-      if (["fork", "join", "end"].includes(node2.type)) {
+      if (["fork", "join", "end", "dynamic"].includes(node2.type)) {
         return fork_join_start_outPort.link(node2.getPort("left"));
       }
     } else if (node1.type === "default") {
@@ -564,7 +576,7 @@ export class WorkflowDiagram {
       if (node2.type === "decision") {
         return defaultOutPort.link(node2.getPort("inputPort"));
       }
-      if (["fork", "join", "end"].includes(node2.type)) {
+      if (["fork", "join", "end", "dynamic"].includes(node2.type)) {
         return defaultOutPort.link(node2.getPort("left"));
       }
     } else if (node1.type === "decision") {
@@ -576,7 +588,7 @@ export class WorkflowDiagram {
       if (node2.type === "decision") {
         return currentPort.link(node2.getPort("inputPort"));
       }
-      if (["fork", "join", "end"].includes(node2.type)) {
+      if (["fork", "join", "end", "dynamic"].includes(node2.type)) {
         return currentPort.link(node2.getPort("left"));
       }
     }
@@ -770,7 +782,14 @@ export class WorkflowDiagram {
       case "SIMPLE":
       case "SUB_WORKFLOW": {
         const { x, y } = this.calculatePosition(branchX, branchY);
-        const node = this.placeDefaultNode(task, x, y);
+        var node = null;
+
+        if (task.name === "DYNAMIC_FORK") {
+          node = this.placeDynamicForkNode(task, x, y);
+        } else {
+          node = this.placeDefaultNode(task, x, y);
+        }
+
         this.diagramModel.addNode(node);
         break;
       }

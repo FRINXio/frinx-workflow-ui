@@ -11,11 +11,12 @@ import {Button, Col, Form, InputGroup, Row} from 'react-bootstrap';
 
 const TEXTFIELD_KEYWORDS = ['template', 'uri', 'body'];
 const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw'];
-const SELECTFIELD_KEYWORDS = ['method', 'action'];
+const SELECTFIELD_KEYWORDS = ['method', 'action', 'expectedType'];
 const KEYFIELD_KEYWORDS = ['headers'];
 const SELECTFIELD_OPTIONS = {
   action: ['complete_task', 'fail_task'],
   method: ['GET', 'PUT', 'POST', 'DELETE'],
+  expectedType: ['SIMPLE', 'SUB_WORKFLOW']
 };
 
 const InputsTab = props => {
@@ -122,7 +123,7 @@ const InputsTab = props => {
     const options = SELECTFIELD_OPTIONS[entry[0]];
 
     return (
-      <Col sm={12} key={`colTf-${entry[0]}`}>
+      <Col sm={6} key={`colTf-${entry[0]}`}>
         <Form.Group>
           <Form.Label>{entry[0]}</Form.Label>
           <Dropdown
