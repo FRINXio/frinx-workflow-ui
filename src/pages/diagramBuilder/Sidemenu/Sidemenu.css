@@ -30,24 +30,6 @@
     text-align: left;
 }
 
-#sidebar-right {
-    opacity: 0.3;
-    transition: opacity 0.2s ease;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #e0e1e2;
-    height: auto!important;
-}
-
-#sidebar-right:hover {
-    opacity: 1;
-    transition: opacity 0.2s ease;
-}
-
-#sidebar-right .item:hover {
-    background-color: rgba(0, 0, 0, 0.13);
-}
-
 .decision-icon {
     position: relative;
     height: 30px;

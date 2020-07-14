@@ -1,6 +1,6 @@
 import React from "react";
 import { Badge, Navbar } from "react-bootstrap";
-import { NavLink, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import "./Header.css";
 import logo from "./logo-min.png";
 import { version } from "../../../package.json";
@@ -21,18 +21,22 @@ const Header = () => {
     }
   };
 
+  // workaround to get to parent app context
+  const reloadPage = () => {
+    history.pushState(null, null, "/");
+    window.location.reload()
+  }
+
   return (
     <Navbar className="navbarHeader">
       <Navbar.Brand>
-        <NavLink to="/">
-          <img alt="" src={logo} />
+        <img alt="logo" src={logo} onClick={() => reloadPage()} style={{ cursor: "pointer" }} />
           <Badge
             style={{ fontSize: "55%", marginLeft: "10px" }}
             variant="light"
           >
             {version}
           </Badge>
-        </NavLink>
       </Navbar.Brand>
       <Navbar.Toggle />
       <Navbar.Collapse className="justify-content-end">
