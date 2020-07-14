@@ -30,33 +30,15 @@
     text-align: left;
 }
 
-#sidebar-right {
-    opacity: 0.3;
-    transition: opacity 0.2s ease;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #e0e1e2;
-    height: auto!important;
-}
-
-#sidebar-right:hover {
-    opacity: 1;
-    transition: opacity 0.2s ease;
-}
-
-#sidebar-right .item:hover {
-    background-color: rgba(0, 0, 0, 0.13);
-}
-
 .decision-icon {
     position: relative;
     height: 30px;
     width: 30px;
     background-color: rgb(11, 60, 139);
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
     color: white;
     line-height: 30px;
+    text-align: center;
 }
 
 .circle-icon {
@@ -67,6 +49,7 @@
     border-radius: 30px;
     color: white;
     line-height: 30px;
+    text-align: center;
 }
 
 .join-icon {
@@ -77,6 +60,7 @@
     color: white;
     line-height: 30px;
     clip-path: polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%);
+    text-align: center;
 }
 
 .fork-icon {
@@ -87,6 +71,7 @@
     color: white;
     line-height: 30px;
     clip-path: polygon(25% 0%, 100% 1%, 100% 100%, 25% 100%, 0% 50%);
+    text-align: center;
 }
 
 .dynamicFork-icon {
@@ -97,15 +82,17 @@
     color: white;
     line-height: 30px;
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    text-align: center;
 }
 
-.lambda-icon{
+.default-icon{
     position: relative;
     height: 30px;
     width: 30px;
     background-color: rgb(11, 60, 139);
     color: white;
     line-height: 30px;
+    text-align: center;
 }
 
 .raw-icon{
@@ -115,6 +102,7 @@
     background-color: rgb(137, 141, 148);
     color: white;
     line-height: 30px;
+    text-align: center;
 }
 
 kbd {

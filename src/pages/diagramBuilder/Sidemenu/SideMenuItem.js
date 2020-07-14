@@ -16,21 +16,27 @@ const SideMenuItem = props => {
       fluid
       as={Card}
       draggable={true}
-      onDragStart={e => {
+      onDragStart={(e) => {
         e.dataTransfer.setData(
-          'storm-diagram-node',
-          JSON.stringify(props.model),
+          "storm-diagram-node",
+          JSON.stringify(props.model)
         );
       }}
-      style={{minHeight: '50px', cursor: 'grab', backgroundColor: 'white'}}>
-      <div style={{float: 'left', maxWidth: '90%'}}>{props.name}</div>
+      style={{ cursor: "grab", backgroundColor: "white" }}
+    >
+      <div style={{ maxWidth: "90%", float: "left" }}>
+        <div style={{display: props.icon ? "inline-block" : "hidden", marginRight: "10px"}}>
+          {props?.icon}
+        </div>
+        <div style={{display: "inline-block"}}>{props.name}</div>
+      </div>
       <div
         style={{
-          float: 'right',
-          marginTop: '8px',
-          color: 'grey',
-          opacity: '30%',
-        }}>
+          float: "right",
+          color: "grey",
+          opacity: "30%",
+        }}
+      >
         <i className="fas fa-grip-vertical" />
       </div>
     </Menu.Item>
