@@ -21,7 +21,6 @@ import * as searchActions from "../../../store/actions/searchExecs";
 import DetailsModal from "./DetailsModal/DetailsModal";
 import WorkflowBulk from "./WorkflowBulk/WorkflowBulk";
 import "./WorkflowExec.css";
-import { HttpClient as http } from "../../../common/HttpClient";
 
 class WorkflowExec extends Component {
   constructor(props) {
@@ -332,7 +331,7 @@ class WorkflowExec extends Component {
             {moment(dataset[i]["startTime"]).format("MM/DD/YYYY, HH:mm:ss:SSS")}
           </td>
           <td>
-            {moment(dataset[i]["endTime"]).format("MM/DD/YYYY, HH:mm:ss:SSS")}
+            {dataset[i].endTime ? moment(dataset[i]["endTime"]).format("MM/DD/YYYY, HH:mm:ss:SSS") : "-"}
           </td>
         </tr>
       );

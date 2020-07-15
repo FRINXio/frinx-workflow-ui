@@ -129,8 +129,9 @@ class DetailsModal extends Component {
   }
 
   formatDate(dt) {
-    if (dt == null || dt === "") {
-      return "";
+    console.log(dt)
+    if (dt == null || dt === "" || dt === 0) {
+      return "-";
     }
     return moment(dt).format("MM/DD/YYYY, HH:mm:ss:SSS");
   }
