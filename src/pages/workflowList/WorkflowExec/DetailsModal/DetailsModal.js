@@ -19,6 +19,7 @@ import { withRouter } from "react-router-dom";
 import TaskModal from "../../../../common/TaskModal";
 import "./DetailsModal.css";
 import WorkflowDia from "./WorkflowDia/WorkflowDia";
+import UnescapeButton from '../../../../common/UnescapeButton'
 import { HttpClient as http } from "../../../../common/HttpClient";
 
 new Clipboard(".clp");
@@ -358,6 +359,7 @@ class DetailsModal extends Component {
               data-clipboard-target="#wfinput"
             />
             &nbsp;&nbsp;
+            <UnescapeButton size="tiny" target="wfinput" />
           </h4>
           <code>
             <pre id="wfinput" className="heightWrapper">
@@ -374,6 +376,7 @@ class DetailsModal extends Component {
               data-clipboard-target="#wfoutput"
             />
             &nbsp;&nbsp;
+            <UnescapeButton size="tiny" target="wfoutput" />
           </h4>
           <code>
             <pre id="wfoutput" className="heightWrapper">

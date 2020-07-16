@@ -2,6 +2,7 @@
 import React from "react";
 import { Col, Container, Modal, Row, Tab, Tabs } from "react-bootstrap";
 import Highlight from "react-highlight.js";
+import UnescapeButton from './UnescapeButton';
 import type {Task} from "./flowtypes";
 
 type Props = {
@@ -63,6 +64,7 @@ const TaskModal = (props:Props) => {
                     className="btn fa fa-clipboard"
                     data-clipboard-target="#t_input"
                   />
+                  <UnescapeButton size="tiny" target="t_input" />
                 </b>
               </Row>
               <Row>
@@ -82,6 +84,7 @@ const TaskModal = (props:Props) => {
                     className="btn fa fa-clipboard"
                     data-clipboard-target="#t_output"
                   />
+                  <UnescapeButton size="tiny" target="t_output" />
                 </b>
               </Row>
               <Row>
