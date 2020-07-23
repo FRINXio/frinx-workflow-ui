@@ -42,6 +42,8 @@ function App(props) {
               <DiagramBuilder
                 frontendUrlPrefix={props.frontendUrlPrefix}
                 backendApiUrlPrefix={props.backendApiUrlPrefix}
+                disabledTasks={props.disabledTasks}
+                prefixHttpTask={props.prefixHttpTask}
                 {...pp}
               />
             )}

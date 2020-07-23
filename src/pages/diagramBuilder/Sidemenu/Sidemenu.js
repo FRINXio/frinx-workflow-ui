@@ -36,6 +36,11 @@ const icons = taskDef => {
       return (
         <div className="default-icon">{task.substring(0, 1).toUpperCase()}</div>
       );
+    case 'js':
+    case 'py':
+      return (
+        <div className="default-icon">{task.substring(0, 2).toUpperCase()}</div>
+      );
     case 'fork':
       return (
         <div className="fork-icon">{task.substring(0, 1).toUpperCase()}</div>
@@ -79,7 +84,7 @@ const sub_task = t => ({
   startDelay: 0,
 });
 
-const systemTasks = type => {
+const systemTasks = (type, props) => {
   switch (type) {
     case 'fork': {
       return {
@@ -132,6 +137,41 @@ const systemTasks = type => {
         startDelay: 0,
       };
     }
+    case 'js': {
+      return {
+        name: 'GLOBAL___js',
+        taskReferenceName: 'lambdaJsTaskRef_' + hash(),
+        type: 'SIMPLE',
+        inputParameters: {
+          lambdaValue: '${workflow.input.lambdaValue}',
+          scriptExpression:
+`if ($.lambdaValue == 1) {
+  return {testvalue: true};
+} else {
+  return {testvalue: false};
+}`,
+        },
+        optional: false,
+        startDelay: 0,
+      };
+    }
+    case 'py': {
+      return {
+        name: 'GLOBAL___py',
+        taskReferenceName: 'lambdaPyTaskRef_' + hash(),
+        type: 'SIMPLE',
+        inputParameters: {
+          lambdaValue: '${workflow.input.lambdaValue}',
+          scriptExpression:
+`if inputData["lambdaValue"] == "1":
+  return {"testValue": True}
+else:
+  return {"testValue": False}`,
+        },
+        optional: false,
+        startDelay: 0,
+      };
+    }
     case 'terminate': {
       return {
         name: 'TERMINATE_TASK',
@@ -147,7 +187,7 @@ const systemTasks = type => {
     }
     case 'http': {
       return {
-        name: 'HTTP_task',
+        name: props.prefixHttpTask + 'HTTP_task',
         taskReferenceName: 'httpRequestTaskRef_' + hash(),
         inputParameters: {
           http_request: {
@@ -284,8 +324,10 @@ const tasks = props => {
 };
 
 const system = props => {
-  return props.system.map((task, i) => {
-    const wfObject = systemTasks(task.name)
+  return props.system
+  .filter((task) => props.disabledTasks.includes(task.name) == false)
+  .map((task, i) => {
+    const wfObject = systemTasks(task.name, props);
     return (
       <SideMenuItem
         key={`st${i}`}
@@ -362,7 +404,7 @@ const Sidemenu = props => {
         case 'Tasks':
           setContent(tasks(props));
           break;
-        case 'System Tasks': 
+        case 'System Tasks':
           setContent(system(props));
           break;
         default:

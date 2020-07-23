@@ -41,9 +41,11 @@ const initialState = {
     { name: "dynamic_fork", description: "Dynamic concurrent execution fork in a workflow. Tasks and inputs are provided in runtime." },
     { name: "http", description: "HTTP execution task" },
     { name: "lambda", description: "Arbitrary javascript code execution task" },
+    { name: "js", description: "Arbitrary javascript code execution task" },
+    { name: "py", description: "Arbitrary python code execution task" },
     { name: "wait", description: "Wait for a specific event before continuing" },
     { name: "event", description: "Publish a specific event (other workflow might be waiting for)" },
-    { name: "raw", description: "Specify a task in JSON" },
+    { name: "raw", description: "Specify a task in JSON" }
   ],
   originalSystem: [
     { name: "start", description: "Starting point of every workflow" },
@@ -55,6 +57,8 @@ const initialState = {
     { name: "dynamic_fork", description: "Dynamic concurrent execution fork in a workflow. Tasks and inputs are provided in runtime." },
     { name: "http", description: "HTTP execution task" },
     { name: "lambda", description: "Arbitrary javascript code execution task" },
+    { name: "js", description: "Arbitrary javascript code execution task" },
+    { name: "py", description: "Arbitrary python code execution task" },
     { name: "wait", description: "Wait for a specific event before continuing" },
     { name: "event", description: "Publish a specific event (other workflow might be waiting for)" },
     { name: "raw", description: "Specify a task in JSON" }

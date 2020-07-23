@@ -44,7 +44,8 @@ class DiagramBuilder extends Component {
         new Application(),
         this.props.finalWorkflow,
         { x: 600, y: 300 },
-        this.backendApiUrlPrefix
+        this.backendApiUrlPrefix,
+        props.prefixHttpTask
       ),
     };
 
@@ -69,7 +70,6 @@ class DiagramBuilder extends Component {
     this.showGeneralInfoModal = this.showGeneralInfoModal.bind(this);
     this.saveNodeInputsHandler = this.saveNodeInputsHandler.bind(this);
     this.createDiagramByDefinition = this.createDiagramByDefinition.bind(this);
-  
   }
 
   componentDidMount() {
@@ -502,6 +502,8 @@ class DiagramBuilder extends Component {
               system={this.props.system}
               updateQuery={this.props.updateQuery}
               openCard={this.props.openCard}
+              prefixHttpTask={this.props.prefixHttpTask}
+              disabledTasks={this.props.disabledTasks}
             />
 
             <CustomAlert
