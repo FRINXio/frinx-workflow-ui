@@ -196,7 +196,7 @@ else:
             body: '',
             contentType: 'application/json',
             headers: {},
-            timeout: '3600',
+            timeout: 3600,
           },
         },
         type: 'SIMPLE',
