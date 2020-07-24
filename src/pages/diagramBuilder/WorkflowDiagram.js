@@ -41,13 +41,14 @@ export class WorkflowDiagram {
    * @param definition - workflow definition object
    * @param startPos - position for first node in diagram
    */
-  constructor(app = null, definition = null, startPos = null, backendApiUrlPrefix = null) {
+  constructor(app, definition, startPos, backendApiUrlPrefix, prefixHttpTask) {
     this.app = app;
     this.definition = definition;
     this.diagramEngine = app.getDiagramEngine();
     this.diagramModel = app.getDiagramEngine().getDiagramModel();
     this.startPos = startPos;
     this.backendApiUrlPrefix = backendApiUrlPrefix;
+    this.prefixHttpTask = prefixHttpTask;
   }
 
   setDefinition(definition) {
@@ -283,6 +284,12 @@ export class WorkflowDiagram {
       case "lambda":
         node = this.placeLambdaNode(task, points.x, points.y);
         break;
+      case "js":
+        node = this.placeJsNode(task, points.x, points.y);
+        break;
+      case "py":
+        node = this.placePyNode(task, points.x, points.y);
+        break;
       case "terminate":
         node = this.placeTerminateNode(task, points.x, points.y);
         break;
@@ -437,6 +444,18 @@ export class WorkflowDiagram {
     return node;
   };
 
+  placeJsNode = (task, x, y) => {
+    let node = new DefaultNodeModel('JS Lambda', nodeColors.lambdaTask, task);
+    node.setPosition(x, y);
+    return node;
+  };
+
+  placePyNode = (task, x, y) => {
+    let node = new DefaultNodeModel('PY Lambda', nodeColors.lambdaTask, task);
+    node.setPosition(x, y);
+    return node;
+  };
+
   placeTerminateNode = (task, x, y) => {
     let node = new DefaultNodeModel(task.name, nodeColors.terminateTask, task);
     node.setPosition(x, y);
@@ -450,7 +469,7 @@ export class WorkflowDiagram {
   };
 
   placeHTTPNode = (task, x, y) => {
-    let node = new DefaultNodeModel(task.name, nodeColors.httpTask, task);
+    let node = new DefaultNodeModel('HTTP', nodeColors.httpTask, task);
     node.setPosition(x, y);
     return node;
   };
@@ -761,12 +780,6 @@ export class WorkflowDiagram {
         this.diagramModel.addNode(node);
         break;
       }
-      case "HTTP": {
-        const { x, y } = this.calculatePosition(branchX, branchY);
-        const node = this.placeHTTPNode(task, x, y);
-        this.diagramModel.addNode(node);
-        break;
-      }
       case "EVENT": {
         const { x, y } = this.calculatePosition(branchX, branchY);
         const node = this.placeEventNode(task, x, y);
@@ -782,9 +795,15 @@ export class WorkflowDiagram {
       case "SIMPLE":
       case "SUB_WORKFLOW": {
         const { x, y } = this.calculatePosition(branchX, branchY);
-        var node = null;
+        let node = null;
 
-        if (task.name === "DYNAMIC_FORK") {
+        if (task.type == "SIMPLE" && task.name == 'GLOBAL___js') {
+          node = this.placeJsNode(task, x, y);
+        } else if (task.type == "SIMPLE" && task.name == 'GLOBAL___py') {
+          node = this.placePyNode(task, x, y);
+        } else if (task.type == "SIMPLE" && task.name == this.prefixHttpTask + 'HTTP_task') {
+          node = this.placeHTTPNode(task, x, y);
+        } else if (task.name === "DYNAMIC_FORK") {
           node = this.placeDynamicForkNode(task, x, y);
         } else {
           node = this.placeDefaultNode(task, x, y);

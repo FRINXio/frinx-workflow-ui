@@ -6,7 +6,8 @@ module.exports = {
     historyApiFallback: true,
     inline: true,
     hot: true,
-    open: true,
+    open: false,
+    disableHostCheck: true,
     port: 3000,
     proxy: {
       '/': {
