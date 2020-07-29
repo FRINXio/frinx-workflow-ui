@@ -1,42 +1,101 @@
 // @flow
-import React, { useState } from "react";
-import { Button, Col, Form, InputGroup } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
 import { getWfInputsRegex } from "../builder-utils";
+import {
+  Form,
+  Row,
+  Col,
+  InputGroup
+} from "react-bootstrap";
+import Dropdown from 'react-dropdown';
+
 import _ from "lodash";
 
-const createInputParamsList = props => {
-  const existingInputParameters = props.finalWf.inputParameters || [];
+const inputParamsTemplate = {
+  value: "",
+  description: "",
+  type: "string"
+}
+
+const jsonParse = (json) => {
+  try {
+    return JSON.parse(json);
+  } catch (e) {
+    return null;
+  }
+}
+
+const getInputParameters = (props) => {
+  const inputParameters = jsonParse(props.finalWf.inputParameters[0]);
   let inputParametersKeys = Object.keys(getWfInputsRegex(props.finalWf)) || [];
 
-  existingInputParameters.forEach(param => {
-    inputParametersKeys.push(param.match(/^(.*?)\[/)[1]);
-  });
+  let inputParams = inputParametersKeys.map((key) => ({
+    label: key,
+    ...(inputParameters ? inputParameters[key] : inputParamsTemplate),
+  }));
 
-  inputParametersKeys = _.uniq(inputParametersKeys);
-
-  return inputParametersKeys;
+  return inputParams;
 };
 
-const DefaultsDescsTab = props => {
-  const inputParamsList = createInputParamsList(props);
-  const [selectedParam, setSelectedParam] = useState(inputParamsList[0]);
+const DefaultsDescsTab = (props) => {
+  const [inputParams, setInputParams] = useState([]);
+  const [selectedParam, setSelectedParam] = useState(getInputParameters(props)[0]?.label);
+  const [selectedParamObj, setSelectedParamObj] = useState({})
 
-  const getDescriptionAndDefault = () => {
-    let inputParameters = props.finalWf.inputParameters || [];
-    let result = [];
+  useEffect(() => {
+    selectParameter(selectedParam);
+  }, [props]);
 
-    inputParameters.forEach(param => {
-      if (param.match(/^(.*?)\[/)[1] === selectedParam) {
-        param.match(/\[(.*?)]/g).forEach(group => {
-          result.push(group.replace(/[[\]']+/g, ""));
-        });
-      }
-    });
-    return result.length > 0 ? result : ["", ""];
+  const selectParameter = (label) => {
+    let inputParams = getInputParameters(props);
+    setInputParams(inputParams)
+    setSelectedParam(label);
+    setSelectedParamObj(_.find(inputParams, { label: label }));
   };
 
-  let currentDescription = getDescriptionAndDefault(selectedParam)[0];
-  let currentDefault = getDescriptionAndDefault(selectedParam)[1];
+  const renderInputFields = (param, i) => {
+    const types = ['string', 'toggle', 'select', 'textarea']
+
+    switch (param[0]) {
+      case "type":
+        return (
+          <Col sm={6} key={`col-${selectedParam}-${i}`}>
+            <Form.Group>
+              <Form.Label>{param[0]}</Form.Label>
+              <Dropdown
+                options={types}
+                onChange={(e) => props.handleInputParams(
+                  selectedParam,
+                  selectedParamObj,
+                  param[0],
+                  e.value
+                )}
+                value={param[1]}
+              />
+            </Form.Group>
+          </Col>          
+        );
+      default:
+        return (
+          <Col sm={6} key={`col-${selectedParam}-${i}`}>
+            <Form.Group>
+              <Form.Label>{param[0]}</Form.Label>
+              <Form.Control
+                defaultValue={param[1]}
+                onChange={(e) =>
+                  props.handleInputParams(
+                    selectedParam,
+                    selectedParamObj,
+                    param[0],
+                    e.target.value
+                  )
+                }
+              />
+            </Form.Group>
+          </Col>
+        );
+    }
+  }
 
   return (
     <div>
@@ -47,58 +106,23 @@ const DefaultsDescsTab = props => {
               <InputGroup.Text>Available input parameters:</InputGroup.Text>
             </InputGroup.Prepend>
             <Form.Control
-              disabled={inputParamsList.length === 0}
-              onClick={e => setSelectedParam(e.target.value)}
+              disabled={inputParams.length === 0}
+              onClick={(e) =>
+                selectParameter(e.target.value)
+              }
               as="select"
             >
-              {inputParamsList.map(param => (
-                <option>{param}</option>
+              {inputParams.map((param) => (
+                <option>{param.label}</option>
               ))}
             </Form.Control>
-            <InputGroup.Append>
-              <Button
-                disabled={inputParamsList.length === 0}
-                title="delete parameter's default and description"
-                onClick={() => props.deleteDefaultAndDesc(selectedParam)}
-                variant="outline-danger"
-              >
-                <i className="fas fa-times" />
-              </Button>
-            </InputGroup.Append>
           </InputGroup>
         </Form.Group>
-        <Form.Row>
-          <Col>
-            <Form.Label>default value</Form.Label>
-            <Form.Control
-              placeholder="default value"
-              disabled={inputParamsList.length === 0}
-              value={currentDefault}
-              onChange={e =>
-                props.handleCustomDefaultAndDesc(
-                  selectedParam,
-                  e.target.value,
-                  currentDescription
-                )
-              }
-            />
-          </Col>
-          <Col>
-            <Form.Label>description</Form.Label>
-            <Form.Control
-              placeholder="description"
-              disabled={inputParamsList.length === 0}
-              value={currentDescription}
-              onChange={e =>
-                props.handleCustomDefaultAndDesc(
-                  selectedParam,
-                  currentDefault,
-                  e.target.value
-                )
-              }
-            />
-          </Col>
-        </Form.Row>
+        <Row>
+          {Object.entries(_.omit(selectedParamObj, "label")).map((param, i) =>
+            renderInputFields(param, i)
+          )}
+        </Row>
       </Form>
     </div>
   );

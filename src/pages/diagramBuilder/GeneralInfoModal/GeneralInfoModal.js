@@ -128,41 +128,38 @@ const GeneralInfoModal = props => {
     setFinalWf(finalWf);
   };
 
-  const handleCustomDefaultAndDesc = (param, defaultValue, description) => {
+  const handleInputParams = (paramKey, paramObj, key, value) => {
     let finalWf = { ...finalWorkflow };
-    let inputParameters = finalWf.inputParameters || [];
-    // eslint-disable-next-line no-useless-concat
-    let entry = `${param}` + `[${description}]` + `[${defaultValue}]`;
-    let isUnique = true;
+    let inputParameters = jsonParse(finalWf.inputParameters[0]);
 
-    if (inputParameters.length > 0) {
-      inputParameters.forEach((elem, i) => {
-        if (elem.startsWith(param)) {
-          inputParameters[i] = entry;
-          return (isUnique = false);
-        }
-      });
-    }
-
-    if (isUnique) {
-      inputParameters.push(entry);
-    }
-
-    finalWf = { ...finalWf, inputParameters };
-    setFinalWf(finalWf);
-  };
-
-  const deleteDefaultAndDesc = selectedParam => {
-    let finalWf = { ...finalWorkflow };
-    let inputParameters = finalWf.inputParameters || [];
-
-    inputParameters.forEach((param, i) => {
-      if (param.match(/^(.*?)\[/)[1] === selectedParam) {
-        inputParameters.splice(i, 1);
+    let newInputParams = {
+      ...inputParameters,
+      [paramKey]: {
+        ...paramObj,
+        [key]: value
       }
-    });
+    };
 
-    finalWf = { ...finalWf, inputParameters };
+    //TODO add options if toggle/select
+    // remove options if other
+    // make type,value,description always on as template
+    const optionValues = ["toggle", "select"];
+    if (
+      key === "type" &&
+      optionValues.includes(value) &&
+      !newInputParams?.[paramKey]?.options
+    ) {
+      console.log(!newInputParams?.[paramKey]?.options)
+      newInputParams = {
+        ...newInputParams,
+        [paramKey]: {
+          ...paramObj,
+          options: value,
+        },
+      };
+    }
+
+    finalWf = { ...finalWf, inputParameters: [JSON.stringify(newInputParams)] };
     setFinalWf(finalWf);
   };
 
@@ -184,7 +181,7 @@ const GeneralInfoModal = props => {
     >
       <Modal.Header>
         <Modal.Title>
-          {isNameLocked ? "Edit general informations" : "Create new workflow"}
+          {isNameLocked ? "Edit general information" : "Create new workflow"}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ padding: "30px" }}>
@@ -211,8 +208,7 @@ const GeneralInfoModal = props => {
           <Tab eventKey={3} title="Defaults & description">
             <DefaultsDescsTab
               finalWf={finalWorkflow}
-              deleteDefaultAndDesc={deleteDefaultAndDesc}
-              handleCustomDefaultAndDesc={handleCustomDefaultAndDesc}
+              handleInputParams={handleInputParams}
             />
           </Tab>
         </Tabs>
