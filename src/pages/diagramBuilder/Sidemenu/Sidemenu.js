@@ -324,8 +324,10 @@ const tasks = props => {
 };
 
 const system = props => {
+  // FIXME props.disabledTasks is not passed properly when bundled (works in dev)
+  let disabledTasks = ['js', 'py'];
   return props.system
-  .filter((task) => props.disabledTasks.includes(task.name) == false)
+  .filter((task) => disabledTasks?.includes(task.name) == false)
   .map((task, i) => {
     const wfObject = systemTasks(task.name, props);
     return (
