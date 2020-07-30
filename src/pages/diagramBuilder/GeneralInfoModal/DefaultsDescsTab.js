@@ -31,8 +31,21 @@ const getInputParameters = (props) => {
 
   let inputParams = inputParametersKeys.map((key) => ({
     label: key,
-    ...(inputParameters ? inputParameters[key] : inputParamsTemplate),
+    ...(inputParameters
+      ? inputParameters[key]
+        ? inputParameters[key]
+        : inputParamsTemplate
+      : inputParamsTemplate),
   }));
+
+  const defaults = ['value', 'description', 'type']
+  inputParams.forEach((param, i) => {
+    defaults.forEach(d => {
+        if(!inputParams[i][d]) {
+          inputParams[i][d] = ""
+        }
+    })
+  })
 
   return inputParams;
 };
@@ -54,7 +67,7 @@ const DefaultsDescsTab = (props) => {
   };
 
   const renderInputFields = (param, i) => {
-    const types = ['string', 'toggle', 'select', 'textarea']
+    const types = ['string', 'toggle', 'select', 'textarea', 'node_id']
 
     switch (param[0]) {
       case "type":

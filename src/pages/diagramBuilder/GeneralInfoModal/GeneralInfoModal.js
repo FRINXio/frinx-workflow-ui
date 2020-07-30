@@ -136,27 +136,24 @@ const GeneralInfoModal = props => {
       ...inputParameters,
       [paramKey]: {
         ...paramObj,
-        [key]: value
+        [key]: key === "options" ?  value.split(',') : value 
       }
     };
 
-    //TODO add options if toggle/select
-    // remove options if other
-    // make type,value,description always on as template
     const optionValues = ["toggle", "select"];
     if (
       key === "type" &&
-      optionValues.includes(value) &&
-      !newInputParams?.[paramKey]?.options
+      optionValues.includes(value)
     ) {
-      console.log(!newInputParams?.[paramKey]?.options)
       newInputParams = {
         ...newInputParams,
         [paramKey]: {
-          ...paramObj,
-          options: value,
+          ...newInputParams[paramKey],
+          options: ['value1','value2']
         },
       };
+    } else if (key === "type") {
+      delete newInputParams[paramKey].options
     }
 
     finalWf = { ...finalWf, inputParameters: [JSON.stringify(newInputParams)] };
