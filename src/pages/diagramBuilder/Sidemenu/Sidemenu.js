@@ -16,6 +16,14 @@ import SideMenuItem from './SideMenuItem';
 import {getTaskInputsRegex, getWfInputsRegex, hash} from '../builder-utils';
 import { version } from "../../../../package.json";
 
+const jsonParse = json => {
+  try {
+    return JSON.parse(json);
+  } catch (e) {
+    return null;
+  }
+}
+
 const icons = taskDef => {
   const task = taskDef.name;
   switch (task) {
@@ -532,13 +540,7 @@ const Sidemenu = props => {
                 [open === 'Tasks' ? props.tasks : props.workflows]
                   .flat()
                   .map(wf => {
-                    return wf.description
-                      ? wf.description
-                          .split('-')
-                          .pop()
-                          .replace(/\s/g, '')
-                          .split(',')
-                      : null;
+                    return jsonParse(wf.description)?.labels || null
                   })
                   .flat()
                   .filter(item => item !== null),

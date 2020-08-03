@@ -124,12 +124,14 @@ export const requestUpdateByQuery = (queryIn, labelsIn) => {
     // label filter
     if (labelsIn && labelsIn.length > 0) {
       data.forEach(wf => {
+        var wfLabels;
+
         if (wf.description) {
-          let wfLabels = wf.description
-            .split("-")
-            .pop()
-            .replace(/\s/g, "")
-            .split(",");
+          try {
+            wfLabels = JSON.parse(wf.description)?.labels;
+          } catch (e) {
+            wfLabels = [];
+          }
 
           if (_.intersection(wfLabels, labelsIn).length === labelsIn.length) {
             withLabels.push(wf);
