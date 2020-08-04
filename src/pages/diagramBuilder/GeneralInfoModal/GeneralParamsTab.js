@@ -10,7 +10,6 @@ import {
 } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { workflowDescriptions } from "../../../constants";
-import { getLabelsFromString } from "../builder-utils";
 
 const GeneralParamsTab = props => {
   const { isWfNameLocked, isWfNameValid } = props;
@@ -74,14 +73,23 @@ const GeneralParamsTab = props => {
     </Form.Group>
   );
 
+  const parseJson = (json) => {
+    try {
+      return JSON.parse(json);
+    } catch (e) {
+      return null;
+    }
+  };
+
   const description = () => {
-    let desc = "";
+    let desc = props.finalWf.description || "";
     let labels = [];
     let existingLabels = [];
+    let description = parseJson(props.finalWf.description)
 
-    if (props.finalWf["description"]) {
-      desc = props.finalWf["description"].split(" - ")[0];
-      labels = getLabelsFromString(props.finalWf["description"]);
+    if (description) {
+      desc = description.description;
+      labels = description.labels;
       existingLabels = Array.from(props.getExistingLabels());
     }
 
@@ -93,25 +101,21 @@ const GeneralParamsTab = props => {
           </InputGroup.Prepend>
           <Form.Control
             type="input"
-            onChange={e =>
-              props.handleInput(e.target.value + " - " + labels, "description")
-            }
+            onChange={(e) => props.handleInput(e.target.value, "description")}
             value={desc}
           />
         </InputGroup>
         <Typeahead
-          id='new-label-typehead'
+          id="new-label-typehead"
           allowNew
           multiple
           clearButton
           newSelectionPrefix="Add a new label: "
           defaultSelected={labels}
           value={labels}
-          onChange={e =>
+          onChange={(e) =>
             props.handleInput(
-              desc +
-                " - " +
-                e.map(item => (item.label ? item.label.toUpperCase() : item)),
+              e.map((item) => (item.label ? item.label.toUpperCase() : item)),
               "description"
             )
           }

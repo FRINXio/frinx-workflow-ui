@@ -6,7 +6,11 @@ const SideMenuItem = props => {
   let description = null;
 
   if (props.model.description) {
-    description = props.model.description.split('-')[0];
+    try {
+      description = JSON.parse(props.model.description)?.description
+    } catch (e) {
+      description = props.model.description
+    }
   }
 
   return (

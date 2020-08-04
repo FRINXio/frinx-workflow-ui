@@ -15,6 +15,14 @@ import { getMountedDevices } from "../../../../store/actions/mountedDevices";
 import { storeWorkflowId } from "../../../../store/actions/builder";
 import { HttpClient as http } from "../../../../common/HttpClient";
 
+const jsonParse = (json) => {
+  try {
+    return JSON.parse(json);
+  } catch (e) {
+    return null;
+  }
+}
+
 const getInputs = (def) => {
   let inputCaptureRegex = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim
   let match = inputCaptureRegex.exec(def)
@@ -73,7 +81,10 @@ function InputModal(props) {
   const [waitingWfs, setWaitingWfs] = useState([]);
   const name = props.wf.name;
   const version = Number(props.wf.version);
-  const wfdesc = props.wf.description?.split("-")[0] || "";
+  const wfdesc =
+    jsonParse(props.wf.description)?.description ||
+    (jsonParse(props.wf.description)?.description !== "" &&
+    props.wf.description);
   
   const backendApiUrlPrefix = props.backendApiUrlPrefix;
   const frontendUrlPrefix = props.frontendUrlPrefix;

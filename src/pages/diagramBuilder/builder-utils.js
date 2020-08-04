@@ -48,14 +48,6 @@ export const encode = s => {
   return new Uint8Array(out);
 };
 
-export const getLabelsFromString = str => {
-  let labelsString = str
-    .split("-")
-    .pop()
-    .replace(/ /g, "");
-  return labelsString === "" ? [] : labelsString.split(",");
-};
-
 export const getWfInputs = wf => {
   let taskArray = wf.tasks;
   let inputParams = [];

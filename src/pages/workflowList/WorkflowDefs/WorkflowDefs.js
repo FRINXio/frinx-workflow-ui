@@ -53,34 +53,24 @@ export class WorkflowDefs extends Component {
           res.result.sort((a, b) =>
             a.name > b.name ? 1 : b.name > a.name ? -1 : 0
           ) || [];
-        let allLabels = this.getLabels(dataset);
         this.setState({
           data: dataset,
           pagesCount:
             res.result.length % this.state.defaultPages ? ++size : size,
-          allLabels: allLabels,
+          allLabels: this.getLabels(dataset),
         });
       }
     });
   }
 
   getLabels(dataset) {
-    let labelsArr = [];
-    dataset.map(({ description }) => {
-      let str =
-        description && description.match(/-(,|) [A-Z].*/g)
-          ? description.substring(description.indexOf("-") + 1)
-          : "";
-      if (str !== "") {
-        str = str.replace(/\s/g, "");
-        labelsArr = labelsArr.concat(str.split(","));
-      }
-      return null;
+    let labelsArr = dataset.map(({ description }) => {
+      return this.jsonParse(description)?.labels;
     });
     let allLabels = [...new Set([].concat(...labelsArr))];
     return allLabels
       .filter((e) => {
-        return e !== "";
+        return e !== undefined;
       })
       .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
   }
@@ -113,13 +103,9 @@ export class WorkflowDefs extends Component {
       const rows =
         this.state.keywords !== "" ? this.state.table : this.state.data;
       for (let i = 0; i < rows.length; i++) {
-        if (rows[i]["description"]) {
-          let tags = rows[i]["description"]
-            .split("-")
-            .pop()
-            .replace(/\s/g, "")
-            .split(",");
-          if (this.state.labels.every((elem) => tags.indexOf(elem) > -1)) {
+        const labels = this.jsonParse(rows[i].description)?.labels;
+        if (labels) {
+          if (this.state.labels.every((elem) => labels.indexOf(elem) > -1)) {
             toBeRendered.push(rows[i]);
           }
         }
@@ -184,26 +170,37 @@ export class WorkflowDefs extends Component {
     });
   }
 
-  updateFavourite(data) {
-    if (data.description) {
-      if (!data.description.match(/-(| )[A-Z]*/g)) data.description += " -";
-      if (data.description.includes("FAVOURITE")) {
-        let labelIndex = data.description.indexOf("FAVOURITE");
-        data.description = data.description.replace("FAVOURITE", "");
-        if (data.description[labelIndex - 1] === ",")
-          data.description =
-            data.description.substring(0, labelIndex - 1) +
-            data.description.substring(labelIndex, data.description.length);
-        if (data.description.match(/^(| )-(| )$/g)) delete data.description;
-      } else {
-        data.description.match(/.*[A-Za-z0-9]$/g)
-          ? (data.description += ",FAVOURITE")
-          : (data.description += "FAVOURITE");
-      }
-    } else {
-      data.description = "- FAVOURITE";
+  updateFavourite(workflow) {
+    var wfDescription = this.jsonParse(workflow.description);
+
+    // if workflow doesn't contain description attr. at all
+    if (!wfDescription) {
+      wfDescription = {
+        description: "",
+        labels: ["FAVOURITE"],
+      };
     }
-    http.put(this.backendApiUrlPrefix + "/metadata/", [data]).then(() => {
+    // if workflow has only description but no labels array
+    else if (wfDescription && !wfDescription.labels) {
+      wfDescription = {
+        ...wfDescription,
+        labels: ["FAVOURITE"],
+      };
+    }
+    // if workflow is already favourited (unfav.)
+    else if (wfDescription.labels.includes("FAVOURITE")) {
+      wfDescription.labels = wfDescription?.labels.filter(
+        (e) => e !== "FAVOURITE"
+      );
+    }
+    // if workflow has correct description object, just add label
+    else {
+      wfDescription.labels.push("FAVOURITE");
+    }
+
+    workflow.description = JSON.stringify(wfDescription);
+
+    http.put(this.backendApiUrlPrefix + "/metadata/", [workflow]).then(() => {
       http.get(this.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
         let dataset =
           res.result.sort((a, b) =>
@@ -233,31 +230,32 @@ export class WorkflowDefs extends Component {
   }
 
   createLabels = ({ name, description }) => {
-    let labels = [];
-    let str =
-      description && description.match(/-(,|) [A-Z].*/g)
-        ? description.substring(description.indexOf("-") + 1)
-        : "";
-    let wfLabels = str.replace(/\s/g, "").split(",");
-    wfLabels.forEach((label, i) => {
-      if (label !== "") {
-        let index = this.state.allLabels.findIndex((lab) => lab === label);
-        let newLabels =
-          this.state.labels.findIndex((lbl) => lbl === label) < 0
-            ? [...this.state.labels, label]
-            : this.state.labels;
-        labels.push(
-          <WfLabels
-            key={`${name}-${i}`}
-            label={label}
-            index={index}
-            search={this.onLabelSearch.bind(this, newLabels)}
-          />
-        );
-      }
+    const labels = this.jsonParse(description)?.labels || [];
+
+    return labels.map((label, i) => {
+      let index = this.state.allLabels.findIndex((lab) => lab === label);
+      let newLabels =
+        this.state.labels.findIndex((lbl) => lbl === label) < 0
+          ? [...this.state.labels, label]
+          : this.state.labels;
+      return (
+        <WfLabels
+          key={`${name}-${i}`}
+          label={label}
+          index={index}
+          search={this.onLabelSearch.bind(this, newLabels)}
+        />
+      );
     });
-    return labels;
   };
+
+  jsonParse(json) {
+    try {
+      return JSON.parse(json);
+    } catch (e) {
+      return null;
+    }
+  }
 
   deleteWorkflow(workflow) {
     http
@@ -276,7 +274,7 @@ export class WorkflowDefs extends Component {
         }
         this.setState({
           table: table,
-          confirmDeleteModal: false
+          confirmDeleteModal: false,
         });
       });
   }
@@ -304,7 +302,9 @@ export class WorkflowDefs extends Component {
         basic
         circular
         icon={
-          dataset?.description?.includes("FAVOURITE") ? "star" : "star outline"
+          this.jsonParse(dataset?.description)?.labels?.includes("FAVOURITE")
+            ? "star"
+            : "star outline"
         }
         onClick={this.updateFavourite.bind(this, dataset)}
       />
@@ -396,7 +396,11 @@ export class WorkflowDefs extends Component {
                 <Header.Content>
                   {dataset[i].name} / {dataset[i].version}
                   <Header.Subheader>
-                    {dataset[i]?.description?.split("-")[0] || "no description"}
+                    {this.jsonParse(dataset[i].description)?.description ||
+                      (this.jsonParse(dataset[i].description)?.description !==
+                        "" &&
+                        dataset[i].description) ||
+                      "no description"}
                   </Header.Subheader>
                 </Header.Content>
               </Header>
@@ -569,18 +573,32 @@ export class WorkflowDefs extends Component {
 
   renderConfirmDeleteModal() {
     return this.state.confirmDeleteModal ? (
-      <Modal size="mini" show={this.state.confirmDeleteModal} onHide={this.showConfirmDeleteModal.bind(this)}>
-      <Modal.Header>
-        <Modal.Title>Delete Workflow</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <p>Do you want to delete workflow <b>{this.state.activeWf.name}</b> ?</p>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button content='Delete' negative icon='trash' onClick={this.deleteWorkflow.bind(this, this.state.activeWf)}/>  
-        <Button content='Cancel' onClick={this.showConfirmDeleteModal.bind(this)}/>
-      </Modal.Footer>
-    </Modal>
+      <Modal
+        size="mini"
+        show={this.state.confirmDeleteModal}
+        onHide={this.showConfirmDeleteModal.bind(this)}
+      >
+        <Modal.Header>
+          <Modal.Title>Delete Workflow</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            Do you want to delete workflow <b>{this.state.activeWf.name}</b> ?
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            content="Delete"
+            negative
+            icon="trash"
+            onClick={this.deleteWorkflow.bind(this, this.state.activeWf)}
+          />
+          <Button
+            content="Cancel"
+            onClick={this.showConfirmDeleteModal.bind(this)}
+          />
+        </Modal.Footer>
+      </Modal>
     ) : null;
   }
 
