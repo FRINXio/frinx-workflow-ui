@@ -10,7 +10,7 @@ module.exports = {
     disableHostCheck: true,
     port: 3000,
     proxy: {
-      '/': {
+      '/api/conductor': {
         target: 'http://localhost:3001',
         secure: false
       }
