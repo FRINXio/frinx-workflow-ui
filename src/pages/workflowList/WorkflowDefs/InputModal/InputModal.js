@@ -11,6 +11,7 @@ import {
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead";
+import Dropdown from 'react-dropdown';
 import { getMountedDevices } from "../../../../store/actions/mountedDevices";
 import { storeWorkflowId } from "../../../../store/actions/builder";
 import { HttpClient as http } from "../../../../common/HttpClient";
@@ -36,48 +37,13 @@ const getInputs = (def) => {
   return [...new Set(inputsArray)];
 };
 
-const getDetails = (def, inputsArray) => {
-  let [detailsArray, tmpDesc, tmpValue, descs, values] = [[], [], [], [], []];
-
-  if (inputsArray.length > 0) {
-    for (let i = 0; i < inputsArray.length; i++) {
-      let RegExp3 = new RegExp(`\\b${inputsArray[i]}\\[.*?]"`, "igm");
-      detailsArray[i] = def.match(RegExp3);
-    }
-  }
-  for (let i = 0; i < detailsArray.length; i++) {
-    if (detailsArray[i]) {
-      tmpDesc[i] = detailsArray[i][0].match(/\[.*?\[/);
-      tmpValue[i] = detailsArray[i][0].match(/].*?]/);
-      if (tmpDesc[i] == null) {
-        tmpDesc[i] = detailsArray[i][0].match(/\[(.*?)]/);
-        descs[i] = tmpDesc[i][1];
-        values[i] = null;
-      } else {
-        tmpDesc[i] = tmpDesc[i][0].match(/[^[\]"]+/);
-        tmpValue[i] = tmpValue[i][0].match(/[^[\]]+/);
-        descs[i] = tmpDesc[i] ? tmpDesc[i][0] : null;
-        values[i] = tmpValue[i] ? tmpValue[i][0].replace(/\\/g, "") : null;
-      }
-    } else {
-      descs[i] = null;
-      values[i] = null;
-    }
-  }
-  return { descs, values };
-};
-
 function InputModal(props) {
   const dispatch = useDispatch();
   const devices = useSelector((state) => state.mountedDeviceReducer.devices);
   const [wfId, setWfId] = useState();
   const [warning, setWarning] = useState([]);
   const [status, setStatus] = useState("Execute");
-  const [workflowForm, setWorkflowForm] = useState({
-    labels: [],
-    descs: [],
-    values: [],
-  });
+  const [workflowForm, setWorkflowForm] = useState([]);
   const [waitingWfs, setWaitingWfs] = useState([]);
   const name = props.wf.name;
   const version = Number(props.wf.version);
@@ -92,20 +58,21 @@ function InputModal(props) {
   useEffect(() => {
     let definition = JSON.stringify(props.wf, null, 2);
     let labels = getInputs(definition);
-    let { descs, values } = getDetails(definition, labels);
+    let inputParams = jsonParse(props.wf.inputParameters[0])
+
+    let workflowForm = labels.map(label => ({
+      label: label,
+      ...(inputParams ? inputParams[label] : null )
+    }))
 
     if (definition.match(/\bEVENT_TASK\b/)) {
       getWaitingWorkflows().then((waitingWfs) => {
         setWaitingWfs(waitingWfs);
       });
     }
-    setWorkflowForm({
-      labels,
-      descs,
-      values,
-    });
+    setWorkflowForm(workflowForm);
 
-    if (descs.some((rx) => rx && rx.match(/.*#node_id.*/g))) {
+    if (workflowForm.some(({type}) => type && type === "node_id")) {
       dispatch(getMountedDevices());
     }
   }, [props]);
@@ -154,13 +121,13 @@ function InputModal(props) {
   };
 
   const handleInput = (e, i) => {
-    const workflowFormCopy = { ...workflowForm };
+    const workflowFormCopy = [ ...workflowForm ];
     const warningCopy = { ...warning };
 
-    workflowFormCopy.values[i] = e.target.value;
+    workflowFormCopy[i].value = e.target.value;
     warningCopy[i] = !!(
-      workflowFormCopy.values[i].match(/^\s.*$/) ||
-      workflowFormCopy.values[i].match(/^.*\s$/)
+      workflowFormCopy[i].value.match(/^\s.*$/) ||
+      workflowFormCopy[i].value.match(/^.*\s$/)
     );
 
     setWorkflowForm(workflowFormCopy);
@@ -168,19 +135,26 @@ function InputModal(props) {
   };
 
   const handleTypeahead = (e, i) => {
-    const workflowFormCopy = { ...workflowForm };
-    workflowFormCopy.values[i] = e.toString();
+    const workflowFormCopy = [ ...workflowForm ];
+    workflowFormCopy[i].value = e.toString();
     setWorkflowForm(workflowFormCopy);
   };
 
   const handleSwitch = (e, i) => {
-    const workflowFormCopy = { ...workflowForm };
-    workflowFormCopy.values[i] = e ? "true" : "false";
+    const workflowFormCopy = [ ...workflowForm ];
+
+    if (e === "true" || e === "false") {
+      e = (e == 'true')
+    }
+
+    console.log(e)
+
+    workflowFormCopy[i].value = e
     setWorkflowForm(workflowFormCopy);
   };
 
   const executeWorkflow = () => {
-    let { labels, values } = { ...workflowForm };
+    const workflowFormCopy = [ ...workflowForm ];
     let input = {};
     let payload = {
       name: name,
@@ -188,13 +162,13 @@ function InputModal(props) {
       input,
     };
 
-    for (let i = 0; i < labels.length; i++) {
-      if (values[i]) {
-        input[labels[i]] = values[i].startsWith("{")
-          ? JSON.parse(values[i])
-          : values[i];
-      }
-    }
+    workflowFormCopy.forEach(({label, value}) => {
+        input[label] =
+          typeof value === "string" && value.startsWith("{")
+            ? JSON.parse(value)
+            : value;
+    })
+
     setStatus("Executing...");
     http
       .post(backendApiUrlPrefix + "/workflow", JSON.stringify(payload))
@@ -214,16 +188,16 @@ function InputModal(props) {
     setTimeout(() => setStatus("Execute"), 1000);
   };
 
-  const inputModel = (type, i) => {
-    switch (true) {
-      case waitingWfs.length > 0 && type.toLowerCase().includes("id"):
+  const inputModel = (item, i) => {
+    switch (item.type) {
+      case "workflow-id":
         return (
           <Typeahead
-            id={`input-${type}`}
+            id={`input-${i}`}
             onChange={(e) => handleTypeahead(e, i)}
             placeholder="Enter or select workflow id"
             options={waitingWfs.map((w) => w.id)}
-            defaultSelected={workflowForm.values[i] || ""}
+            defaultSelected={workflowForm[i].value}
             onInputChange={(e) => handleTypeahead(e, i)}
             renderMenuItemChildren={(option) => (
               <div>
@@ -237,10 +211,10 @@ function InputModal(props) {
             )}
           />
         );
-      case waitingWfs.length > 0 && type.toLowerCase().includes("task"):
+      case "task-refname":
         return (
           <Typeahead
-            id={`input-${type}`}
+            id={`input-${item.i}`}
             onChange={(e) => handleTypeahead(e, i)}
             placeholder="Enter or select task reference name"
             options={waitingWfs.map((w) => w.waitingTasks).flat()}
@@ -261,21 +235,20 @@ function InputModal(props) {
             )}
           />
         );
-      case /node_id.*/g.test(type):
+      case "node_id":
         return (
           <Typeahead
             id={`input-${i}`}
             onChange={(e) => handleTypeahead(e, i)}
-            placeholder="Enter the node id"
-            multiple={!!type.match(/node_ids/g)}
+            placeholder="Enter or select node id"
             options={devices}
             selected={devices.filter(
-              (device) => device === workflowForm.values[i]
+              (device) => device === workflowForm[i].value
             )}
             onInputChange={(e) => handleTypeahead(e, i)}
           />
         );
-      case /template/g.test(type):
+      case "textarea":
         return (
           <Form.Control
             type="input"
@@ -283,15 +256,15 @@ function InputModal(props) {
             rows="2"
             onChange={(e) => handleInput(e, i)}
             placeholder="Enter the input"
-            value={workflowForm.values[i] || ""}
+            value={workflowForm[i].value}
             isInvalid={warning[i]}
           />
         );
-      case /bool/g.test(type):
+      case "toggle":
         return (
           <ToggleButtonGroup
             type="radio"
-            value={workflowForm.values[i] === "true"}
+            value={item.value}
             name={`switch-${i}`}
             onChange={(e) => handleSwitch(e, i)}
             style={{
@@ -300,13 +273,29 @@ function InputModal(props) {
               paddingTop: ".375rem",
             }}
           >
-            <ToggleButton size="sm" variant="outline-primary" value={true}>
-              On
+            <ToggleButton
+              size="sm"
+              variant="outline-primary"
+              value={item?.options[0]}
+            >
+              {item?.options[0].toString()}
             </ToggleButton>
-            <ToggleButton size="sm" variant="outline-primary" value={false}>
-              Off
+            <ToggleButton
+              size="sm"
+              variant="outline-primary"
+              value={item?.options[1]}
+            >
+              {item?.options[1].toString()}
             </ToggleButton>
           </ToggleButtonGroup>
+        );
+      case "select":
+        return (
+          <Dropdown
+            options={item.options}
+            onChange={(e) => handleSwitch(e.value, i)}
+            value={item.value}
+          />
         );
       default:
         return (
@@ -314,7 +303,7 @@ function InputModal(props) {
             type="input"
             onChange={(e) => handleInput(e, i)}
             placeholder="Enter the input"
-            value={workflowForm.values[i] || ""}
+            value={item.value}
             isInvalid={warning[i]}
           />
         );
@@ -331,11 +320,11 @@ function InputModal(props) {
         <hr />
         <Form onSubmit={executeWorkflow}>
           <Row>
-            {workflowForm.labels.map((item, i) => {
+            {workflowForm.map((item, i) => {
               return (
                 <Col sm={6} key={`col1-${i}`}>
                   <Form.Group>
-                    <Form.Label>{item}</Form.Label>
+                    <Form.Label>{item.label}</Form.Label>
                     {warning[i] ? (
                       <div
                         style={{
@@ -348,12 +337,9 @@ function InputModal(props) {
                         Unnecessary space
                       </div>
                     ) : null}
-                    {inputModel(
-                      workflowForm?.descs[i]?.split("#")[1] || item,
-                      i
-                    )}
+                    {inputModel(item, i)}
                     <Form.Text className="text-muted">
-                      {workflowForm?.descs[i]?.split("#")[0] || []}
+                      {item.description}
                     </Form.Text>
                   </Form.Group>
                 </Col>
