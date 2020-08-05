@@ -240,6 +240,9 @@ class DiagramBuilder extends Component {
 
   // GENERAL INFO MODAL
   showGeneralInfoModal() {
+    if (!this.state.showGeneralInfoModal) {
+      this.parseDiagramToJSON();
+    } 
     this.setState({
       showGeneralInfoModal: !this.state.showGeneralInfoModal,
     });
