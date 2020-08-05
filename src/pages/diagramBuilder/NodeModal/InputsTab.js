@@ -19,22 +19,28 @@ const SELECTFIELD_OPTIONS = {
   expectedType: ['SIMPLE', 'SUB_WORKFLOW']
 };
 
+const jsonParse = (json) => {
+  try {
+    return JSON.parse(json)
+  } catch (e) {
+    return null
+  }
+}
+
 const InputsTab = props => {
   const [customParam, setCustomParam] = useState('');
   const textFieldParams = [];
 
-  const getDescriptionAndDefault = selectedParam => {
-    const inputParameters = props.inputParameters || [];
-    const result = [];
+  const getDescriptionAndDefault = (selectedParam) => {
+    const inputParameters = jsonParse(
+      props.inputParameters ? props.inputParameters[0] : null
+    );
 
-    inputParameters.forEach(param => {
-      if (param.match(/^(.*?)\[/)[1] === selectedParam) {
-        param.match(/\[(.*?)]/g).forEach(group => {
-          result.push(group.replace(/[[\]']+/g, ''));
-        });
-      }
-    });
-    return result.length > 0 ? result : ['', ''];
+    if (!inputParameters) {
+      return null
+    }
+
+    return inputParameters[selectedParam]?.description
   };
 
   const addNewInputParam = e => {
@@ -80,7 +86,7 @@ const InputsTab = props => {
             />
           </InputGroup>
           <Form.Text className="text-muted">
-            {getDescriptionAndDefault(entry[0])[0]}
+            {getDescriptionAndDefault(entry[0])}
           </Form.Text>
         </Form.Group>
       </Col>,
@@ -111,7 +117,7 @@ const InputsTab = props => {
             }}
           />
           <Form.Text className="text-muted">
-            {getDescriptionAndDefault(entry[0])[0]}
+            {getDescriptionAndDefault(entry[0])}
           </Form.Text>
         </Form.Group>
       </Col>,
@@ -132,7 +138,7 @@ const InputsTab = props => {
             value={value}
           />
           <Form.Text className="text-muted">
-            {getDescriptionAndDefault(entry[0])[0]}
+            {getDescriptionAndDefault(entry[0])}
           </Form.Text>
         </Form.Group>
       </Col>
@@ -212,7 +218,7 @@ const InputsTab = props => {
             value={entry[1]}
           />
           <Form.Text className="text-muted">
-            {getDescriptionAndDefault(entry[0])[0]}
+            {getDescriptionAndDefault(entry[0])}
           </Form.Text>
         </Form.Group>
       </Col>
