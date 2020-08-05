@@ -132,6 +132,8 @@ const GeneralInfoModal = props => {
     let finalWf = { ...finalWorkflow };
     let inputParameters = jsonParse(finalWf.inputParameters[0]);
 
+    delete paramObj.label;
+
     let newInputParams = {
       ...inputParameters,
       [paramKey]: {
