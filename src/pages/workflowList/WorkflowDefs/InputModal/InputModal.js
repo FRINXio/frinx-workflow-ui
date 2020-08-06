@@ -58,7 +58,9 @@ function InputModal(props) {
   useEffect(() => {
     let definition = JSON.stringify(props.wf, null, 2);
     let labels = getInputs(definition);
-    let inputParams = jsonParse(props.wf.inputParameters[0])
+    let inputParams = jsonParse(
+      props.inputParameters ? props.inputParameters[0] : null
+    );
 
     let workflowForm = labels.map(label => ({
       label: label,
