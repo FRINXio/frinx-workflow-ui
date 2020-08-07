@@ -22,13 +22,12 @@ import WorkflowDefModal from "./WorkflowDefModal/WorkflowDefModal";
 import { WorkflowDiagram } from "./WorkflowDiagram";
 import { HttpClient as http } from "../../common/HttpClient";
 import closest from "closest";
+import { GlobalContext } from '../../common/GlobalContext';
 
 class DiagramBuilder extends Component {
+  static contextType = GlobalContext
   constructor(props) {
     super(props);
-    this.backendApiUrlPrefix = props.backendApiUrlPrefix;
-    this.frontendUrlPrefix = props.frontendUrlPrefix;
-
     this.state = {
       showNodeModal: false,
       showDefinitionModal: false,
@@ -43,9 +42,7 @@ class DiagramBuilder extends Component {
       workflowDiagram: new WorkflowDiagram(
         new Application(),
         this.props.finalWorkflow,
-        { x: 600, y: 300 },
-        this.backendApiUrlPrefix,
-        props.prefixHttpTask
+        { x: 600, y: 300 }
       ),
     };
 
@@ -72,16 +69,28 @@ class DiagramBuilder extends Component {
     this.createDiagramByDefinition = this.createDiagramByDefinition.bind(this);
   }
 
+  componentWillMount() {
+    this.setState({
+      workflowDiagram: new WorkflowDiagram(
+        new Application(),
+        this.props.finalWorkflow,
+        { x: 600, y: 300 },
+        this.context.backendApiUrlPrefix,
+        this.context.prefixHttpTask
+      )
+    })
+  }
+
   componentDidMount() {
     document.addEventListener("dblclick", this.doubleClickListener.bind(this));
 
-    http.get(this.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
+    http.get(this.context.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
       this.props.storeWorkflows(
         res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
       );
     });
 
-    http.get(this.backendApiUrlPrefix + "/metadata/taskdefs").then((res) => {
+    http.get(this.context.backendApiUrlPrefix + "/metadata/taskdefs").then((res) => {
       this.props.storeTasks(
         res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
       );
@@ -111,7 +120,7 @@ class DiagramBuilder extends Component {
   createExistingWorkflow() {
     const { name, version } = this.props.match.params;
     http
-      .get(this.backendApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
+      .get(this.context.backendApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
       .then((res) => {
         this.createDiagramByDefinition(res.result);
       })
@@ -329,12 +338,12 @@ class DiagramBuilder extends Component {
   }
 
   redirectOnExit() {
-    this.props.history.push(this.frontendUrlPrefix + "/defs");
+    this.props.history.push(this.context.frontendUrlPrefix + "/defs");
     window.location.reload();
   }
 
   redirectOnNew() {
-    this.props.history.push(this.frontendUrlPrefix + "/builder");
+    this.props.history.push(this.context.frontendUrlPrefix + "/builder");
     window.location.reload();
   }
 
@@ -367,8 +376,6 @@ class DiagramBuilder extends Component {
         modalHandler={this.closeInputModal}
         fromBuilder
         show={this.state.showInputModal}
-        backendApiUrlPrefix={this.backendApiUrlPrefix}
-        frontendUrlPrefix={this.frontendUrlPrefix}
       />
     ) : null;
 
@@ -376,8 +383,6 @@ class DiagramBuilder extends Component {
       <DetailsModal
         wfId={this.props.workflowId}
         modalHandler={this.showDetailsModal}
-        backendApiUrlPrefix={this.backendApiUrlPrefix}
-        frontendUrlPrefix={this.frontendUrlPrefix}
       />
     ) : null;
 
@@ -387,7 +392,6 @@ class DiagramBuilder extends Component {
         inputs={this.state.modalInputs}
         saveInputs={this.saveNodeInputsHandler}
         show={this.state.showNodeModal}
-        backendApiUrlPrefix={this.backendApiUrlPrefix}
       />
     ) : null;
 
@@ -504,8 +508,8 @@ class DiagramBuilder extends Component {
               system={this.props.system}
               updateQuery={this.props.updateQuery}
               openCard={this.props.openCard}
-              prefixHttpTask={this.props.prefixHttpTask}
-              disabledTasks={this.props.disabledTasks}
+              prefixHttpTask={this.context.prefixHttpTask}
+              disabledTasks={this.context.disabledTasks}
             />
 
             <CustomAlert

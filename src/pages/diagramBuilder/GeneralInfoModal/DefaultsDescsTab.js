@@ -27,7 +27,7 @@ const jsonParse = (json) => {
 
 const getInputParameters = (props) => {
   const inputParameters = jsonParse(
-    props.inputParameters ? props.inputParameters[0] : null
+    props.finalWf.inputParameters ? props.finalWf.inputParameters[0] : null
   );
   let inputParametersKeys = Object.keys(getWfInputsRegex(props.finalWf)) || [];
 

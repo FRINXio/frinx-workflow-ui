@@ -14,8 +14,10 @@ import InputModal from "./InputModal/InputModal";
 import DependencyModal from "./DependencyModal/DependencyModal";
 import SchedulingModal from "../Scheduling/SchedulingModal/SchedulingModal";
 import { HttpClient as http } from "../../../common/HttpClient";
+import {GlobalContext} from '../../../common/GlobalContext'
 
 export class WorkflowDefs extends Component {
+  static contextType = GlobalContext
   constructor(props) {
     super(props);
     this.state = {
@@ -36,9 +38,6 @@ export class WorkflowDefs extends Component {
       allLabels: [],
     };
     this.onEditSearch = this.onEditSearch.bind(this);
-    this.backendApiUrlPrefix = props.backendApiUrlPrefix;
-    this.frontendUrlPrefix = props.frontendUrlPrefix;
-    this.enableScheduling = props.enableScheduling;
   }
 
   componentWillMount() {
@@ -46,7 +45,7 @@ export class WorkflowDefs extends Component {
   }
 
   componentDidMount() {
-    http.get(this.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
+    http.get(this.context.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
       if (res.result) {
         let size = ~~(res.result.length / this.state.defaultPages);
         let dataset =
@@ -200,8 +199,8 @@ export class WorkflowDefs extends Component {
 
     workflow.description = JSON.stringify(wfDescription);
 
-    http.put(this.backendApiUrlPrefix + "/metadata/", [workflow]).then(() => {
-      http.get(this.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
+    http.put(this.context.backendApiUrlPrefix + "/metadata/", [workflow]).then(() => {
+      http.get(this.context.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
         let dataset =
           res.result.sort((a, b) =>
             a.name > b.name ? 1 : b.name > a.name ? -1 : 0
@@ -260,7 +259,7 @@ export class WorkflowDefs extends Component {
   deleteWorkflow(workflow) {
     http
       .delete(
-        this.backendApiUrlPrefix +
+        this.context.backendApiUrlPrefix +
           "/metadata/workflow/" +
           workflow.name +
           "/" +
@@ -288,7 +287,7 @@ export class WorkflowDefs extends Component {
         icon="edit"
         onClick={() =>
           this.props.history.push(
-            `${this.frontendUrlPrefix}/builder/${dataset.name}/${dataset.version}`
+            `${this.context.frontendUrlPrefix}/builder/${dataset.name}/${dataset.version}`
           )
         }
       />
@@ -344,7 +343,7 @@ export class WorkflowDefs extends Component {
         basic
         circular
         icon="clock"
-        disabled={!this.enableScheduling}
+        disabled={!this.context.enableScheduling}
         onClick={this.showSchedulingModal.bind(this, dataset)}
       />
     );
@@ -517,7 +516,6 @@ export class WorkflowDefs extends Component {
         wf={this.state.activeWf}
         modalHandler={this.showDefinitionModal.bind(this)}
         show={this.state.defModal}
-        backendApiUrlPrefix={this.backendApiUrlPrefix}
       />
     ) : null;
   }
@@ -528,8 +526,6 @@ export class WorkflowDefs extends Component {
         wf={this.state.activeWf}
         modalHandler={this.showInputModal.bind(this)}
         show={this.state.inputModal}
-        backendApiUrlPrefix={this.backendApiUrlPrefix}
-        frontendUrlPrefix={this.frontendUrlPrefix}
       />
     ) : null;
   }
@@ -540,7 +536,6 @@ export class WorkflowDefs extends Component {
         wf={this.state.activeWf}
         modalHandler={this.showDiagramModal.bind(this)}
         show={this.state.diagramModal}
-        backendApiUrlPrefix={this.backendApiUrlPrefix}
       />
     ) : null;
   }
@@ -553,7 +548,6 @@ export class WorkflowDefs extends Component {
         workflowVersion={this.state.activeWf?.version}
         onClose={this.onSchedulingModalClose.bind(this)}
         show={this.state.schedulingModal}
-        backendApiUrlPrefix={this.backendApiUrlPrefix}
       />
     );
   }
@@ -565,8 +559,6 @@ export class WorkflowDefs extends Component {
         modalHandler={this.showDependencyModal.bind(this)}
         show={this.state.dependencyModal}
         data={this.state.data}
-        backendApiUrlPrefix={this.backendApiUrlPrefix}
-        frontendUrlPrefix={this.frontendUrlPrefix}
       />
     ) : null;
   }

@@ -3,7 +3,7 @@ import './css/bootstrap.min.css';
 import './css/awesomefonts.css';
 import './css/neat.css';
 import './css/mono-blue.min.css';
-import React from "react";
+import React, {useContext} from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { applyMiddleware, combineReducers, compose, createStore } from "redux";
@@ -15,6 +15,7 @@ import bulkReducer from "./store/reducers/bulk";
 import mountedDeviceReducer from "./store/reducers/mountedDevices";
 import searchReducer from "./store/reducers/searchExecs";
 import Header from './common/header/Header'
+import { GlobalContext } from './common/GlobalContext';
 
 const rootReducer = combineReducers({
   bulkReducer,
@@ -30,40 +31,35 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk))
 );
 
-function App(props) {
+function App() {
+  const global = useContext(GlobalContext)
+  
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Switch>
           <Route
             exact
-            path={[props.frontendUrlPrefix + "/builder", props.frontendUrlPrefix + "/builder/:name/:version"]}
-            render={(pp) => (
-              <DiagramBuilder
-                frontendUrlPrefix={props.frontendUrlPrefix}
-                backendApiUrlPrefix={props.backendApiUrlPrefix}
-                disabledTasks={props.disabledTasks}
-                prefixHttpTask={props.prefixHttpTask}
-                {...pp}
-              />
-            )}
+            path={[
+              global.frontendUrlPrefix + "/builder",
+              global.frontendUrlPrefix + "/builder/:name/:version",
+            ]}
+            render={(props) => <DiagramBuilder {...props}/>}
           />
           <Route
             exact
-            path={[props.frontendUrlPrefix + "/:type", props.frontendUrlPrefix + "/:type/:wfid"]}
-            render={(pp) =>
+            path={[
+              global.frontendUrlPrefix + "/:type",
+              global.frontendUrlPrefix + "/:type/:wfid",
+            ]}
+            render={() => (
               <>
                 <Header />
-                <WorkflowList
-                  frontendUrlPrefix={props.frontendUrlPrefix}
-                  backendApiUrlPrefix={props.backendApiUrlPrefix}
-                  enableScheduling={props.enableScheduling}
-                  {...pp}
-                />
+                <WorkflowList />
               </>
-            }
+            )}
           />
-          <Redirect to={props.frontendUrlPrefix + "/defs"}/>
+          <Redirect to={global.frontendUrlPrefix + "/defs"} />
         </Switch>
       </BrowserRouter>
     </Provider>

@@ -4,7 +4,6 @@ import { Modal, Button, Tab, Tabs, ButtonGroup } from "react-bootstrap";
 import DefaultsDescsTab from "./DefaultsDescsTab";
 import OutputParamsTab from "./OutputParamsTab";
 import GeneralParamsTab from "./GeneralParamsTab";
-import { lte } from "lodash/fp";
 
 const GeneralInfoModal = props => {
   const [isWfNameValid, setWfNameValid] = useState(false);
@@ -132,16 +131,25 @@ const GeneralInfoModal = props => {
   const handleInputParams = (paramKey, paramObj, key, value) => {
     let finalWf = { ...finalWorkflow };
     let inputParameters = jsonParse(
-      props.inputParameters ? props.inputParameters[0] : null
+      finalWf.inputParameters ? finalWf.inputParameters[0] : null
     );
-
+    
     delete paramObj.label;
+
+    if (key === "options") {
+      value = value.split(",").map((e) => {
+        if (e === "true" || e === "false") {
+          return e == "true";
+        }
+        return e;
+      });
+    }
 
     let newInputParams = {
       ...inputParameters,
       [paramKey]: {
         ...paramObj,
-        [key]: key === "options" ?  value.split(',') : value 
+        [key]: value
       }
     };
 

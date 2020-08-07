@@ -1,10 +1,11 @@
 // @flow
 import GeneralTab from './GeneralTab';
 import InputsTab from './InputsTab';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {Button, Modal, Tab, Tabs} from 'react-bootstrap';
 import {hash} from '../builder-utils';
 import {HttpClient as http} from '../../../common/HttpClient';
+import {GlobalContext} from '../../../common/GlobalContext';
 
 const OBJECT_KEYWORDS = ['template', 'body'];
 
@@ -17,13 +18,12 @@ const renameObjKey = (oldObj, oldKey, newKey) => {
 };
 
 function NodeModal(props) {
+  const global = useContext(GlobalContext);
   const [inputs, setInputs] = useState([]);
   const [name, setName] = useState();
   const [version, setVersion] = useState();
   const [inputParameters, setInputParameters] = useState([]);
-  
-  const backendApiUrlPrefix = props.backendApiUrlPrefix;
-  
+    
   useEffect(() => {
     setName(props.inputs.inputs.name);
     setInputs(props.inputs.inputs);
@@ -37,13 +37,13 @@ function NodeModal(props) {
 
       http
         .get(
-          backendApiUrlPrefix + '/metadata/workflow/' + name + '/' + version,
+          global.backendApiUrlPrefix + '/metadata/workflow/' + name + '/' + version,
         )
         .then(res => {
           setInputParameters(res.result.inputParameters);
         });
     }
-  }, [props.inputs, backendApiUrlPrefix]);
+  }, [props.inputs]);
 
   function handleSave() {
     props.saveInputs(inputs, props.inputs.id);

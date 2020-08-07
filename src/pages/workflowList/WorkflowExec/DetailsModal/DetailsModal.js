@@ -21,15 +21,14 @@ import "./DetailsModal.css";
 import WorkflowDia from "./WorkflowDia/WorkflowDia";
 import UnescapeButton from '../../../../common/UnescapeButton'
 import { HttpClient as http } from "../../../../common/HttpClient";
+import { GlobalContext } from '../../../../common/GlobalContext';
 
 new Clipboard(".clp");
 
 class DetailsModal extends Component {
+  static contextType = GlobalContext
   constructor(props, context) {
     super(props, context);
-
-    this.handleClose = this.handleClose.bind(this);
-
     this.state = {
       show: true,
       meta: {},
@@ -45,9 +44,7 @@ class DetailsModal extends Component {
       taskModal: false,
       wfIdRerun: ""
     };
-
-    this.backendApiUrlPrefix = props.backendApiUrlPrefix;
-    this.frontendUrlPrefix = props.frontendUrlPrefix;
+    this.handleClose = this.handleClose.bind(this);
   }
 
   componentDidMount() {
@@ -59,7 +56,7 @@ class DetailsModal extends Component {
   }
 
   getData() {
-    http.get(this.backendApiUrlPrefix + "/id/" + this.props.wfId).then(res => {
+    http.get(this.context.backendApiUrlPrefix + "/id/" + this.props.wfId).then(res => {
 
       let inputCaptureRegex = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim
       let def = JSON.stringify(res)
@@ -104,7 +101,7 @@ class DetailsModal extends Component {
   executeWorkflow() {
     this.setState({ status: "Executing..." });
     http
-      .post(this.backendApiUrlPrefix + "/workflow", JSON.stringify(this.state.input))
+      .post(this.context.backendApiUrlPrefix + "/workflow", JSON.stringify(this.state.input))
       .then(res => {
         this.setState({
           status: res.statusText,
@@ -165,7 +162,7 @@ class DetailsModal extends Component {
                   Object.keys(this.state.subworkflows).map(item => {
                     return item === row["referenceTaskName"]
                       ? this.props.history.push(
-                          `${this.frontendUrlPrefix}/exec/${this.state.subworkflows[item].wfe.workflowId}`
+                          `${this.context.frontendUrlPrefix}/exec/${this.state.subworkflows[item].wfe.workflowId}`
                         )
                       : null;
                   });
@@ -196,31 +193,31 @@ class DetailsModal extends Component {
   }
 
   terminateWfs() {
-    http.delete(this.backendApiUrlPrefix + "/bulk/terminate", [this.state.wfId]).then(() => {
+    http.delete(this.context.backendApiUrlPrefix + "/bulk/terminate", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   pauseWfs() {
-    http.put(this.backendApiUrlPrefix + "/bulk/pause", [this.state.wfId]).then(() => {
+    http.put(this.context.backendApiUrlPrefix + "/bulk/pause", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   resumeWfs() {
-    http.put(this.backendApiUrlPrefix + "/bulk/resume", [this.state.wfId]).then(() => {
+    http.put(this.context.backendApiUrlPrefix + "/bulk/resume", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   retryWfs() {
-    http.post(this.backendApiUrlPrefix + "/bulk/retry", [this.state.wfId]).then(() => {
+    http.post(this.context.backendApiUrlPrefix + "/bulk/retry", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
 
   restartWfs() {
-    http.post(this.backendApiUrlPrefix + "/bulk/restart", [this.state.wfId]).then(() => {
+    http.post(this.context.backendApiUrlPrefix + "/bulk/restart", [this.state.wfId]).then(() => {
       this.getData();
     });
   }
@@ -454,7 +451,7 @@ class DetailsModal extends Component {
             style={{ margin: "2px", display: "inline" }}
             onClick={() =>
               this.props.history.push(
-                `${this.frontendUrlPrefix}/exec/${this.state.parentWfId}`
+                `${this.context.frontendUrlPrefix}/exec/${this.state.parentWfId}`
               )
             }
           >
@@ -541,7 +538,7 @@ class DetailsModal extends Component {
         <Modal.Footer>
           <a
             style={{ float: "left", marginRight: "50px" }}
-            href={`${this.frontendUrlPrefix}/exec/${this.state.wfIdRerun}`}
+            href={`${this.context.frontendUrlPrefix}/exec/${this.state.wfIdRerun}`}
           >
             {this.state.wfIdRerun}
           </a>

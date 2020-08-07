@@ -13,6 +13,7 @@ import bulkReducer from "./store/reducers/bulk";
 import mountedDeviceReducer from "./store/reducers/mountedDevices";
 import searchReducer from "./store/reducers/searchExecs";
 import Header from './common/header/Header'
+import { GlobalContext } from './common/GlobalContext';
 
 const rootReducer = combineReducers({
   bulkReducer,
@@ -28,26 +29,31 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk))
 );
 
-function App(props) {
+function App() {
+  const global = useContext(GlobalContext);
+
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Switch>
           <Route
             exact
-            path={[props.frontendUrlPrefix + "/:type", props.frontendUrlPrefix + "/:type/:wfid", "/"]}
-            render={(pp) =>
+            path={[
+              global.frontendUrlPrefix + "/:type",
+              global.frontendUrlPrefix + "/:type/:wfid",
+              "/",
+            ]}
+            render={() => (
               <>
                 <Header />
-                <WorkflowListReadOnly
-                  frontendUrlPrefix={props.frontendUrlPrefix}
-                  backendApiUrlPrefix={props.backendApiUrlPrefix}
-                  {...pp}
-                />
+                <WorkflowListReadOnly />
               </>
-            }
+            )}
           />
-          <Redirect from={props.frontendUrlPrefix} to={props.frontendUrlPrefix + "/defs"} />
+          <Redirect
+            from={global.frontendUrlPrefix}
+            to={global.frontendUrlPrefix + "/defs"}
+          />
         </Switch>
       </BrowserRouter>
     </Provider>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Accordion,
   Button,
@@ -13,9 +13,10 @@ import PageCount from "../../../common/PageCount";
 import PageSelect from "../../../common/PageSelect";
 import SchedulingModal from "./SchedulingModal/SchedulingModal";
 import superagent from "superagent";
+import { GlobalContext } from '../../../common/GlobalContext'
 
 const Scheduling = props => {
-
+  const global = useContext(GlobalContext)
   const [showSchedulingModal, setShowSchedulingModal] = useState(false);
   const [activeRow, setActiveRow] = useState();
   const [pagesCount, setPagesCount] = useState(1);
@@ -23,10 +24,9 @@ const Scheduling = props => {
   const [error, setError] = useState(undefined);
   const [defaultPages, setDefaultPages] = useState(20);
   const [viewedPage, setViewedPage] = useState(1);
-  const backendApiUrlPrefix = props.backendApiUrlPrefix;
 
   const refresh = () => {
-    const path = backendApiUrlPrefix + "/schedule/";
+    const path = global.backendApiUrlPrefix + "/schedule/";
     const req = superagent.get(path).accept("application/json");
     req.end((err, res) => {
       if (res && res.ok && Array.isArray(res.body)) {
@@ -73,7 +73,7 @@ const Scheduling = props => {
   };
 
   const deleteEntry = (schedulingEntry) => {
-    const path = backendApiUrlPrefix + "/schedule/" + schedulingEntry.name;
+    const path = global.backendApiUrlPrefix + "/schedule/" + schedulingEntry.name;
     const req = superagent.delete(path).accept("application/json");
     req.end((err, res) => {
       if (res && res.ok) {
