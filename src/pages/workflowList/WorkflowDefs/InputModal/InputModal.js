@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Modal,
   Button,
@@ -15,6 +15,7 @@ import Dropdown from 'react-dropdown';
 import { getMountedDevices } from "../../../../store/actions/mountedDevices";
 import { storeWorkflowId } from "../../../../store/actions/builder";
 import { HttpClient as http } from "../../../../common/HttpClient";
+import { GlobalContext } from '../../../../common/GlobalContext';
 
 const jsonParse = (json) => {
   try {
@@ -38,6 +39,7 @@ const getInputs = (def) => {
 };
 
 function InputModal(props) {
+  const global = useContext(GlobalContext);
   const dispatch = useDispatch();
   const devices = useSelector((state) => state.mountedDeviceReducer.devices);
   const [wfId, setWfId] = useState();
@@ -52,14 +54,11 @@ function InputModal(props) {
     (jsonParse(props.wf.description)?.description !== "" &&
     props.wf.description);
   
-  const backendApiUrlPrefix = props.backendApiUrlPrefix;
-  const frontendUrlPrefix = props.frontendUrlPrefix;
-
   useEffect(() => {
     let definition = JSON.stringify(props.wf, null, 2);
     let labels = getInputs(definition);
     let inputParams = jsonParse(
-      props.inputParameters ? props.inputParameters[0] : null
+      props.wf.inputParameters ? props.wf.inputParameters[0] : null
     );
 
     let workflowForm = labels.map(label => ({
@@ -85,7 +84,7 @@ function InputModal(props) {
       let q = 'status:"RUNNING"';
       http
         .get(
-          backendApiUrlPrefix + "/executions/?q=&h=&freeText=" +
+          global.backendApiUrlPrefix + "/executions/?q=&h=&freeText=" +
             q +
             "&start=" +
             0 +
@@ -94,7 +93,7 @@ function InputModal(props) {
         .then((res) => {
           let runningWfs = res.result?.hits || [];
           let promises = runningWfs.map((wf) => {
-            return http.get(backendApiUrlPrefix + "/id/" + wf.workflowId);
+            return http.get(global.backendApiUrlPrefix + "/id/" + wf.workflowId);
           });
 
           Promise.all(promises).then((results) => {
@@ -149,8 +148,6 @@ function InputModal(props) {
       e = (e == 'true')
     }
 
-    console.log(e)
-
     workflowFormCopy[i].value = e
     setWorkflowForm(workflowFormCopy);
   };
@@ -173,7 +170,7 @@ function InputModal(props) {
 
     setStatus("Executing...");
     http
-      .post(backendApiUrlPrefix + "/workflow", JSON.stringify(payload))
+      .post(global.backendApiUrlPrefix + "/workflow", JSON.stringify(payload))
       .then((res) => {
         setStatus(res.statusText);
         setWfId(res.body.text);
@@ -266,7 +263,7 @@ function InputModal(props) {
         return (
           <ToggleButtonGroup
             type="radio"
-            value={item.value}
+            value={item.value.toString()}
             name={`switch-${i}`}
             onChange={(e) => handleSwitch(e, i)}
             style={{
@@ -278,14 +275,14 @@ function InputModal(props) {
             <ToggleButton
               size="sm"
               variant="outline-primary"
-              value={item?.options[0]}
+              value={item?.options[0].toString()}
             >
               {item?.options[0].toString()}
             </ToggleButton>
             <ToggleButton
               size="sm"
               variant="outline-primary"
-              value={item?.options[1]}
+              value={item?.options[1].toString()}
             >
               {item?.options[1].toString()}
             </ToggleButton>
@@ -353,7 +350,7 @@ function InputModal(props) {
       <Modal.Footer>
         <a
           style={{ float: "left", marginRight: "50px" }}
-          href={`${frontendUrlPrefix}/exec/${wfId}`}
+          href={`${global.frontendUrlPrefix}/exec/${wfId}`}
         >
           {wfId}
         </a>

@@ -1,13 +1,14 @@
 // @flow
-import React from "react";
+import React, { useContext } from "react";
 import { Button } from "semantic-ui-react";
 import { Modal } from "react-bootstrap";
 import { Tree, TreeNode } from "react-organizational-chart";
 import { withRouter } from "react-router-dom";
 import "./DependencyModal.css";
+import { GlobalContext } from '../../../../common/GlobalContext'
 
 const DependencyModal = (props) => {
-  const frontendUrlPrefix = props.frontendUrlPrefix;
+  const global = useContext(GlobalContext)
 
   const createDepTree = (rootWorkflow) => {
     let tree = [];
@@ -56,7 +57,7 @@ const DependencyModal = (props) => {
               title="Edit"
               onClick={() =>
                 props.history.push(
-                  `${frontendUrlPrefix}/builder/${p.workflow.name}/${p.workflow.version}`
+                  `${global.frontendUrlPrefix}/builder/${p.workflow.name}/${p.workflow.version}`
                 )
               }
             >
@@ -80,7 +81,7 @@ const DependencyModal = (props) => {
               title="Edit"
               onClick={() =>
                 props.history.push(
-                  `${frontendUrlPrefix}/builder/${wf.workflow.name}/${wf.workflow.version}`
+                  `${global.frontendUrlPrefix}/builder/${wf.workflow.name}/${wf.workflow.version}`
                 )
               }
             >

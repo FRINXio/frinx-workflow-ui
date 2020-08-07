@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Table, Checkbox, Button, Icon, Input } from "semantic-ui-react";
 import { Modal } from "react-bootstrap";
 import AceEditor from "react-ace";
 import { HttpClient as http } from "../../../common/HttpClient";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-tomorrow";
+import { GlobalContext } from '../../../common/GlobalContext';
 
 function EventListeners(props) {
+  const global = useContext(GlobalContext);
   const [eventListeners, setEventListeners] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEvent, setSelectedEvent] = useState(null);
-
-  const backendApiUrlPrefix = props.backendApiUrlPrefix;
 
   useEffect(() => {
     getData();
   }, []);
 
   const getData = () => {
-    http.get(backendApiUrlPrefix + "/event").then((res) => {
+    http.get(global.backendApiUrlPrefix + "/event").then((res) => {
       if (Array.isArray(res)) {
         setEventListeners(res);
       }
@@ -31,7 +31,7 @@ function EventListeners(props) {
     }
 
     http
-      .post(backendApiUrlPrefix + "/event", event)
+      .post(global.backendApiUrlPrefix + "/event", event)
       .then((res) => {
         getData();
       })
@@ -43,7 +43,7 @@ function EventListeners(props) {
 
   const deleteEvent = (name) => {
     http
-      .delete(backendApiUrlPrefix + "/event/" + name)
+      .delete(global.backendApiUrlPrefix + "/event/" + name)
       .then(() => {
         getData();
       })

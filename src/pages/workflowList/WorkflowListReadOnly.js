@@ -4,11 +4,11 @@ import { withRouter } from "react-router-dom";
 import WorkflowDefsReadOnly from "./WorkflowDefs/WorkflowDefsReadOnly";
 import WorkflowExec from "./WorkflowExec/WorkflowExec";
 import {changeUrl, exportButton} from './workflowUtils'
+import { GlobalContext } from '../../common/GlobalContext';
 
 const WorkflowListReadOnly = (props) => {
-  const backendApiUrlPrefix = props.backendApiUrlPrefix;
-  const frontendUrlPrefix = props.frontendUrlPrefix;
-  let urlUpdater = changeUrl(props.history, frontendUrlPrefix);
+  const global = useContext(GlobalContext);
+  let urlUpdater = changeUrl(props.history, global.frontendUrlPrefix);
   let query = props.match.params.wfid ? props.match.params.wfid : null;
 
   return (
@@ -24,10 +24,10 @@ const WorkflowListReadOnly = (props) => {
             style={{ marginBottom: "20px" }}
         >
           <Tab mountOnEnter unmountOnExit eventKey="defs" title="Definitions">
-            <WorkflowDefsReadOnly backendApiUrlPrefix={backendApiUrlPrefix} frontendUrlPrefix={frontendUrlPrefix}/>
+            <WorkflowDefsReadOnly/>
           </Tab>
           <Tab mountOnEnter unmountOnExit eventKey="exec" title="Executed">
-            <WorkflowExec query={query} backendApiUrlPrefix={backendApiUrlPrefix} frontendUrlPrefix={frontendUrlPrefix}/>
+            <WorkflowExec query={query}/>
           </Tab>
         </Tabs>
       </Container>

@@ -1,20 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-
-const conductorApiUrlPrefix = "/api/conductor";
-const frontendUrlPrefix = "/workflows";
-const enableScheduling = false;
-const disabledTasks = ['js', 'py'];
-const prefixHttpTask = '';
+import { GlobalProvider } from './common/GlobalContext'
 
 ReactDOM.render(
-  <App
-    backendApiUrlPrefix={conductorApiUrlPrefix}
-    frontendUrlPrefix={frontendUrlPrefix}
-    enableScheduling={enableScheduling}
-    disabledTasks={disabledTasks}
-    prefixHttpTask={prefixHttpTask}
-  />,
+  <GlobalProvider>
+    <App/>
+  </GlobalProvider>,
   document.getElementById("root")
 );

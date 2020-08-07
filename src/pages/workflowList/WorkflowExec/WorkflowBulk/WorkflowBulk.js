@@ -12,14 +12,15 @@ import {
 } from "react-bootstrap";
 import { connect } from "react-redux";
 import * as bulkActions from "../../../../store/actions/bulk";
+import { GlobalContext } from '../../../../common/GlobalContext';
 
 class WorkflowBulk extends Component {
+  static contextType = GlobalContext;
   constructor(props) {
     super(props);
     this.state = {
       showBulk: null
     };
-    this.backendApiUrlPrefix = props.backendApiUrlPrefix;
   }
 
   performOperation(e) {
@@ -30,7 +31,7 @@ class WorkflowBulk extends Component {
     }
 
     let operation = e.target.value;
-    performBulkOperation(operation, selectedWfs, this.props.pageCount, this.backendApiUrlPrefix);
+    performBulkOperation(operation, selectedWfs, this.props.pageCount, this.context.backendApiUrlPrefix);
     this.props.bulkOperation();
     this.props.selectAllWfs();
   }
