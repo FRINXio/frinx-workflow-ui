@@ -1,19 +1,19 @@
-import './css/bootstrap.min.css';
-import './css/awesomefonts.css';
-import './css/neat.css';
-import './css/mono-blue.min.css';
+// @flow
+import "./css/bootstrap.min.css";
+import "./css/awesomefonts.css";
+import "./css/neat.css";
+import "./css/mono-blue.min.css";
 import React from "react";
 import { Provider } from "react-redux";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import thunk from "redux-thunk";
-import WorkflowListReadOnly from "./pages/workflowList/WorkflowListReadOnly";
 import buildReducer from "./store/reducers/builder";
 import bulkReducer from "./store/reducers/bulk";
 import mountedDeviceReducer from "./store/reducers/mountedDevices";
 import searchReducer from "./store/reducers/searchExecs";
-import Header from './common/header/Header'
-import { GlobalContext } from './common/GlobalContext';
+import Header from "./common/header/Header";
+import { GlobalProvider, globalConstants } from "./common/GlobalContext";
 
 const rootReducer = combineReducers({
   bulkReducer,
@@ -29,34 +29,35 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk))
 );
 
-function App() {
-  const global = useContext(GlobalContext);
+const { frontendUrlPrefix } = globalConstants;
 
+function App(props) {
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Switch>
-          <Route
-            exact
-            path={[
-              global.frontendUrlPrefix + "/:type",
-              global.frontendUrlPrefix + "/:type/:wfid",
-              "/",
-            ]}
-            render={() => (
-              <>
-                <Header />
-                <WorkflowListReadOnly />
-              </>
-            )}
-          />
-          <Redirect
-            from={global.frontendUrlPrefix}
-            to={global.frontendUrlPrefix + "/defs"}
-          />
-        </Switch>
-      </BrowserRouter>
-    </Provider>
+    <GlobalProvider {...props}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Switch>
+            <Route
+              exact
+              path={[
+                props.frontendUrlPrefix || frontendUrlPrefix + "/:type",
+                props.frontendUrlPrefix || frontendUrlPrefix + "/:type/:wfid",
+                "/",
+              ]}
+              render={() => (
+                <>
+                  <Header />
+                  <WorkflowListReadOnly />
+                </>
+              )}
+            />
+            <Redirect
+              to={props.frontendUrlPrefix || frontendUrlPrefix + "/defs"}
+            />
+          </Switch>
+        </BrowserRouter>
+      </Provider>
+    </GlobalProvider>
   );
 }
 

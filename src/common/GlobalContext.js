@@ -1,26 +1,27 @@
-import React, {createContext} from 'react'
+import React, {createContext, useState, useEffect} from 'react'
 
 export const GlobalContext = createContext();
 
-const backendApiUrlPrefix = "/api/conductor";
-const frontendUrlPrefix = "/workflows";
-const enableScheduling = false;
-const disabledTasks = ['js', 'py'];
-const prefixHttpTask = '';
+export const globalConstants = {
+  backendApiUrlPrefix: "/api/conductor",
+  frontendUrlPrefix: "/workflows",
+  enableScheduling: false,
+  disabledTasks: ["js", "py"],
+  prefixHttpTask: "",
+};
 
-export const GlobalProvider = ({ children }) => {
-  
-    return (
-      <GlobalContext.Provider
-        value={{
-          backendApiUrlPrefix,
-          frontendUrlPrefix,
-          enableScheduling,
-          disabledTasks,
-          prefixHttpTask
-        }}
-      >
-        {children}
-      </GlobalContext.Provider>
-    );
-  };
+export const GlobalProvider = (props) => {
+  const [global, setGlobal] = useState(globalConstants);
+
+  useEffect(() => {
+    setGlobal({...global, ...props})
+  }, [props])
+
+  return (
+    <GlobalContext.Provider
+      value={global}
+    >
+      {props.children}
+    </GlobalContext.Provider>
+  );
+};
