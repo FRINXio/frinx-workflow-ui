@@ -40,8 +40,8 @@ function App(props) {
             <Route
               exact
               path={[
-                props.frontendUrlPrefix || frontendUrlPrefix + "/:type",
-                props.frontendUrlPrefix || frontendUrlPrefix + "/:type/:wfid",
+                (props.frontendUrlPrefix || frontendUrlPrefix) + "/:type",
+                (props.frontendUrlPrefix || frontendUrlPrefix) + "/:type/:wfid",
                 "/",
               ]}
               render={() => (
@@ -52,7 +52,7 @@ function App(props) {
               )}
             />
             <Redirect
-              to={props.frontendUrlPrefix || frontendUrlPrefix + "/defs"}
+              to={(props.frontendUrlPrefix || frontendUrlPrefix) + "/defs"}
             />
           </Switch>
         </BrowserRouter>
