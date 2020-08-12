@@ -1,15 +1,25 @@
 # frinx-workflow-ui
 
-The Frinx workflow user interface
+UI for managing workflows
+
+## Components 
+
+- `/api`
+    - workflow proxy - redirects requests to conductor endpoints
+- `/app` 
+    - React web app
+- `/server` 
+    - server that hosts web app
+    - redirects UI requests to workflow proxy
 
 ## Installation
 
 To build as standalone:
 ```bash
-npm install
+cd app && npm install
 npm start
 ```
-http://localhost:8080
+http://localhost:3000
 
 ## npm publish
 

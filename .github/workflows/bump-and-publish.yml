@@ -34,6 +34,7 @@ jobs:
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
+          PACKAGEJSON_DIR:  'app'
           CI: true 
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} 
   bump-version:
@@ -56,6 +57,7 @@ jobs:
         with:
           tag-prefix: ''
         env:
+          PACKAGEJSON_DIR:  'app'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "cat package.json"
         run: cat ./package.json 
