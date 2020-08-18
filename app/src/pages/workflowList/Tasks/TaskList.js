@@ -6,40 +6,31 @@ import { GlobalContext } from "../../../common/GlobalContext";
 import AddTaskModal from "./AddTaskModal";
 import { taskDefinition } from "../../../constants";
 import {sortAscBy, sortDescBy} from "../workflowUtils";
+import PaginationPages from "../../../common/Pagination";
+import {usePagination} from '../../../common/PaginationHook';
 
 function TaskList() {
   const global = useContext(GlobalContext);
   const [keywords, setKeywords] = useState("");
-  const [data, setData] = useState([]);
   const [sorted, setSorted] = useState(false);
+  const [data, setData] = useState([]);
   const [taskModal, setTaskModal] = useState(false);
   const [taskName, setTaskName] = useState(null);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [taskBody, setTaskBody] = useState(taskDefinition);
+  const {
+    currentPage,
+    setCurrentPage,
+    pageItems,
+    setItemList,
+    totalPages
+  } = usePagination([], 10);
 
   useEffect(() => {
     getData();
   }, []);
 
-  const getData = () => {
-    http.get(global.backendApiUrlPrefix + "/metadata/taskdefs").then((res) => {
-      if (res.result) {
-        let data =
-          res.result.sort((a, b) =>
-            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-          ) || [];
-        setData(data);
-      }
-    });
-  };
-
-  const handleTaskModal = (name) => {
-    let taskName = name !== undefined ? name : null;
-    setTaskName(taskName);
-    setTaskModal(!taskModal);
-  };
-
-  const filteredRows = () => {
+  useEffect(() => {
     const results = !keywords
       ? data
       : data.filter((e) => {
@@ -64,8 +55,29 @@ function TaskList() {
           }
           return false;
         });
+    setItemList(results);
+  }, [keywords, data]);
 
-    return results.map((e) => {
+  const getData = () => {
+    http.get(global.backendApiUrlPrefix + "/metadata/taskdefs").then((res) => {
+      if (res.result) {
+        let data =
+          res.result.sort((a, b) =>
+            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+          ) || [];
+        setData(data)
+      }
+    });
+  };
+
+  const handleTaskModal = (name) => {
+    let taskName = name !== undefined ? name : null;
+    setTaskName(taskName);
+    setTaskModal(!taskModal);
+  };
+
+  const filteredRows = () => {
+    return pageItems.map((e) => {
       return (
         <Table.Row key={e.name}>
           <Table.Cell>{e.name}</Table.Cell>
@@ -111,7 +123,7 @@ function TaskList() {
 
     sortedArray.sort(sorted ? sortDescBy(key) : sortAscBy(key));
     setSorted(!sorted);
-    setData(sortedArray);
+    setData(sortedArray)
   };
 
   const showAddNewTaskModal = () => {
@@ -149,15 +161,17 @@ function TaskList() {
         <Table.Body>{filteredRows()}</Table.Body>
         <Table.Footer>
           <Table.Row>
-            <Table.HeaderCell colSpan="7"></Table.HeaderCell>
+            <Table.HeaderCell colSpan="7">
+              <PaginationPages
+                totalPages={totalPages}
+                currentPage={currentPage}
+                changePageHandler={setCurrentPage}
+              />
+            </Table.HeaderCell>
           </Table.Row>
         </Table.Footer>
       </Table>
     );
-  };
-
-  const handleAddTaskModal = () => {
-    setAddTaskModal(!addTaskModal);
   };
 
   const handleInput = (e) =>
@@ -213,7 +227,7 @@ function TaskList() {
             <Input iconPosition="left" fluid icon placeholder="Search...">
               <input
                 value={keywords}
-                onChange={(e) => setKeywords(e.target.value)(e)}
+                onChange={(e) => setKeywords(e.target.value)}
               />
               <Icon name="search" />
             </Input>

@@ -3,13 +3,22 @@ import { Table, Input, Icon } from "semantic-ui-react";
 import moment from "moment";
 import { HttpClient as http } from "../../../common/HttpClient";
 import { GlobalContext } from "../../../common/GlobalContext";
-import {sortAscBy, sortDescBy} from "../workflowUtils";
+import { sortAscBy, sortDescBy } from "../workflowUtils";
+import { usePagination } from "../../../common/PaginationHook";
+import PaginationPages from "../../../common/Pagination";
 
 function PollData() {
   const global = useContext(GlobalContext);
-  const [data, setData] = useState([]);
   const [sorted, setSorted] = useState(false);
+  const [data, setData] = useState([]);
   const [keywords, setKeywords] = useState("");
+  const {
+    currentPage,
+    setCurrentPage,
+    pageItems,
+    setItemList,
+    totalPages
+  } = usePagination([], 10);
 
   useEffect(() => {
     http.get(global.backendApiUrlPrefix + "/queue/data").then((data) => {
@@ -19,15 +28,7 @@ function PollData() {
     });
   }, []);
 
-  const sortArray = (key) => {
-    let sortedArray = data;
-
-    sortedArray.sort(sorted ? sortDescBy(key) : sortAscBy(key));
-    setSorted(!sorted);
-    setData(sortedArray);
-  };
-
-  const filteredRows = () => {
+  useEffect(() => {
     const results = !keywords
       ? data
       : data.filter((e) => {
@@ -56,8 +57,19 @@ function PollData() {
           }
           return false;
         });
+    setItemList(results);
+  }, [keywords, data]);
 
-    return results.map((e) => {
+  const sortArray = (key) => {
+    let sortedArray = data;
+
+    sortedArray.sort(sorted ? sortDescBy(key) : sortAscBy(key));
+    setSorted(!sorted);
+    setData(sortedArray);
+  };
+
+  const filteredRows = () => {
+    return pageItems.map((e) => {
       return (
         <Table.Row key={e.queueName}>
           <Table.Cell>{e.queueName}</Table.Cell>
@@ -93,7 +105,13 @@ function PollData() {
         <Table.Body>{filteredRows()}</Table.Body>
         <Table.Footer>
           <Table.Row>
-            <Table.HeaderCell colSpan="4"></Table.HeaderCell>
+            <Table.HeaderCell colSpan="4">
+              <PaginationPages
+                totalPages={totalPages}
+                currentPage={currentPage}
+                changePageHandler={setCurrentPage}
+              />
+            </Table.HeaderCell>
           </Table.Row>
         </Table.Footer>
       </Table>
@@ -105,7 +123,7 @@ function PollData() {
       <Input iconPosition="left" fluid icon placeholder="Search...">
         <input
           value={keywords}
-          onChange={(e) => setKeywords(e.target.value)(e)}
+          onChange={(e) => setKeywords(e.target.value)}
         />
         <Icon name="search" />
       </Input>

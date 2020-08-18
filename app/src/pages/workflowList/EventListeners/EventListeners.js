@@ -6,16 +6,45 @@ import { HttpClient as http } from "../../../common/HttpClient";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-tomorrow";
 import { GlobalContext } from '../../../common/GlobalContext';
+import { usePagination } from "../../../common/PaginationHook";
+import PaginationPages from "../../../common/Pagination";
 
-function EventListeners(props) {
+function EventListeners() {
   const global = useContext(GlobalContext);
   const [eventListeners, setEventListeners] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const {
+    currentPage,
+    setCurrentPage,
+    pageItems,
+    setItemList,
+    totalPages
+  } = usePagination([], 10);
 
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    const results = !searchTerm
+      ? eventListeners
+      : eventListeners.filter((e) => {
+          let searchedKeys = ["name", "event"];
+          for (let i = 0; i < searchedKeys.length; i += 1) {
+            if (
+              e[searchedKeys[i]]
+                .toString()
+                .toLowerCase()
+                .includes(searchTerm.toLocaleLowerCase())
+            ) {
+              return true;
+            }
+          }
+          return false;
+        });
+    setItemList(results);
+  }, [searchTerm, eventListeners]);
 
   const getData = () => {
     http.get(global.backendApiUrlPrefix + "/event").then((res) => {
@@ -64,12 +93,6 @@ function EventListeners(props) {
       console.log(e);
     }
   };
-
-  const results = !searchTerm
-    ? eventListeners
-    : eventListeners.filter((e) =>
-        e.event.toLowerCase().includes(searchTerm.toLocaleLowerCase())
-      );
 
   const editModal = () => (
     <Modal
@@ -129,7 +152,7 @@ function EventListeners(props) {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {results.map((e) => {
+          {pageItems.map((e) => {
             return (
               <Table.Row key={e.event}>
                 <Table.Cell style={{ textAlign: "center" }}>
@@ -156,6 +179,17 @@ function EventListeners(props) {
             );
           })}
         </Table.Body>
+        <Table.Footer>
+          <Table.Row>
+            <Table.HeaderCell colSpan="7">
+              <PaginationPages
+                totalPages={totalPages}
+                currentPage={currentPage}
+                changePageHandler={setCurrentPage}
+              />
+            </Table.HeaderCell>
+          </Table.Row>
+        </Table.Footer>
       </Table>
     </div>
   );
