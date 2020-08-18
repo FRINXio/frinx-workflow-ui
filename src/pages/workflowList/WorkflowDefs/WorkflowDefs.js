@@ -44,8 +44,18 @@ export class WorkflowDefs extends Component {
     this.search();
   }
 
+  metadataUrlSuffix() {
+    // Use standard URL (/metadata/workflow) in case scheduling is disabled
+    // but use a special endpoint that returns workflow metadata with
+    // scheduling info attached (/schedule/metadata/workflow)
+    // if scheduling is supported by the backend
+    return this.context.enableScheduling === false
+      ? '/metadata/workflow'
+      : '/schedule/metadata/workflow';
+  }
+
   componentDidMount() {
-    http.get(this.context.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
+    http.get(this.context.backendApiUrlPrefix + this.metadataUrlSuffix()).then((res) => {
       if (res.result) {
         let size = ~~(res.result.length / this.state.defaultPages);
         let dataset =
@@ -200,7 +210,7 @@ export class WorkflowDefs extends Component {
     workflow.description = JSON.stringify(wfDescription);
 
     http.put(this.context.backendApiUrlPrefix + "/metadata/", [workflow]).then(() => {
-      http.get(this.context.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
+      http.get(this.context.backendApiUrlPrefix + this.metadataUrlSuffix()).then((res) => {
         let dataset =
           res.result.sort((a, b) =>
             a.name > b.name ? 1 : b.name > a.name ? -1 : 0
