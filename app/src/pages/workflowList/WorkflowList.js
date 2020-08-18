@@ -10,6 +10,7 @@ import {changeUrl, exportButton} from './workflowUtils'
 import EventListeners from "./EventListeners/EventListeners";
 import { GlobalContext } from '../../common/GlobalContext';
 import TaskList from "./Tasks/TaskList";
+import PollData from "./PollData/PollData";
 
 const workflowModifyButtons = (openFileUpload, history, frontendUrlPrefix) => {
   return [
@@ -107,7 +108,7 @@ const WorkflowList = (props) => {
             <TaskList />
           </Tab>
           <Tab mountOnEnter unmountOnExit eventKey="polldata" title="Poll Data">
-            {/* <EventListeners /> */}
+            <PollData />
           </Tab>
         </Tabs>
       </Container>
