@@ -5,8 +5,9 @@ export const GlobalContext = createContext();
 export const globalConstants = {
   backendApiUrlPrefix: "/api/conductor",
   frontendUrlPrefix: "/workflows",
-  enableScheduling: false,
-  disabledTasks: ["js", "py"],
+  enableScheduling: true,
+  disabledTasks: [],
+  // disabledTasks: ["js", "py", "graphQL"],
   prefixHttpTask: "",
 };
 

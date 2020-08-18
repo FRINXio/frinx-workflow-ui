@@ -49,6 +49,8 @@ const icons = taskDef => {
       return (
         <div className="default-icon">{task.substring(0, 2).toUpperCase()}</div>
       );
+    case 'graphQL':
+      return <div className="default-icon">gQL</div>;
     case 'fork':
       return (
         <div className="fork-icon">{task.substring(0, 1).toUpperCase()}</div>
@@ -175,6 +177,25 @@ const systemTasks = (type, props) => {
   return {"testValue": True}
 else:
   return {"testValue": False}`,
+        },
+        optional: false,
+        startDelay: 0,
+      };
+    }
+    case 'graphQL': {
+      return {
+        name: 'GLOBAL___graphQL',
+        taskReferenceName: 'graphQLTaskRef_' + hash(),
+        type: 'SIMPLE',
+        inputParameters: {
+          lambdaValue: '${workflow.input.lambdaValue}',
+          graphQLExpression:
+              `query queryResourceTypes {
+    QueryResourceTypes{
+        ID
+        Name
+    }
+}`,
         },
         optional: false,
         startDelay: 0,

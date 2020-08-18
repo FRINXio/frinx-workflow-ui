@@ -3,14 +3,17 @@
 import AceEditor from 'react-ace';
 
 import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-graphqlschema';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 import 'react-dropdown/style.css';
 import Dropdown from 'react-dropdown';
 import React, {useState} from 'react';
 import {Button, Col, Form, InputGroup, Row} from 'react-bootstrap';
+import GraphiQL from 'graphiql';
+import {buildSchema, GraphQLSchema} from "graphql";
 
 const TEXTFIELD_KEYWORDS = ['template', 'uri', 'body'];
-const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw'];
+const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw', 'graphQLExpression'];
 const SELECTFIELD_KEYWORDS = ['method', 'action', 'expectedType'];
 const KEYFIELD_KEYWORDS = ['headers'];
 const SELECTFIELD_OPTIONS = {
@@ -93,7 +96,101 @@ const InputsTab = props => {
     );
   };
 
-  const createCodeField = (entry, item) => {
+  const creategraphQLField = (entry, item) => {
+
+    let schema = buildSchema(`directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+) on FIELD_DEFINITION | OBJECT | INTERFACE
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+type Continent {
+  code: ID!
+  name: String!
+  countries: [Country!]!
+}
+
+input ContinentFilterInput {
+  code: StringQueryOperatorInput
+}
+
+type Country {
+  code: ID!
+  name: String!
+  native: String!
+  phone: String!
+  continent: Continent!
+  capital: String
+  currency: String
+  languages: [Language!]!
+  emoji: String!
+  emojiU: String!
+  states: [State!]!
+}
+
+input CountryFilterInput {
+  code: StringQueryOperatorInput
+  currency: StringQueryOperatorInput
+  continent: StringQueryOperatorInput
+}
+
+type Language {
+  code: ID!
+  name: String
+  native: String
+  rtl: Boolean!
+}
+
+input LanguageFilterInput {
+  code: StringQueryOperatorInput
+}
+
+type Query {
+  continents(filter: ContinentFilterInput): [Continent!]!
+  continent(code: ID!): Continent
+  countries(filter: CountryFilterInput): [Country!]!
+  country(code: ID!): Country
+  languages(filter: LanguageFilterInput): [Language!]!
+  language(code: ID!): Language
+}
+
+type State {
+  code: String
+  name: String!
+  country: Country!
+}
+
+input StringQueryOperatorInput {
+  eq: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: String
+  glob: String
+}
+
+scalar Upload
+
+`)
+    textFieldParams.push(
+    <Col sm={12} key={`colTf-${entry[0]}`}>
+      <Form.Group>
+        <Form.Label>{entry[0]}</Form.Label>
+        <GraphiQL.QueryEditor
+            schema={schema}
+            value={entry[1]}
+            readOnly={false}/>
+        <Form.Text className="text-muted">
+          {getDescriptionAndDefault(entry[0])}
+        </Form.Text>
+      </Form.Group>
+    </Col>)
+  }
+
+  const createCodeField = (entry, item, lang = 'javascript') => {
     const value = entry[1];
 
     textFieldParams.push(
@@ -101,7 +198,7 @@ const InputsTab = props => {
         <Form.Group>
           <Form.Label>{entry[0]}</Form.Label>
           <AceEditor
-            mode="javascript"
+            mode={lang}
             theme="tomorrow"
             width="100%"
             height="300px"
@@ -229,7 +326,11 @@ const InputsTab = props => {
     if (TEXTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
       createTextField(entry, item);
     } else if (CODEFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
-      createCodeField(entry, item);
+      if (entry[0].includes('graphQLExpression')) {
+        creategraphQLField(entry, item);
+      } else {
+        createCodeField(entry, item);
+      }
     } else if (
       SELECTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))
     ) {
