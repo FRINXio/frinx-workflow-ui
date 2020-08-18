@@ -5,6 +5,7 @@ import { HttpClient as http } from "../../../common/HttpClient";
 import { GlobalContext } from "../../../common/GlobalContext";
 import AddTaskModal from "./AddTaskModal";
 import { taskDefinition } from "../../../constants";
+import {sortAscBy, sortDescBy} from "../workflowUtils";
 
 function TaskList() {
   const global = useContext(GlobalContext);
@@ -103,18 +104,6 @@ function TaskList() {
           getData();
         }
       });
-  };
-
-  const sortAscBy = (key) => {
-    return function(x, y) {
-      return x[key] === y[key] ? 0 : x[key] > y[key] ? 1 : -1;
-    };
-  };
-
-  const sortDescBy = (key) => {
-    return function(x, y) {
-      return x[key] === y[key] ? 0 : x[key] < y[key] ? 1 : -1;
-    };
   };
 
   const sortArray = (key) => {

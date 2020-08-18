@@ -3,6 +3,7 @@ import { Table, Input, Icon } from "semantic-ui-react";
 import moment from "moment";
 import { HttpClient as http } from "../../../common/HttpClient";
 import { GlobalContext } from "../../../common/GlobalContext";
+import {sortAscBy, sortDescBy} from "../workflowUtils";
 
 function PollData() {
   const global = useContext(GlobalContext);
@@ -17,18 +18,6 @@ function PollData() {
       }
     });
   }, []);
-
-  const sortAscBy = (key) => {
-    return function(x, y) {
-      return x[key] === y[key] ? 0 : x[key] > y[key] ? 1 : -1;
-    };
-  };
-
-  const sortDescBy = (key) => {
-    return function(x, y) {
-      return x[key] === y[key] ? 0 : x[key] < y[key] ? 1 : -1;
-    };
-  };
 
   const sortArray = (key) => {
     let sortedArray = data;
