@@ -9,6 +9,7 @@ import Scheduling from "./Scheduling/Scheduling";
 import {changeUrl, exportButton} from './workflowUtils'
 import EventListeners from "./EventListeners/EventListeners";
 import { GlobalContext } from '../../common/GlobalContext';
+import TaskList from "./Tasks/TaskList";
 
 const workflowModifyButtons = (openFileUpload, history, frontendUrlPrefix) => {
   return [
@@ -99,8 +100,14 @@ const WorkflowList = (props) => {
           <Tab mountOnEnter unmountOnExit eventKey="scheduled" title="Scheduled" disabled={!global.enableScheduling}>
             <Scheduling />
           </Tab>
-          <Tab eventKey="eventlisteners" title="Event Listeners">
+          <Tab mountOnEnter unmountOnExit eventKey="eventlisteners" title="Event Listeners">
             <EventListeners />
+          </Tab>
+          <Tab mountOnEnter unmountOnExit eventKey="tasks" title="Tasks">
+            <TaskList />
+          </Tab>
+          <Tab mountOnEnter unmountOnExit eventKey="polldata" title="Poll Data">
+            {/* <EventListeners /> */}
           </Tab>
         </Tabs>
       </Container>

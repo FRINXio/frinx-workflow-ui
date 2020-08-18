@@ -59,3 +59,16 @@ export const taskDescriptions = {
   optional: "when set to true - workflow continues even if the task fails.",
   startDelay: "time period before task executes"
 };
+
+export const taskDefinition = {
+  name: "",
+  description: "",
+  retryCount: "0",
+  retryLogic: "FIXED",
+  retryDelaySeconds: "0",
+  timeoutPolicy: "TIME_OUT_WF",
+  timeoutSeconds: "60",
+  responseTimeoutSeconds: "10",
+  inputKeys: "",
+  outputKeys: ""
+};
