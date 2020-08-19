@@ -888,7 +888,18 @@ export class WorkflowDiagram {
               break;
             default:
               parentNode = link.targetPort.parent;
-              if (parentNode.name === "RAW") {
+              if (parentNode.name === "graphQL") {
+                // In case of graphQL task, we need to put graphQLBody param into body param
+                // so that we conform to HTTP task API ... and from now on, this will be treated
+                // as graphQL task
+                if (parentNode.extras.inputs.inputParameters?.http_request?.graphQLBody != null) {
+                  parentNode.extras.inputs.inputParameters.http_request.body =
+                      parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
+                  delete parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
+                } else {
+                  tasks.push(parentNode.extras.inputs);
+                }
+              } else if (parentNode.name === "RAW") {
                 tasks.push(handleRawNode(parentNode.extras.inputs));
               } else {
                 tasks.push(parentNode.extras.inputs);

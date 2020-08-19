@@ -174,25 +174,28 @@ else:
       };
     }
     case 'graphQL': {
+      // graphQL task is a simple facade on top of HTTP task
       return {
-        name: 'GLOBAL___GRAPHQL_task',
+        name: props.prefixHttpTask + 'HTTP_task',
         taskReferenceName: 'graphQLTaskRef_' + hash(),
-        type: 'SIMPLE',
         inputParameters: {
-          graphql_request: {
+          http_request: {
             uri: '${workflow.input.uri}',
-            timeout: 1000,
-            graphQLBody:
-                `query queryResourceTypes {
+            method: 'POST',
+            graphQLBody: `query queryResourceTypes {
     QueryResourceTypes{
         ID
         Name
     }
 }`,
+            contentType: 'application/json',
+            headers: {},
+            timeout: 3600,
           },
         },
         optional: false,
         startDelay: 0,
+        type: 'SIMPLE',
       };
     }
     case 'terminate': {
