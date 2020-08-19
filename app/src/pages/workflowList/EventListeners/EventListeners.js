@@ -147,7 +147,7 @@ function EventListeners() {
             <Table.HeaderCell>Event Task Name</Table.HeaderCell>
             <Table.HeaderCell>Action</Table.HeaderCell>
             <Table.HeaderCell style={{ textAlign: "center" }}>
-              <Icon name="cog" />
+              Actions
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
@@ -168,10 +168,10 @@ function EventListeners() {
                 <Table.Cell>{e.event.split(":")[2]}</Table.Cell>
                 <Table.Cell>{e.actions[0].action}</Table.Cell>
                 <Table.Cell style={{ textAlign: "center" }}>
-                  <Button size="mini" onClick={() => setSelectedEvent(e)}>
+                  <Button basic circular onClick={() => setSelectedEvent(e)}>
                     Edit
                   </Button>
-                  <Button size="mini" icon negative onClick={() => deleteEvent(e.name)}>
+                  <Button basic circular icon negative onClick={() => deleteEvent(e.name)}>
                     <Icon name="trash"/>
                   </Button>
                 </Table.Cell>
