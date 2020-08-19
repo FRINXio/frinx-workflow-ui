@@ -3,7 +3,6 @@ import Clipboard from "clipboard";
 import moment from "moment";
 import React, { Component } from "react";
 import {
-  Accordion,
   Button,
   ButtonGroup,
   Card,
@@ -474,27 +473,12 @@ class DetailsModal extends Component {
         />
         <Modal.Header>
           <Modal.Title>
-            Details of {this.state.meta.name ? this.state.meta.name : null}
+            Details of {this.state.meta.name ? this.state.meta.name : null} / {this.state.meta.version}
           </Modal.Title>
           <div>{parentWorkflowButton()}</div>
         </Modal.Header>
         <Modal.Body>
-          <Accordion>
-            <Accordion.Toggle as={Card.Header}>
-              <b>{this.state.meta.name ? this.state.meta.name : null}</b>
-              &nbsp;&nbsp;
-              <p style={{ float: "right" }}>{this.props.wfId}</p>
-              <b>
-                <p style={{ float: "right" }}>
-                  Version: {this.state.meta.version}&nbsp;&nbsp;
-                </p>
-              </b>
-            </Accordion.Toggle>
-            <Accordion.Collapse>
-              <Card.Body style={{ padding: "0px" }}>{headerInfo()}</Card.Body>
-            </Accordion.Collapse>
-          </Accordion>
-
+          <Card.Body style={{ padding: "0px" }}>{headerInfo()}</Card.Body>
           <Tabs
             className="heightWrapper"
             onSelect={e => this.setState({ activeTab: e })}
