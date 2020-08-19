@@ -3,14 +3,27 @@
 import AceEditor from 'react-ace';
 
 import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-graphqlschema';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 import 'react-dropdown/style.css';
 import Dropdown from 'react-dropdown';
 import React, {useState} from 'react';
 import {Button, Col, Form, InputGroup, Row} from 'react-bootstrap';
 
+/* FIXME graphQL editor : implement schema validation*/
+// import {buildSchema} from "graphql";
+// import 'codemirror/addon/hint/show-hint';
+// import 'codemirror/addon/lint/lint';
+// import 'codemirror/addon/lint/lint.css';
+// import 'codemirror-graphql/hint';
+import 'codemirror-graphql/mode';
+import 'codemirror/addon/display/autorefresh';
+import {Controlled as CodeMirror} from 'react-codemirror2';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/xq-light.css';
+
 const TEXTFIELD_KEYWORDS = ['template', 'uri', 'body'];
-const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw'];
+const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw', 'graphQLBody'];
 const SELECTFIELD_KEYWORDS = ['method', 'action', 'expectedType'];
 const KEYFIELD_KEYWORDS = ['headers'];
 const SELECTFIELD_OPTIONS = {
@@ -93,7 +106,46 @@ const InputsTab = props => {
     );
   };
 
-  const createCodeField = (entry, item) => {
+  const creategraphQLField = (entry, item) => {
+
+/* FIXME graphQL editor : implement schema validation*/
+//  let schema = buildSchema(`...`);
+
+    textFieldParams.push(
+    <Col sm={12} key={`colTf-${entry[0]}`}>
+      <Form.Group>
+        <Form.Label>{entry[0]}</Form.Label>
+        <CodeMirror
+            value={entry[1]}
+            options={{
+              mode: 'graphql',
+              theme: 'xq-light',
+              lineNumbers: true,
+              autoRefresh: true,
+              lint: {
+                /* FIXME graphQL editor : implement schema validation*/
+                schema: null,
+              },
+              hintOptions: {
+                /* FIXME graphQL editor : implement schema validation*/
+                schema: null,
+              },
+            }}
+            onBeforeChange={(editor, data, value) => {
+              props.handleInput(value, item, entry);
+            }}
+            onChange={(editor, data, value) => {
+              props.handleInput(value, item, entry);
+            }}
+        />
+        <Form.Text className="text-muted">
+          {getDescriptionAndDefault(entry[0])}
+        </Form.Text>
+      </Form.Group>
+    </Col>)
+  }
+
+  const createCodeField = (entry, item, lang = 'javascript') => {
     const value = entry[1];
 
     textFieldParams.push(
@@ -101,7 +153,7 @@ const InputsTab = props => {
         <Form.Group>
           <Form.Label>{entry[0]}</Form.Label>
           <AceEditor
-            mode="javascript"
+            mode={lang}
             theme="tomorrow"
             width="100%"
             height="300px"
@@ -229,7 +281,11 @@ const InputsTab = props => {
     if (TEXTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
       createTextField(entry, item);
     } else if (CODEFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
-      createCodeField(entry, item);
+      if (entry[0].includes('graphQLBody')) {
+        creategraphQLField(entry, item);
+      } else {
+        createCodeField(entry, item);
+      }
     } else if (
       SELECTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))
     ) {

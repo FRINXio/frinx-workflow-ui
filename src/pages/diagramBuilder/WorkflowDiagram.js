@@ -290,6 +290,9 @@ export class WorkflowDiagram {
       case "py":
         node = this.placePyNode(task, points.x, points.y);
         break;
+      case "graphQL":
+        node = this.placeGraphQLNode(task, points.x, points.y);
+        break;
       case "terminate":
         node = this.placeTerminateNode(task, points.x, points.y);
         break;
@@ -452,6 +455,12 @@ export class WorkflowDiagram {
 
   placePyNode = (task, x, y) => {
     let node = new DefaultNodeModel('PY Lambda', nodeColors.lambdaTask, task);
+    node.setPosition(x, y);
+    return node;
+  };
+
+  placeGraphQLNode = (task, x, y) => {
+    let node = new DefaultNodeModel('graphQL', nodeColors.lambdaTask, task);
     node.setPosition(x, y);
     return node;
   };
@@ -801,6 +810,8 @@ export class WorkflowDiagram {
           node = this.placeJsNode(task, x, y);
         } else if (task.type == "SIMPLE" && task.name == 'GLOBAL___py') {
           node = this.placePyNode(task, x, y);
+        } else if (task.type == "SIMPLE" && task.name == 'GLOBAL___graphQL') {
+          node = this.placeGraphQLNode(task, x, y);
         } else if (task.type == "SIMPLE" && task.name == this.prefixHttpTask + 'HTTP_task') {
           node = this.placeHTTPNode(task, x, y);
         } else if (task.name === "DYNAMIC_FORK") {

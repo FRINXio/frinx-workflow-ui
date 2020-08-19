@@ -1,20 +1,11 @@
 // @flow
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Divider,
-  Dropdown,
-  Grid,
-  Icon,
-  Input,
-  Menu,
-  Popup,
-  Sidebar,
-} from 'semantic-ui-react';
+import {Divider, Dropdown, Grid, Icon, Input, Menu, Popup, Sidebar,} from 'semantic-ui-react';
 
 import './Sidemenu.css';
 import SideMenuItem from './SideMenuItem';
 import {getTaskInputsRegex, getWfInputsRegex, hash} from '../builder-utils';
-import { version } from "../../../../package.json";
+import {version} from "../../../../package.json";
 
 const jsonParse = json => {
   try {
@@ -49,6 +40,8 @@ const icons = taskDef => {
       return (
         <div className="default-icon">{task.substring(0, 2).toUpperCase()}</div>
       );
+    case 'graphQL':
+      return <div className="default-icon">gQL</div>;
     case 'fork':
       return (
         <div className="fork-icon">{task.substring(0, 1).toUpperCase()}</div>
@@ -175,6 +168,28 @@ const systemTasks = (type, props) => {
   return {"testValue": True}
 else:
   return {"testValue": False}`,
+        },
+        optional: false,
+        startDelay: 0,
+      };
+    }
+    case 'graphQL': {
+      return {
+        name: 'GLOBAL___GRAPHQL_task',
+        taskReferenceName: 'graphQLTaskRef_' + hash(),
+        type: 'SIMPLE',
+        inputParameters: {
+          graphql_request: {
+            uri: '${workflow.input.uri}',
+            timeout: 1000,
+            graphQLBody:
+                `query queryResourceTypes {
+    QueryResourceTypes{
+        ID
+        Name
+    }
+}`,
+          },
         },
         optional: false,
         startDelay: 0,

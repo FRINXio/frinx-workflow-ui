@@ -123,6 +123,26 @@ function NodeModal(props) {
     return copiedInputs['inputParameters']['http_request']['headers'];
   }
 
+  function updateGraphQLRequest(value, key, entry) {
+    let copiedInputs = {...inputs};
+    let graphql_request = copiedInputs.inputParameters.graphql_request;
+    const inputParameters = copiedInputs.inputParameters;
+
+
+    copiedInputs = {
+      ...copiedInputs,
+      inputParameters: {
+        ...inputParameters,
+        graphql_request: {
+          ...graphql_request,
+          [entry[0]]: value,
+        },
+      },
+    };
+
+    setInputs(copiedInputs);
+  }
+
   function updateHTTPRequest(value, key, entry, i, headerKey) {
     let copiedInputs = {...inputs};
     let http_request = copiedInputs.inputParameters.http_request;
@@ -182,6 +202,9 @@ function NodeModal(props) {
       case 'headers':
       case 'http_request':
         updateHTTPRequest(value, key, entry, i, headerKey);
+        break;
+      case 'graphql_request':
+        updateGraphQLRequest(value, key, entry);
         break;
       case 'decisionCases':
         updateDecisionCase(value);
