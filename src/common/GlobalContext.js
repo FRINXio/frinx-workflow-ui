@@ -6,7 +6,7 @@ export const globalConstants = {
   backendApiUrlPrefix: "/api/conductor",
   frontendUrlPrefix: "/workflows",
   enableScheduling: false,
-  disabledTasks: ["js", "py"],
+  disabledTasks: ["js", "py", "graphQL"],
   prefixHttpTask: "",
 };
 

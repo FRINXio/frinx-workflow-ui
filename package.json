@@ -50,7 +50,11 @@
     "unescape-js": "^1.1.4",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "codemirror": "^5.56.0",
+    "codemirror-graphql": "^0.12.1",
+    "react-codemirror2": "^7.2.1",
+    "graphql": "^15.0.0"
   },
   "scripts": {
     "start": "webpack-dev-server --mode development",
