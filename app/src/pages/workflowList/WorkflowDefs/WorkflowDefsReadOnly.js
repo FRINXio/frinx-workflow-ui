@@ -91,12 +91,12 @@ function WorkflowDefs(props) {
                   e[searchedKeys[i]]
                     .toString()
                     .toUpperCase()
-                    .indexOf(queryWords[j]) !== -1
+                    .indexOf(queryWords[j]) === -1
                 ) {
-                  return true;
+                  return false;
                 }
               }
-              return false;
+              return true;
             }
           });
     setItemList(results);

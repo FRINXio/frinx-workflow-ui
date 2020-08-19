@@ -73,9 +73,10 @@ function InputModal(props) {
     }
     setWorkflowForm(workflowForm);
 
-    if (workflowForm.some(({type}) => type && type === "node_id")) {
-      dispatch(getMountedDevices());
-    }
+    // FIXME
+    // if (workflowForm.some(({type}) => type && type === "node_id")) {
+    //   dispatch(getMountedDevices());
+    // }
   }, [props]);
 
   const getWaitingWorkflows = () => {

@@ -69,6 +69,7 @@ function WorkflowDefs(props) {
             let searchedKeys = ["name"];
             let queryWords = keywords.toUpperCase().split(" ");
             let labelsArr = jsonParse(e.description)?.labels;
+            console.log(queryWords)
 
             // if labels are used and wf doesnt contain selected labels => filter out
             if (labels.length > 0 ) {
@@ -84,12 +85,12 @@ function WorkflowDefs(props) {
                   e[searchedKeys[i]]
                     .toString()
                     .toUpperCase()
-                    .indexOf(queryWords[j]) !== -1
+                    .indexOf(queryWords[j]) === -1
                 ) {
-                  return true;
+                  return false;
                 }
               }
-              return false;
+              return true;
             }
           });
     setItemList(results);
