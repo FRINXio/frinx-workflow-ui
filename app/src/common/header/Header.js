@@ -1,6 +1,5 @@
 import React from "react";
 import { Badge, Navbar } from "react-bootstrap";
-import { withRouter } from "react-router-dom";
 import "./Header.css";
 import logo from "./logo-min.png";
 import { version } from "../../../package.json";
@@ -22,15 +21,9 @@ const Title = () => (
 );
 
 const Header = () => {
-  // workaround to get to parent app context
-  const reloadPage = () => {
-    history.pushState(null, null, "/");
-    window.location.reload();
-  };
-
   return (
     <Navbar className="navbarHeader">
-      <Navbar.Brand style={{cursor: "pointer"}} onClick={() => reloadPage()}>
+      <Navbar.Brand style={{cursor: "pointer"}} onClick={() => window.location = "/"}>
         <Logo />
       </Navbar.Brand>
       <Title />
@@ -45,4 +38,4 @@ const Header = () => {
   );
 };
 
-export default withRouter(Header);
+export default Header;
