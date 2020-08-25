@@ -6,7 +6,7 @@ export const globalConstants = {
   backendApiUrlPrefix: "/uniflow/api/conductor",
   frontendUrlPrefix: "/uniflow/ui",
   enableScheduling: false,
-  disabledTasks: ["js", "py"],
+  disabledTasks: ["js", "py", "graphQL"],
   prefixHttpTask: "",
 };
 

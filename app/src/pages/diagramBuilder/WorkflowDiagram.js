@@ -290,6 +290,9 @@ export class WorkflowDiagram {
       case "py":
         node = this.placePyNode(task, points.x, points.y);
         break;
+      case "graphQL":
+        node = this.placeGraphQLNode(task, points.x, points.y);
+        break;
       case "terminate":
         node = this.placeTerminateNode(task, points.x, points.y);
         break;
@@ -452,6 +455,12 @@ export class WorkflowDiagram {
 
   placePyNode = (task, x, y) => {
     let node = new DefaultNodeModel('PY Lambda', nodeColors.lambdaTask, task);
+    node.setPosition(x, y);
+    return node;
+  };
+
+  placeGraphQLNode = (task, x, y) => {
+    let node = new DefaultNodeModel('graphQL', nodeColors.lambdaTask, task);
     node.setPosition(x, y);
     return node;
   };
@@ -801,6 +810,8 @@ export class WorkflowDiagram {
           node = this.placeJsNode(task, x, y);
         } else if (task.type == "SIMPLE" && task.name == 'GLOBAL___py') {
           node = this.placePyNode(task, x, y);
+        } else if (task.type == "SIMPLE" && task.name == 'GLOBAL___graphQL') {
+          node = this.placeGraphQLNode(task, x, y);
         } else if (task.type == "SIMPLE" && task.name == this.prefixHttpTask + 'HTTP_task') {
           node = this.placeHTTPNode(task, x, y);
         } else if (task.name === "DYNAMIC_FORK") {
@@ -877,7 +888,18 @@ export class WorkflowDiagram {
               break;
             default:
               parentNode = link.targetPort.parent;
-              if (parentNode.name === "RAW") {
+              if (parentNode.name === "graphQL") {
+                // In case of graphQL task, we need to put graphQLBody param into body param
+                // so that we conform to HTTP task API ... and from now on, this will be treated
+                // as graphQL task
+                if (parentNode.extras.inputs.inputParameters?.http_request?.graphQLBody != null) {
+                  parentNode.extras.inputs.inputParameters.http_request.body =
+                      parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
+                  delete parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
+                } else {
+                  tasks.push(parentNode.extras.inputs);
+                }
+              } else if (parentNode.name === "RAW") {
                 tasks.push(handleRawNode(parentNode.extras.inputs));
               } else {
                 tasks.push(parentNode.extras.inputs);

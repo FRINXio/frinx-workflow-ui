@@ -1,6 +1,6 @@
 {
   "name": "frinx-workflow-ui",
-  "version": "1.1.38",
+  "version": "1.1.41",
   "main": "lib/App.js",
   "author": "frinx",
   "license": "MIT",
@@ -47,7 +47,11 @@
     "semantic-ui-react": "^0.88.1",
     "style-loader": "^1.2.0",
     "superagent": "^5.2.2",
-    "unescape-js": "^1.1.4"
+    "unescape-js": "^1.1.4",
+    "codemirror": "^5.56.0",
+    "codemirror-graphql": "^0.12.1",
+    "react-codemirror2": "^7.2.1",
+    "graphql": "^15.0.0"
   },
   "scripts": {
     "start": "webpack-dev-server --mode development",

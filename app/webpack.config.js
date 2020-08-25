@@ -12,7 +12,15 @@ module.exports = {
     proxy: {
       '/api/conductor': {
         target: 'http://localhost:3001',
-        secure: false
+        secure: false,
+        // Uncomment below settings when testing frinx-workflow-ui running on host and talking to workflow-proxy in net-auto
+        // target: 'http://localhost:8088',
+        // secure: false,
+        // pathRewrite: {'^/api/conductor' : ''},
+        // headers: {
+        //   'from': 'fb-user',
+        //   'x-tenant-id': 'fb',
+        // }
       }
     }
   },
