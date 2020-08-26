@@ -1,0 +1,31 @@
+.navbarHeader {
+  height: 50px;
+  color: white;
+  z-index: 110;
+  background: linear-gradient(
+    -90deg,
+    rgba(0, 149, 255, 0.91) 0%,
+    rgb(0, 93, 167) 100%
+  );
+}
+
+.navbar-text {
+  color: white !important;
+}
+
+.navbarHeader img {
+  height: 30px;
+}
+
+h2 {
+  text-align: left;
+  color: white;
+  box-sizing: inherit;
+  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  line-height: 1.28571429em;
+  margin: calc(2rem - .14285714em) 0 1rem;
+  padding: 0;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 0;
+}
