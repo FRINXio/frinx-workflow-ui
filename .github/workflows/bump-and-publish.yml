@@ -52,7 +52,9 @@ jobs:
         with:
           ref: ${{ github.ref }}
       - name: "cat package.json"
-        run: cat ./package.json
+        run: |
+          cd app 
+          cat ./package.json
       - name: "Setup Node.js"
         uses: "actions/setup-node@v1"
         with:
@@ -65,4 +67,6 @@ jobs:
           PACKAGEJSON_DIR:  'app'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "cat package.json"
-        run: cat ./package.json 
+        run: |
+          cd app 
+          cat ./package.json
