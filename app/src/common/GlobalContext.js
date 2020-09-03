@@ -8,6 +8,14 @@ export const globalConstants = {
   enableScheduling: false,
   disabledTasks: ["js", "py", "graphQL"],
   prefixHttpTask: "",
+  // Uncomment below settings when testing frinx-workflow-ui running on host and talking to workflow-proxy in net-auto
+  /*
+  backendApiUrlPrefix: "/workflow/proxy",
+  frontendUrlPrefix: "/workflow/frontend",
+  enableScheduling: true,
+  disabledTasks: ['lambda'],
+  prefixHttpTask: 'GLOBAL___',
+ */
 };
 
 export const GlobalProvider = (props) => {
