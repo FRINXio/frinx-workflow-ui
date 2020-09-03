@@ -96,8 +96,18 @@ function WorkflowDefs(props) {
     setItemList(results);
   }, [keywords, labels, data]);
 
+  const metadataUrlSuffix = () => {
+    // Use standard URL (/metadata/workflow) in case scheduling is disabled
+    // but use a special endpoint that returns workflow metadata with
+    // scheduling info attached (/schedule/metadata/workflow)
+    // if scheduling is supported by the backend
+    return global.enableScheduling === false
+      ? '/metadata/workflow'
+      : '/schedule/metadata/workflow';
+  }
+
   const getData = () => {
-    http.get(global.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
+    http.get(global.backendApiUrlPrefix + metadataUrlSuffix()).then((res) => {
       if (res.result) {
         let dataset =
           res.result.sort((a, b) =>
@@ -148,7 +158,7 @@ function WorkflowDefs(props) {
 
     http.put(global.backendApiUrlPrefix + "/metadata/", [workflow]).then(() => {
       http
-        .get(global.backendApiUrlPrefix + "/metadata/workflow")
+        .get(global.backendApiUrlPrefix + metadataUrlSuffix())
         .then((res) => {
           let dataset =
             res.result.sort((a, b) =>
