@@ -34,16 +34,15 @@ const Scheduling = () => {
     req.end((err, res) => {
       if (res && res.ok && Array.isArray(res.body)) {
         const result = res.body;
-        const dataset =
-          result.sort((a, b) =>
-            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-          ) || [];
+
+        const dataset = result.sort((a, b) =>
+            a.workflowName > b.workflowName ? 1 : b.workflowName > a.workflowName ? -1 : 0
+          );
         let size = Math.floor(dataset.length / defaultPages);
         setData(dataset);
         setPagesCount(dataset.length % defaultPages ? ++size : size);
         deselectActiveRow();
       } else {
-        console.log('err res', res, 'err', err);
         const newError =
           err != null ? 'Network error: ' + err : 'Wrong response: ' + res;
         setError(newError);
@@ -62,12 +61,11 @@ const Scheduling = () => {
   };
 
   const changeActiveRow = i => {
-    console.log('changeActiveRow', i);
-    const deselectingCurrentRow = activeRow === i;
+    const deselectingCurrentRow = activeRow == i;
     if (deselectingCurrentRow) {
       deselectActiveRow();
     } else {
-      setActiveRow(i);
+      setActiveRow(i.toString());
     }
   };
 
@@ -142,17 +140,15 @@ const Scheduling = () => {
           output.push(
             <div className="wfRow" key={i}>
               <Accordion.Toggle
-                id={`wf${i}`}
                 onClick={changeActiveRow.bind(this, i)}
                 className="clickable wfDef"
                 as={Card.Header}
-                variant="link"
-                eventKey={i}>
+                eventKey={i.toString()}>
                 <b>{data[i]['workflowName']}</b> v.{data[i]['workflowVersion']}
                 <br />
                 <div className="description">{data[i]['cronString']}</div>
               </Accordion.Toggle>
-              <Accordion.Collapse eventKey={i}>
+              <Accordion.Collapse eventKey={i.toString()}>
                 <Card.Body style={{padding: '0px'}}>
                   <div
                     style={{
@@ -166,7 +162,6 @@ const Scheduling = () => {
                       onClick={flipShowSchedulingModal}>
                       Edit
                     </Button>
-
                     <Button
                       variant="outline-danger noshadow"
                       style={{float: 'right'}}
