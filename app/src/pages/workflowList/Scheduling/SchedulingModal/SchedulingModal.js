@@ -12,6 +12,8 @@ const SchedulingModal = props => {
   const [status, setStatus] = useState();
   const [error, setError] = useState();
 
+  const DEFAULT_CRON_STRING = '* * * * *'
+
   const handleClose = () => {
     props.onClose();
   };
@@ -36,7 +38,7 @@ const SchedulingModal = props => {
           // new schedule is created with enabled: true due to
           // https://github.com/flaviostutz/schellar/issues/5
           enabled: true,
-          cronString: '0 * * ? * *'
+          cronString: DEFAULT_CRON_STRING
         })
       }
     });
@@ -79,7 +81,12 @@ const SchedulingModal = props => {
         return schedule.cronString;
       }
     }
-    return "";
+    return DEFAULT_CRON_STRING;
+  }
+
+  const getCrontabGuruUrl = () => {
+    const url = 'https://crontab.guru/#' + getCronString().replace(/\s/g, '_');
+    return <a target="_blank" href={url}>crontab.guru</a>;
   }
 
   const getEnabled = () => {
@@ -112,6 +119,7 @@ const SchedulingModal = props => {
               placeholder="Enter cron pattern"
               value={getCronString()}
             />
+            Verify using {getCrontabGuruUrl()}
           </Form.Group>
           <Form.Group>
             <Form.Label>Enabled</Form.Label>
