@@ -23,7 +23,7 @@ const Scheduling = () => {
   const [activeRow, setActiveRow] = useState();
   const [pagesCount, setPagesCount] = useState(1);
   const [data, setData] = useState(undefined);
-  // TODO: display error
+  // TODO: display error in a box instead of alert
   const [error, setError] = useState(undefined);
   const [defaultPages, setDefaultPages] = useState(20);
   const [viewedPage, setViewedPage] = useState(1);
@@ -44,9 +44,10 @@ const Scheduling = () => {
         deselectActiveRow();
       } else {
         const newError =
-          err != null ? 'Network error: ' + err : 'Wrong response: ' + res;
+          err != null ? `Network error: ${err}` : `Wrong response: ${res}`;
         setError(newError);
-        alert(newError); // TODO
+        // TODO: display error in a box instead of alert
+        alert(newError);
       }
     });
   };
@@ -84,7 +85,7 @@ const Scheduling = () => {
         deselectActiveRow();
         refresh();
       } else {
-        // TODO
+        // TODO: display error in a box instead of alert
         const newError = 'Network error';
         setError(newError);
         alert(newError);
