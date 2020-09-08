@@ -24,7 +24,8 @@ module.exports = {
     }
   },
   output: {
-    // Uncomment below settings when testing frinx-workflow-ui running on host and talking to workflow-proxy in net-auto
+    publicPath: '/',
+    // Substitute publicPath above with settings below when testing frinx-workflow-ui running on host and talking to workflow-proxy in net-auto
     /*
     publicPath: '/workflow/frontend/',
     */
