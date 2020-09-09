@@ -14,6 +14,7 @@ import mountedDeviceReducer from "./store/reducers/mountedDevices";
 import searchReducer from "./store/reducers/searchExecs";
 import Header from "./common/header/Header";
 import { GlobalProvider, globalConstants } from "./common/GlobalContext";
+import WorkflowListReadOnly from "./pages/workflowList/WorkflowListReadOnly";
 
 const rootReducer = combineReducers({
   bulkReducer,
