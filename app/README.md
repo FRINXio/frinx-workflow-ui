@@ -2,13 +2,13 @@
 
 UI for managing workflows
 
-## Components 
+## Components
 
 - `/api`
     - workflow proxy - redirects requests to conductor endpoints
-- `/app` 
+- `/app`
     - React web app
-- `/server` 
+- `/server`
     - server that hosts web app
     - redirects UI requests to workflow proxy
 
@@ -26,11 +26,6 @@ http://localhost:3000
 Build:
 ```
 npm run transpile
-```
-
-Create new empty folder and copy following folders and files
-```
-lib/  package.json  package-lock.json  README.md
 ```
 
 Change version in package.json to e.g. 1.1.19
