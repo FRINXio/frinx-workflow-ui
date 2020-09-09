@@ -25,11 +25,6 @@ jobs:
           cd app
           ls -l
           npm run transpile
-      - name: copy files
-        run: |
-          cd app
-          mkdir build
-          cp -r lib/ package.json package-lock.json README.md build
       - name: bump version and publish
         run: |
           cd app
@@ -40,8 +35,8 @@ jobs:
           npm publish
         env:
           PACKAGEJSON_DIR:  'app'
-          CI: true 
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} 
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
   bump-version:
     name: "Bump version"
     needs: publish
@@ -53,7 +48,7 @@ jobs:
           ref: ${{ github.ref }}
       - name: "cat package.json"
         run: |
-          cd app 
+          cd app
           cat ./package.json
       - name: "Setup Node.js"
         uses: "actions/setup-node@v1"
@@ -68,5 +63,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "cat package.json"
         run: |
-          cd app 
+          cd app
           cat ./package.json
