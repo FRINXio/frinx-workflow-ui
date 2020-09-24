@@ -55,7 +55,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --mode development",
-    "transpile": "rm -rf build/lib && babel src -d lib --copy-files && mkdir -p build && cp -r lib/ package.json package-lock.json README.md build",
+    "transpile": "babel src -d lib --copy-files && mkdir -p build && cp -r lib/ package.json package-lock.json README.md build",
     "debug": "PORT=3002 react-scripts --inspect-brk start",
     "build": "webpack --mode production",
     "build-webpack": "webpack --progress",
