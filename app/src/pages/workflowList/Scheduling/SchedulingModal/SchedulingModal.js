@@ -1,18 +1,17 @@
 // @flow
 
+import AceEditor from 'react-ace';
 import React, {useContext, useState} from 'react';
 import superagent from 'superagent';
 import {Button, Form, Modal} from 'react-bootstrap';
 import {GlobalContext} from '../../../../common/GlobalContext';
-
-const stateSubmit = 'Submit';
-const stateSubmitting = 'Submitting...';
 
 const SchedulingModal = props => {
   const global = useContext(GlobalContext);
   const [schedule, setSchedule] = useState();
   const [status, setStatus] = useState();
   const [error, setError] = useState();
+  const [found, setFound] = useState();
 
   const DEFAULT_CRON_STRING = '* * * * *';
 
@@ -22,24 +21,24 @@ const SchedulingModal = props => {
 
   const handleShow = () => {
     setSchedule(null);
-    setStatus(stateSubmit);
+    setStatus(null);
     setError(null);
     const path = global.backendApiUrlPrefix + '/schedule/' + props.name;
     const req = superagent.get(path).accept('application/json');
     req.end((err, res) => {
       if (res && res.ok) {
         // found in db
+        setFound(true);
         setSchedule(res.body);
       } else {
         // not found, prepare new object to be created
+        setFound(false);
         setSchedule({
           name: props.name,
           workflowName: props.workflowName,
           // workflowVersion must be string
           workflowVersion: props.workflowVersion + '',
-          // new schedule is created with enabled: true due to
-          // https://github.com/flaviostutz/schellar/issues/5
-          enabled: true,
+          enabled: false,
           cronString: DEFAULT_CRON_STRING,
         });
       }
@@ -48,7 +47,7 @@ const SchedulingModal = props => {
 
   const submitForm = () => {
     setError(null);
-    setStatus(stateSubmitting);
+    setStatus('Submitting');
     const path = global.backendApiUrlPrefix + '/schedule/' + props.name;
     const req = superagent
       .put(path, schedule)
@@ -57,7 +56,7 @@ const SchedulingModal = props => {
       if (res && res.ok) {
         handleClose();
       } else {
-        setStatus(stateSubmit);
+        setStatus(null);
         setError('Request failed:' + err);
       }
     });
@@ -77,6 +76,17 @@ const SchedulingModal = props => {
       enabled: enabled,
     };
     setSchedule(mySchedule);
+  };
+
+  const setWorkflowContext = workflowContext => {
+    try {
+      workflowContext = JSON.parse(workflowContext);
+      const mySchedule = {
+        ...schedule,
+        workflowContext: workflowContext,
+      };
+      setSchedule(mySchedule);
+    } catch (e) {}
   };
 
   const getCronString = () => {
@@ -104,6 +114,40 @@ const SchedulingModal = props => {
       } // backend does not send this property when disabled
     }
     return false;
+  };
+
+  const getWorkflowContext = () => {
+    if (schedule) {
+      return JSON.stringify(schedule.workflowContext, null, 2);
+    }
+  };
+
+  const handleDelete = () => {
+    setError(null);
+    setStatus('Deleting');
+    const path = global.backendApiUrlPrefix + '/schedule/' + props.name;
+    const req = superagent.delete(path, schedule);
+    req.end((err, res) => {
+      if (res && res.ok) {
+        handleClose();
+      } else {
+        setStatus(null);
+        setError('Request failed:' + err);
+      }
+    });
+  };
+
+  const deleteButton = () => {
+    if (found) {
+      return (
+        <Button
+          variant="danger"
+          onClick={handleDelete}
+          disabled={status != null}>
+          Delete
+        </Button>
+      );
+    }
   };
 
   return (
@@ -136,20 +180,36 @@ const SchedulingModal = props => {
               checked={getEnabled()}
             />
           </Form.Group>
+          <Form.Group>
+            <Form.Label>Workflow Input</Form.Label>
+            <AceEditor
+              mode="javascript"
+              theme="tomorrow"
+              width="100%"
+              height="100px"
+              onChange={data => setWorkflowContext(data)}
+              fontSize={16}
+              value={getWorkflowContext()}
+              wrapEnabled={true}
+              setOptions={{
+                showPrintMargin: true,
+                highlightActiveLine: true,
+                showLineNumbers: true,
+                tabSize: 2,
+              }}
+            />
+          </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
         <pre>{error}</pre>
         <Button
-          variant={status === stateSubmit ? 'primary' : 'info'}
+          variant="primary"
           onClick={submitForm}
-          disabled={status === stateSubmitting}>
-          {status === stateSubmit ? <i className="fas fa-play" /> : null}
-          {status === stateSubmitting ? (
-            <i className="fas fa-spinner fa-spin" />
-          ) : null}
-          &nbsp;&nbsp;{status}
+          disabled={status != null}>
+          {found ? 'Update' : 'Create'}
         </Button>
+        {deleteButton()}
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
