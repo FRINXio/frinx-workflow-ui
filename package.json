@@ -58,9 +58,6 @@
     "transpile": "babel src -d lib --copy-files && mkdir -p build && cp -r lib/ package.json package-lock.json README.md build",
     "debug": "PORT=3002 react-scripts --inspect-brk start",
     "build": "webpack --mode production",
-    "build-webpack": "webpack --progress",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "flow": "flow"
   },
   "eslintConfig": {

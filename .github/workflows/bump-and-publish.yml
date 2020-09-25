@@ -18,23 +18,19 @@ jobs:
           node-version: '12'
       - name: install babel
         run: |
-          cd app
           npm install --save-dev @babel/core @babel/cli
       - name: npm run transpile
         run: |
-          cd app
           ls -l
           npm run transpile
       - name: bump version and publish
         run: |
-          cd app
           cd build
           ls -l
           npm version patch
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
-          PACKAGEJSON_DIR:  'app'
           CI: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
   bump-version:
@@ -48,7 +44,6 @@ jobs:
           ref: ${{ github.ref }}
       - name: "cat package.json"
         run: |
-          cd app
           cat ./package.json
       - name: "Setup Node.js"
         uses: "actions/setup-node@v1"
@@ -59,9 +54,7 @@ jobs:
         with:
           tag-prefix: ''
         env:
-          PACKAGEJSON_DIR:  'app'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "cat package.json"
         run: |
-          cd app
           cat ./package.json
