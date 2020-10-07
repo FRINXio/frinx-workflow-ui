@@ -23,7 +23,7 @@ function NodeModal(props) {
   const [name, setName] = useState();
   const [version, setVersion] = useState();
   const [inputParameters, setInputParameters] = useState([]);
-    
+
   useEffect(() => {
     setName(props.inputs.inputs.name);
     setInputs(props.inputs.inputs);
@@ -162,7 +162,7 @@ function NodeModal(props) {
 
     if (entry[0] === 'method') {
       if (value === 'PUT' || value === 'POST')
-        http_request = {...http_request, body: '${workflow.input.body}'};
+        http_request = {...http_request, body: http_request.body};
       else delete http_request['body'];
     }
 
