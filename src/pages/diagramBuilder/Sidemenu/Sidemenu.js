@@ -1,11 +1,20 @@
 // @flow
 import React, {useCallback, useEffect, useState} from 'react';
-import {Divider, Dropdown, Grid, Icon, Input, Menu, Popup, Sidebar,} from 'semantic-ui-react';
+import {
+  Divider,
+  Dropdown,
+  Grid,
+  Icon,
+  Input,
+  Menu,
+  Popup,
+  Sidebar,
+} from 'semantic-ui-react';
 
 import './Sidemenu.css';
 import SideMenuItem from './SideMenuItem';
 import {getTaskInputsRegex, getWfInputsRegex, hash} from '../builder-utils';
-import {version} from "../../../../package.json";
+import {version} from '../../../../package.json';
 
 const jsonParse = json => {
   try {
@@ -13,7 +22,7 @@ const jsonParse = json => {
   } catch (e) {
     return null;
   }
-}
+};
 
 const icons = taskDef => {
   const task = taskDef.name;
@@ -52,11 +61,15 @@ const icons = taskDef => {
       );
     case 'decision':
       return (
-        <div className="decision-icon">{task.substring(0, 1).toUpperCase()}</div>
+        <div className="decision-icon">
+          {task.substring(0, 1).toUpperCase()}
+        </div>
       );
     case 'dynamic_fork':
       return (
-        <div className="dynamicFork-icon">{task.substring(0, 1).toUpperCase()}F</div>
+        <div className="dynamicFork-icon">
+          {task.substring(0, 1).toUpperCase()}F
+        </div>
       );
     default:
       break;
@@ -145,8 +158,7 @@ const systemTasks = (type, props) => {
         type: 'SIMPLE',
         inputParameters: {
           lambdaValue: '${workflow.input.lambdaValue}',
-          scriptExpression:
-`if ($.lambdaValue == 1) {
+          scriptExpression: `if ($.lambdaValue == 1) {
   return {testvalue: true};
 } else {
   return {testvalue: false};
@@ -163,8 +175,7 @@ const systemTasks = (type, props) => {
         type: 'SIMPLE',
         inputParameters: {
           lambdaValue: '${workflow.input.lambdaValue}',
-          scriptExpression:
-`if inputData["lambdaValue"] == "1":
+          scriptExpression: `if inputData["lambdaValue"] == "1":
   return {"testValue": True}
 else:
   return {"testValue": False}`,
@@ -219,7 +230,6 @@ else:
           http_request: {
             uri: '${workflow.input.uri}',
             method: 'GET',
-            body: '',
             contentType: 'application/json',
             headers: {},
             timeout: 3600,
@@ -267,20 +277,20 @@ else:
         name: 'DYNAMIC_FORK',
         taskReferenceName: 'dynamicForkRef' + hash(),
         inputParameters: {
-          expectedName: "${workflow.input.expectedName}",
-          expectedType: "SIMPLE",
-          dynamic_tasks: "${workflow.input.dynamic_tasks}",
-          dynamic_tasks_i: "${workflow.input.dynamic_tasks_i}"
+          expectedName: '${workflow.input.expectedName}',
+          expectedType: 'SIMPLE',
+          dynamic_tasks: '${workflow.input.dynamic_tasks}',
+          dynamic_tasks_i: '${workflow.input.dynamic_tasks_i}',
         },
-        type: "SUB_WORKFLOW",
+        type: 'SUB_WORKFLOW',
         startDelay: 0,
         subWorkflowParam: {
-          name: "Dynamic_fork",
-          version: 1
+          name: 'Dynamic_fork',
+          version: 1,
         },
         optional: false,
-        asyncComplete: false
-      }
+        asyncComplete: false,
+      };
     }
     default:
       break;
@@ -351,23 +361,25 @@ const tasks = props => {
 
 const system = props => {
   return props.system
-  .filter((task) => props.disabledTasks?.includes(task.name) == false)
-  .map((task, i) => {
-    const wfObject = systemTasks(task.name, props);
-    return (
-      <SideMenuItem
-        key={`st${i}`}
-        model={{
-          type: task.name,
-          wfObject,
-          name: task.name,
-          description: task.hasOwnProperty('description') ? task.description : '',
-        }}
-        name={task.name.toUpperCase()}
-        icon={icons(task)}
+    .filter(task => props.disabledTasks?.includes(task.name) == false)
+    .map((task, i) => {
+      const wfObject = systemTasks(task.name, props);
+      return (
+        <SideMenuItem
+          key={`st${i}`}
+          model={{
+            type: task.name,
+            wfObject,
+            name: task.name,
+            description: task.hasOwnProperty('description')
+              ? task.description
+              : '',
+          }}
+          name={task.name.toUpperCase()}
+          icon={icons(task)}
         />
-    );
-  });
+      );
+    });
 };
 
 const custom = (props, custom) => {
@@ -566,7 +578,7 @@ const Sidemenu = props => {
             }>
             <Icon name="help circle" />
           </Menu.Item>
-          <Menu.Item style={{wordWrap: "break-word", padding: "10px 0 10px 0"}}>
+          <Menu.Item style={{wordWrap: 'break-word', padding: '10px 0 10px 0'}}>
             <small>{version}</small>
           </Menu.Item>
         </div>
@@ -600,7 +612,7 @@ const Sidemenu = props => {
                 [open === 'Tasks' ? props.tasks : props.workflows]
                   .flat()
                   .map(wf => {
-                    return jsonParse(wf.description)?.labels || null
+                    return jsonParse(wf.description)?.labels || null;
                   })
                   .flat()
                   .filter(item => item !== null),
