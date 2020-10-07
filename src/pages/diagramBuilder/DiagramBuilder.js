@@ -1,31 +1,31 @@
 // @flow
-import { saveAs } from "file-saver";
-import * as _ from "lodash";
-import React, { Component } from "react";
-import { Button, Modal } from "react-bootstrap";
-import { HotKeys } from "react-hotkeys";
-import { connect } from "react-redux";
-import "semantic-ui-css/semantic.min.css";
-import { DiagramWidget, Toolkit } from "@projectstorm/react-diagrams";
-import * as builderActions from "../../store/actions/builder";
-import InputModal from "../workflowList/WorkflowDefs/InputModal/InputModal";
-import DetailsModal from "../workflowList/WorkflowExec/DetailsModal/DetailsModal";
-import { Application } from "./Application";
-import { encode } from "./builder-utils";
-import BuilderHeader from "./ControlsHeader/BuilderHeader";
-import CustomAlert from "./CustomAlert";
-import "./DiagramBuilder.css";
-import GeneralInfoModal from "./GeneralInfoModal/GeneralInfoModal";
-import NodeModal from "./NodeModal/NodeModal";
-import Sidemenu from "./Sidemenu/Sidemenu";
-import WorkflowDefModal from "./WorkflowDefModal/WorkflowDefModal";
-import { WorkflowDiagram } from "./WorkflowDiagram";
-import { HttpClient as http } from "../../common/HttpClient";
-import closest from "closest";
-import { GlobalContext } from '../../common/GlobalContext';
+import './DiagramBuilder.css';
+import 'semantic-ui-css/semantic.min.css';
+import * as _ from 'lodash';
+import * as builderActions from '../../store/actions/builder';
+import BuilderHeader from './ControlsHeader/BuilderHeader';
+import CustomAlert from './CustomAlert';
+import DetailsModal from '../workflowList/WorkflowExec/DetailsModal/DetailsModal';
+import GeneralInfoModal from './GeneralInfoModal/GeneralInfoModal';
+import InputModal from '../workflowList/WorkflowDefs/InputModal/InputModal';
+import NodeModal from './NodeModal/NodeModal';
+import React, {Component} from 'react';
+import Sidemenu from './Sidemenu/Sidemenu';
+import WorkflowDefModal from './WorkflowDefModal/WorkflowDefModal';
+import closest from 'closest';
+import {Application} from './Application';
+import {Button, Modal} from 'react-bootstrap';
+import {DiagramWidget, Toolkit} from '@projectstorm/react-diagrams';
+import {GlobalContext} from '../../common/GlobalContext';
+import {HotKeys} from 'react-hotkeys';
+import {WorkflowDiagram} from './WorkflowDiagram';
+import {connect} from 'react-redux';
+import {encode} from './builder-utils';
+import {HttpClient as http} from '../../common/HttpClient';
+import {saveAs} from 'file-saver';
 
 class DiagramBuilder extends Component {
-  static contextType = GlobalContext
+  static contextType = GlobalContext;
   constructor(props) {
     super(props);
     this.state = {
@@ -42,7 +42,7 @@ class DiagramBuilder extends Component {
       workflowDiagram: new WorkflowDiagram(
         new Application(),
         this.props.finalWorkflow,
-        { x: 600, y: 300 }
+        {x: 600, y: 300},
       ),
     };
 
@@ -74,27 +74,31 @@ class DiagramBuilder extends Component {
       workflowDiagram: new WorkflowDiagram(
         new Application(),
         this.props.finalWorkflow,
-        { x: 600, y: 300 },
+        {x: 600, y: 300},
         this.context.backendApiUrlPrefix,
-        this.context.prefixHttpTask
-      )
-    })
+        this.context.prefixHttpTask,
+      ),
+    });
   }
 
   componentDidMount() {
-    document.addEventListener("dblclick", this.doubleClickListener.bind(this));
+    document.addEventListener('dblclick', this.doubleClickListener.bind(this));
 
-    http.get(this.context.backendApiUrlPrefix + "/metadata/workflow").then((res) => {
-      this.props.storeWorkflows(
-        res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
-      );
-    });
+    http
+      .get(this.context.backendApiUrlPrefix + '/metadata/workflow')
+      .then(res => {
+        this.props.storeWorkflows(
+          res.result?.sort((a, b) => a.name.localeCompare(b.name)) || [],
+        );
+      });
 
-    http.get(this.context.backendApiUrlPrefix + "/metadata/taskdefs").then((res) => {
-      this.props.storeTasks(
-        res.result?.sort((a, b) => a.name.localeCompare(b.name)) || []
-      );
-    });
+    http
+      .get(this.context.backendApiUrlPrefix + '/metadata/taskdefs')
+      .then(res => {
+        this.props.storeTasks(
+          res.result?.sort((a, b) => a.name.localeCompare(b.name)) || [],
+        );
+      });
 
     if (!_.isEmpty(this.props.match.params)) {
       this.createExistingWorkflow();
@@ -108,27 +112,33 @@ class DiagramBuilder extends Component {
   }
 
   createNewWorkflow() {
-    this.setState({ showGeneralInfoModal: true });
+    this.setState({showGeneralInfoModal: true});
     this.state.workflowDiagram.placeDefaultNodes();
     this.props.showCustomAlert(
       true,
-      "primary",
-      "Start to drag & drop tasks from left menu on canvas."
+      'primary',
+      'Start to drag & drop tasks from left menu on canvas.',
     );
   }
 
   createExistingWorkflow() {
-    const { name, version } = this.props.match.params;
+    const {name, version} = this.props.match.params;
     http
-      .get(this.context.backendApiUrlPrefix + "/metadata/workflow/" + name + "/" + version)
-      .then((res) => {
+      .get(
+        this.context.backendApiUrlPrefix +
+          '/metadata/workflow/' +
+          name +
+          '/' +
+          version,
+      )
+      .then(res => {
         this.createDiagramByDefinition(res.result);
       })
       .catch(() => {
         return this.props.showCustomAlert(
           true,
-          "danger",
-          `Cannot find selected sub-workflow: ${name}.`
+          'danger',
+          `Cannot find selected sub-workflow: ${name}.`,
         );
       });
   }
@@ -137,8 +147,8 @@ class DiagramBuilder extends Component {
     this.props.updateFinalWorkflow(definition);
     this.props.showCustomAlert(
       true,
-      "info",
-      `Editing workflow ${definition.name} / ${definition.version}.`
+      'info',
+      `Editing workflow ${definition.name} / ${definition.version}.`,
     );
     this.props.lockWorkflowName();
 
@@ -155,17 +165,17 @@ class DiagramBuilder extends Component {
   }
 
   doubleClickListener(event) {
-    let diagramModel = this.state.workflowDiagram.getDiagramModel();
-    let element = closest(event.target, ".node[data-nodeid]");
+    const diagramModel = this.state.workflowDiagram.getDiagramModel();
+    const element = closest(event.target, '.node[data-nodeid]');
     let node = null;
 
     if (element) {
-      node = diagramModel.getNode(element.getAttribute("data-nodeid"));
-      if (node && node.type !== "start" && node.type !== "end") {
+      node = diagramModel.getNode(element.getAttribute('data-nodeid'));
+      if (node && node.type !== 'start' && node.type !== 'end') {
         node.setSelected(false);
         this.setState({
           showNodeModal: true,
-          modalInputs: { inputs: node.extras.inputs, id: node.id },
+          modalInputs: {inputs: node.extras.inputs, id: node.id},
         });
       }
     }
@@ -175,12 +185,12 @@ class DiagramBuilder extends Component {
     try {
       this.props.showCustomAlert(false);
       const finalWf = this.state.workflowDiagram.parseDiagramToJSON(
-        this.props.finalWorkflow
+        this.props.finalWorkflow,
       );
       this.props.updateFinalWorkflow(finalWf);
       return finalWf;
     } catch (e) {
-      this.props.showCustomAlert(true, "danger", e.message);
+      this.props.showCustomAlert(true, 'danger', e.message);
     }
   }
 
@@ -190,7 +200,7 @@ class DiagramBuilder extends Component {
       this.props.showCustomAlert(false);
       this.state.workflowDiagram.expandSelectedNodes();
     } catch (e) {
-      this.props.showCustomAlert(true, "danger", e.message);
+      this.props.showCustomAlert(true, 'danger', e.message);
     }
   }
 
@@ -198,18 +208,18 @@ class DiagramBuilder extends Component {
     e.preventDefault();
     this.state.workflowDiagram
       .saveWorkflow(this.props.finalWorkflow)
-      .then((res) => {
+      .then(res => {
         this.props.showCustomAlert(
           true,
-          "info",
-          `Workflow ${res.name} saved successfully.`
+          'info',
+          `Workflow ${res.name} saved successfully.`,
         );
       })
-      .catch((e) => {
+      .catch(e => {
         this.props.showCustomAlert(
           true,
-          "danger",
-          e.path + ":\xa0\xa0\xa0" + e.message
+          'danger',
+          e.path + ':\xa0\xa0\xa0' + e.message,
         );
       });
   }
@@ -221,11 +231,11 @@ class DiagramBuilder extends Component {
       .then(() => {
         this.showInputModal();
       })
-      .catch((e) => {
+      .catch(e => {
         this.props.showCustomAlert(
           true,
-          "danger",
-          e.path + ":\xa0\xa0\xa0" + e.message
+          'danger',
+          e.path + ':\xa0\xa0\xa0' + e.message,
         );
       });
   }
@@ -251,7 +261,7 @@ class DiagramBuilder extends Component {
   showGeneralInfoModal() {
     if (!this.state.showGeneralInfoModal) {
       this.parseDiagramToJSON();
-    } 
+    }
     this.setState({
       showGeneralInfoModal: !this.state.showGeneralInfoModal,
     });
@@ -265,11 +275,11 @@ class DiagramBuilder extends Component {
     });
   }
 
-  closeInputModal() {
+  closeInputModal(openDetails) {
     this.setState({
       showInputModal: false,
+      showDetailsModal: openDetails,
     });
-    this.showDetailsModal();
   }
 
   // WORKFLOW EXECUTION DETAILS MODAL
@@ -295,9 +305,9 @@ class DiagramBuilder extends Component {
   /*************** ***************/
 
   saveNodeInputsHandler(savedInputs, id) {
-    let nodes = this.state.workflowDiagram.getNodes();
+    const nodes = this.state.workflowDiagram.getNodes();
 
-    nodes.forEach((node) => {
+    nodes.forEach(node => {
       if (node.id === id) {
         node.extras.inputs = savedInputs;
       }
@@ -306,16 +316,16 @@ class DiagramBuilder extends Component {
   }
 
   importFile() {
-    const fileToLoad = document.getElementById("upload-file").files[0];
+    const fileToLoad = document.getElementById('upload-file').files[0];
     const fileReader = new FileReader();
 
     fileReader.onload = (() => {
       return function(e) {
         try {
-          let jsonObj = JSON.parse(e.target.result);
+          const jsonObj = JSON.parse(e.target.result);
           this.createDiagramByDefinition(jsonObj);
         } catch (err) {
-          alert("Error when trying to parse json." + err);
+          alert('Error when trying to parse json.' + err);
         }
       };
     })(fileToLoad).bind(this);
@@ -331,19 +341,19 @@ class DiagramBuilder extends Component {
 
     const data = encode(JSON.stringify(definition, null, 2));
     const file = new Blob([data], {
-      type: "application/octet-stream",
+      type: 'application/octet-stream',
     });
 
-    saveAs(file, definition.name + ".json");
+    saveAs(file, definition.name + '.json');
   }
 
   redirectOnExit() {
-    this.props.history.push(this.context.frontendUrlPrefix + "/defs");
+    this.props.history.push(this.context.frontendUrlPrefix + '/defs');
     window.location.reload();
   }
 
   redirectOnNew() {
-    this.props.history.push(this.context.frontendUrlPrefix + "/builder");
+    this.props.history.push(this.context.frontendUrlPrefix + '/builder');
     window.location.reload();
   }
 
@@ -365,12 +375,12 @@ class DiagramBuilder extends Component {
       isLocked: !this.state.workflowDiagram.isLocked(),
     });
     this.state.workflowDiagram.setLocked(
-      !this.state.workflowDiagram.isLocked()
+      !this.state.workflowDiagram.isLocked(),
     );
   }
 
   render() {
-    let inputsModal = this.state.showInputModal ? (
+    const inputsModal = this.state.showInputModal ? (
       <InputModal
         wf={this.props.finalWorkflow}
         modalHandler={this.closeInputModal}
@@ -379,14 +389,14 @@ class DiagramBuilder extends Component {
       />
     ) : null;
 
-    let detailsModal = this.state.showDetailsModal ? (
+    const detailsModal = this.state.showDetailsModal ? (
       <DetailsModal
         wfId={this.props.workflowId}
         modalHandler={this.showDetailsModal}
       />
     ) : null;
 
-    let nodeModal = this.state.showNodeModal ? (
+    const nodeModal = this.state.showNodeModal ? (
       <NodeModal
         modalHandler={this.showNodeModal}
         inputs={this.state.modalInputs}
@@ -395,7 +405,7 @@ class DiagramBuilder extends Component {
       />
     ) : null;
 
-    let generalInfoModal = this.state.showGeneralInfoModal ? (
+    const generalInfoModal = this.state.showGeneralInfoModal ? (
       <GeneralInfoModal
         finalWorkflow={this.props.finalWorkflow}
         workflows={this.props.workflows}
@@ -408,7 +418,7 @@ class DiagramBuilder extends Component {
       />
     ) : null;
 
-    let workflowDefModal = this.state.showDefinitionModal ? (
+    const workflowDefModal = this.state.showDefinitionModal ? (
       <WorkflowDefModal
         definition={this.props.finalWorkflow}
         closeModal={this.showDefinitionModal}
@@ -416,7 +426,7 @@ class DiagramBuilder extends Component {
       />
     ) : null;
 
-    let exitModal = this.state.showExitModal ? (
+    const exitModal = this.state.showExitModal ? (
       <Modal show={this.state.showExitModal}>
         <Modal.Header>
           <Modal.Title>Do you want to exit builder?</Modal.Title>
@@ -436,7 +446,7 @@ class DiagramBuilder extends Component {
       </Modal>
     ) : null;
 
-    let newModal = this.state.showNewModal ? (
+    const newModal = this.state.showNewModal ? (
       <Modal show={this.state.showNewModal}>
         <Modal.Header>
           <Modal.Title>Create new workflow</Modal.Title>
@@ -457,27 +467,27 @@ class DiagramBuilder extends Component {
     ) : null;
 
     const keyMap = {
-      ZOOM_IN: ["ctrl++"],
-      ZOOM_OUT: ["ctrl+-"],
-      LOCK: ["ctrl+l"],
-      SAVE: ["ctrl+s"],
-      EXECUTE: ["alt+enter"],
-      EXPAND: ["ctrl+x"],
+      ZOOM_IN: ['ctrl++'],
+      ZOOM_OUT: ['ctrl+-'],
+      LOCK: ['ctrl+l'],
+      SAVE: ['ctrl+s'],
+      EXECUTE: ['alt+enter'],
+      EXPAND: ['ctrl+x'],
     };
 
     const handlers = {
-      ZOOM_IN: (e) => this.setZoomLevel(this.state.zoomLevel + 10, e),
-      ZOOM_OUT: (e) => this.setZoomLevel(this.state.zoomLevel - 10, e),
-      LOCK: (e) => this.setLocked(e),
-      SAVE: (e) => this.saveWorkflow(e),
-      EXECUTE: (e) => this.saveAndExecute(e),
-      EXPAND: (e) => this.expandNodeToWorkflow(e),
+      ZOOM_IN: e => this.setZoomLevel(this.state.zoomLevel + 10, e),
+      ZOOM_OUT: e => this.setZoomLevel(this.state.zoomLevel - 10, e),
+      LOCK: e => this.setLocked(e),
+      SAVE: e => this.saveWorkflow(e),
+      EXECUTE: e => this.saveAndExecute(e),
+      EXPAND: e => this.expandNodeToWorkflow(e),
     };
 
     return (
       <HotKeys keyMap={keyMap}>
         <HotKeys handlers={handlers}>
-          <div style={{ position: "relative", height: "100vh" }}>
+          <div style={{position: 'relative', height: '100vh'}}>
             {workflowDefModal}
             {nodeModal}
             {inputsModal}
@@ -520,12 +530,11 @@ class DiagramBuilder extends Component {
             />
 
             <div
-              style={{ height: "calc(100% - 50px)" }}
-              onDrop={(e) => this.onNodeDrop(e)}
-              onDragOver={(event) => {
+              style={{height: 'calc(100% - 50px)'}}
+              onDrop={e => this.onNodeDrop(e)}
+              onDragOver={event => {
                 event.preventDefault();
-              }}
-            >
+              }}>
               <DiagramWidget
                 className="srd-demo-canvas"
                 diagramEngine={this.state.workflowDiagram.getDiagramEngine()}
@@ -538,7 +547,7 @@ class DiagramBuilder extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     workflows: state.buildReducer.workflows,
     tasks: state.buildReducer.tasks,
@@ -550,17 +559,17 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    storeWorkflows: (wfList) => dispatch(builderActions.storeWorkflows(wfList)),
-    storeTasks: (taskList) => dispatch(builderActions.storeTasks(taskList)),
-    updateFinalWorkflow: (finalWorkflow) =>
+    storeWorkflows: wfList => dispatch(builderActions.storeWorkflows(wfList)),
+    storeTasks: taskList => dispatch(builderActions.storeTasks(taskList)),
+    updateFinalWorkflow: finalWorkflow =>
       dispatch(builderActions.updateFinalWorkflow(finalWorkflow)),
     resetToDefaultWorkflow: () =>
       dispatch(builderActions.resetToDefaultWorkflow()),
     updateQuery: (query, labels) =>
       dispatch(builderActions.requestUpdateByQuery(query, labels)),
-    openCard: (which) => dispatch(builderActions.openCard(which)),
+    openCard: which => dispatch(builderActions.openCard(which)),
     showCustomAlert: (show, variant, msg) =>
       dispatch(builderActions.showCustomAlert(show, variant, msg)),
     lockWorkflowName: () => dispatch(builderActions.lockWorkflowName()),
@@ -569,5 +578,5 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(DiagramBuilder);
