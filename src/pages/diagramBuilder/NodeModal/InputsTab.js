@@ -2,8 +2,8 @@
 // Keep this import first, there is some problem with ace otherwise
 import AceEditor from 'react-ace';
 
-import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-graphqlschema';
+import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 import 'react-dropdown/style.css';
 import Dropdown from 'react-dropdown';
@@ -18,9 +18,9 @@ import {Button, Col, Form, InputGroup, Row} from 'react-bootstrap';
 // import 'codemirror-graphql/hint';
 import 'codemirror-graphql/mode';
 import 'codemirror/addon/display/autorefresh';
-import {Controlled as CodeMirror} from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/xq-light.css';
+import {Controlled as CodeMirror} from 'react-codemirror2';
 
 const TEXTFIELD_KEYWORDS = ['template', 'uri', 'body'];
 const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw', 'graphQLBody'];
@@ -29,31 +29,31 @@ const KEYFIELD_KEYWORDS = ['headers'];
 const SELECTFIELD_OPTIONS = {
   action: ['complete_task', 'fail_task'],
   method: ['GET', 'PUT', 'POST', 'DELETE'],
-  expectedType: ['SIMPLE', 'SUB_WORKFLOW']
+  expectedType: ['SIMPLE', 'SUB_WORKFLOW'],
 };
 
-const jsonParse = (json) => {
+const jsonParse = json => {
   try {
-    return JSON.parse(json)
+    return JSON.parse(json);
   } catch (e) {
-    return null
+    return null;
   }
-}
+};
 
 const InputsTab = props => {
   const [customParam, setCustomParam] = useState('');
   const textFieldParams = [];
 
-  const getDescriptionAndDefault = (selectedParam) => {
+  const getDescriptionAndDefault = selectedParam => {
     const inputParameters = jsonParse(
-      props.inputParameters ? props.inputParameters[0] : null
+      props.inputParameters ? props.inputParameters[0] : null,
     );
 
     if (!inputParameters) {
-      return null
+      return null;
     }
 
-    return inputParameters[selectedParam]?.description
+    return inputParameters[selectedParam]?.description;
   };
 
   const addNewInputParam = e => {
@@ -107,15 +107,14 @@ const InputsTab = props => {
   };
 
   const creategraphQLField = (entry, item) => {
-
-/* FIXME graphQL editor : implement schema validation*/
-//  let schema = buildSchema(`...`);
+    /* FIXME graphQL editor : implement schema validation*/
+    //  let schema = buildSchema(`...`);
 
     textFieldParams.push(
-    <Col sm={12} key={`colTf-${entry[0]}`}>
-      <Form.Group>
-        <Form.Label>{entry[0]}</Form.Label>
-        <CodeMirror
+      <Col sm={12} key={`colTf-${entry[0]}`}>
+        <Form.Group>
+          <Form.Label>{entry[0]}</Form.Label>
+          <CodeMirror
             value={entry[1]}
             options={{
               mode: 'graphql',
@@ -137,13 +136,14 @@ const InputsTab = props => {
             onChange={(editor, data, value) => {
               props.handleInput(value, item, entry);
             }}
-        />
-        <Form.Text className="text-muted">
-          {getDescriptionAndDefault(entry[0])}
-        </Form.Text>
-      </Form.Group>
-    </Col>)
-  }
+          />
+          <Form.Text className="text-muted">
+            {getDescriptionAndDefault(entry[0])}
+          </Form.Text>
+        </Form.Group>
+      </Col>,
+    );
+  };
 
   const createCodeField = (entry, item, lang = 'javascript') => {
     const value = entry[1];
@@ -323,7 +323,7 @@ const InputsTab = props => {
       {props.name !== 'RAW' && createAdditionalFieldsPrompt()}
 
       <hr className="hr-text" data-content="Existing input parameters" />
-      <Form>
+      <Form onSubmit={e => e.preventDefault()}>
         <Row>
           {Object.entries(props.inputs || []).map(item => {
             if (item[0] === 'inputParameters') {
