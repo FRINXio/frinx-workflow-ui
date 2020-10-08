@@ -130,7 +130,7 @@ const systemTasks = (type, props) => {
         type: 'DECISION',
         caseValueParam: 'param',
         decisionCases: {
-          false: [],
+          true: [],
         },
         defaultCase: [],
         optional: false,
