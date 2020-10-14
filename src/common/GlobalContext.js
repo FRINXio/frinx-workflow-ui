@@ -1,13 +1,14 @@
-import React, {createContext, useState, useEffect} from 'react'
+// @flow
+import React, {createContext, useEffect, useState} from 'react';
 
 export const GlobalContext = createContext();
 
 export const globalConstants = {
-  backendApiUrlPrefix: "/uniflow/api/conductor",
-  frontendUrlPrefix: "/uniflow/ui",
-  enableScheduling: false,
-  disabledTasks: ["js", "py", "graphQL"],
-  prefixHttpTask: "",
+  backendApiUrlPrefix: '/uniflow/api/conductor',
+  frontendUrlPrefix: '/uniflow/ui',
+  enableScheduling: true,
+  disabledTasks: ['js', 'py', 'graphQL'],
+  prefixHttpTask: '',
   // Uncomment below settings when testing frinx-workflow-ui running on host and talking to workflow-proxy in net-auto
   /*
   backendApiUrlPrefix: "/workflow/proxy",
@@ -18,17 +19,15 @@ export const globalConstants = {
  */
 };
 
-export const GlobalProvider = (props) => {
+export const GlobalProvider = props => {
   const [global, setGlobal] = useState(globalConstants);
 
   useEffect(() => {
-    setGlobal({...global, ...props})
-  }, [props])
+    setGlobal({...global, ...props});
+  }, [props]);
 
   return (
-    <GlobalContext.Provider
-      value={global}
-    >
+    <GlobalContext.Provider value={global}>
       {props.children}
     </GlobalContext.Provider>
   );
