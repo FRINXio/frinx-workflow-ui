@@ -15,9 +15,13 @@ import { DecisionNodePortModel } from "./NodeModels/DecisionNode/DecisionNodePor
 import { DecisionNodeFactory } from "./NodeModels/DecisionNode/DecisionNodeFactory";
 import { DynamicNodePortModel } from "./NodeModels/DynamicForkNode/DynamicNodePortModel"  
 import { DynamicNodeFactory } from "./NodeModels/DynamicForkNode/DynamicNodeFactory"  
+import { DowhileNodeFactory } from "./NodeModels/DoWhileNode/DowhileNodeFactory";
 
 import { DefaultLabelFactory } from "@projectstorm/react-diagrams";
 import { DefaultPortModel } from "./NodeModels/DefaultNodeModel/DefaultPortModel";
+import {DowhileNodePortModel} from "./NodeModels/DoWhileNode/DowhileNodePortModel";
+import {DowhileEndNodeFactory} from "./NodeModels/DoWhileEndNode/DowhileEndNodeFactory";
+import {DowhileEndNodePortModel} from "./NodeModels/DoWhileEndNode/DowhileEndNodePortModel";
 
 export class Application {
   activeModel;
@@ -50,11 +54,19 @@ export class Application {
     this.diagramEngine.registerPortFactory(
       new SimplePortFactory("dynamic", config => new DynamicNodePortModel())
     );
+    this.diagramEngine.registerPortFactory(
+      new SimplePortFactory("while", config => new DowhileNodePortModel())
+    );
+    this.diagramEngine.registerPortFactory(
+      new SimplePortFactory("while_end", config => new DowhileEndNodePortModel())
+    );
 
     this.diagramEngine.registerNodeFactory(new NodeWithContextFactory());
     this.diagramEngine.registerNodeFactory(new CircleStartNodeFactory());
     this.diagramEngine.registerNodeFactory(new CircleEndNodeFactory());
     this.diagramEngine.registerNodeFactory(new ForkNodeFactory());
+    this.diagramEngine.registerNodeFactory(new DowhileNodeFactory());
+    this.diagramEngine.registerNodeFactory(new DowhileEndNodeFactory());
     this.diagramEngine.registerNodeFactory(new JoinNodeFactory());
     this.diagramEngine.registerNodeFactory(new DecisionNodeFactory());
     this.diagramEngine.registerNodeFactory(new DynamicNodeFactory());

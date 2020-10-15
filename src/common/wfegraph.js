@@ -247,6 +247,77 @@ class Workflow2Graph {
           subworkflows
         );
       });
+    } else if (t1.type === "DO_WHILE") {
+
+      let tasks = t1.loopOver || [];
+      let t1End = {...t1};
+      t1End.taskReferenceName = t1.taskReferenceName + "_end";
+
+      vertices[t1.taskReferenceName] = {
+        name: t1.name,
+        ref: t1.taskReferenceName,
+        type: "simple",
+        style: "fill: #ff0",
+        shape: "house",
+        system: true
+      };
+      vertices[tasks[0].taskReferenceName] = {
+        name: tasks[0].name,
+        ref: tasks[0].taskReferenceName,
+        type: tasks[0].type,
+        style: "",
+        shape: "rect"
+      };
+
+      let style = defstyle;
+      if (
+        this.executedTasks[tasks[0].taskReferenceName] != null &&
+        this.executedTasks[t1.taskReferenceName] != null
+      ) {
+        style = executed;
+        caseExecuted = true;
+      }
+
+      nodes.push({
+        type: "simple",
+        from: t1.taskReferenceName,
+        to: tasks[0].taskReferenceName,
+        style: style
+      });
+      this.getTaskNodes(
+        vertices,
+        nodes,
+        tasks,
+        forks,
+        subworkflows,
+        isExecuting
+      );
+      vertices[t1End.taskReferenceName] = {
+        name: "DO_WHILE_END",
+        ref: t1End.taskReferenceName,
+        type: "simple",
+        style: "fill: #ff0",
+        shape: "ellipse",
+        system: true
+      };
+
+      this.getNodes(
+        vertices,
+        nodes,
+        tasks[tasks.length - 1],
+        t1End,
+        forks,
+        subworkflows,
+        isExecuting
+      );
+
+      nodes.push({
+        type: "simple",
+        to: t2.taskReferenceName,
+        from: t1End.taskReferenceName,
+        style: style
+      });
+
     } else if (t1.type === "FORK_JOIN_DYNAMIC") {
       vertices[t1.taskReferenceName] = {
         name: "DYNAMIC_FORK",

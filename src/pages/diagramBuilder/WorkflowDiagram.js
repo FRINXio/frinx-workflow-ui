@@ -1,9 +1,9 @@
 // @flow
 import * as _ from "lodash";
 import defaultTo from "lodash/fp/defaultTo";
-import { HttpClient as http } from "../../common/HttpClient";
+import {HttpClient as http} from "../../common/HttpClient";
 import Workflow2Graph from "../../common/wfegraph";
-import { Application } from "./Application";
+import {Application} from "./Application";
 import {
   getEndNode,
   getLinksArray,
@@ -11,16 +11,18 @@ import {
   getWfInputs,
   handleDecideNode,
   handleForkNode,
-  linkNodes,
   handleRawNode,
+  linkNodes,
 } from "./builder-utils";
-import { DecisionNodeModel } from "./NodeModels/DecisionNode/DecisionNodeModel";
-import { DefaultNodeModel } from "./NodeModels/DefaultNodeModel/DefaultNodeModel";
-import { CircleEndNodeModel } from "./NodeModels/EndNode/CircleEndNodeModel";
-import { ForkNodeModel } from "./NodeModels/ForkNode/ForkNodeModel";
-import { JoinNodeModel } from "./NodeModels/JoinNode/JoinNodeModel";
-import { CircleStartNodeModel } from "./NodeModels/StartNode/CircleStartNodeModel";
-import { DynamicNodeModel } from "./NodeModels/DynamicForkNode/DynamicNodeModel";
+import {DecisionNodeModel} from "./NodeModels/DecisionNode/DecisionNodeModel";
+import {DefaultNodeModel} from "./NodeModels/DefaultNodeModel/DefaultNodeModel";
+import {CircleEndNodeModel} from "./NodeModels/EndNode/CircleEndNodeModel";
+import {ForkNodeModel} from "./NodeModels/ForkNode/ForkNodeModel";
+import {JoinNodeModel} from "./NodeModels/JoinNode/JoinNodeModel";
+import {CircleStartNodeModel} from "./NodeModels/StartNode/CircleStartNodeModel";
+import {DynamicNodeModel} from "./NodeModels/DynamicForkNode/DynamicNodeModel";
+import {DowhileNodeModel} from "./NodeModels/DoWhileNode/DowhileNodeModel";
+import {DowhileEndNodeModel} from "./NodeModels/DoWhileEndNode/DowhileEndNodeModel";
 
 const nodeColors = {
   subWorkflow: "rgb(34,144,255)",
@@ -32,6 +34,7 @@ const nodeColors = {
   httpTask: "rgb(80,255,163)",
   eventTask: "rgb(137,59,255)",
   waitTask: "rgb(171,171,171)",
+  doWhileTask: "rgb(219,125,10)",
 };
 
 export class WorkflowDiagram {
@@ -281,6 +284,12 @@ export class WorkflowDiagram {
       case "decision":
         node = this.placeDecisionNode(task, points.x, points.y);
         break;
+      case "while":
+        node = this.placeDowhileNode(task, points.x, points.y);
+        break;
+      case "while_end":
+        node = this.placeDowhileEndNode(task, points.x, points.y);
+        break;
       case "lambda":
         node = this.placeLambdaNode(task, points.x, points.y);
         break;
@@ -441,6 +450,18 @@ export class WorkflowDiagram {
     return node;
   };
 
+  placeDowhileNode = (task, x, y) => {
+    let node = new DowhileNodeModel(task.name, nodeColors.doWhileTask, task);
+    node.setPosition(x, y);
+    return node;
+  };
+
+  placeDowhileEndNode = (task, x, y) => {
+    let node = new DowhileEndNodeModel(task.name, nodeColors.doWhileTask, task);
+    node.setPosition(x, y);
+    return node;
+  };
+
   placeLambdaNode = (task, x, y) => {
     let node = new DefaultNodeModel(task.name, nodeColors.lambdaTask, task);
     node.setPosition(x, y);
@@ -532,7 +553,6 @@ export class WorkflowDiagram {
    */
   linkAllNodes() {
     const { edges } = this.getGraphState(this.definition);
-    console.log(edges)
 
     edges.forEach((edge) => {
       if (edge.from !== "start" && edge.to !== "final") {
@@ -582,7 +602,9 @@ export class WorkflowDiagram {
       node1.type === "fork" ||
       node1.type === "join" ||
       node1.type === "start" ||
-      node1.type === "dynamic"
+      node1.type === "dynamic" ||
+      node1.type === "while" ||
+      node1.type === "while_end"
     ) {
       const fork_join_start_outPort = node1.getPort("right");
 
@@ -592,7 +614,7 @@ export class WorkflowDiagram {
       if (node2.type === "decision") {
         return fork_join_start_outPort.link(node2.getPort("inputPort"));
       }
-      if (["fork", "join", "end", "dynamic"].includes(node2.type)) {
+      if (["fork", "join", "end", "dynamic", "while", "while_end"].includes(node2.type)) {
         return fork_join_start_outPort.link(node2.getPort("left"));
       }
     } else if (node1.type === "default") {
@@ -604,7 +626,7 @@ export class WorkflowDiagram {
       if (node2.type === "decision") {
         return defaultOutPort.link(node2.getPort("inputPort"));
       }
-      if (["fork", "join", "end", "dynamic"].includes(node2.type)) {
+      if (["fork", "join", "end", "dynamic", "while", "while_end"].includes(node2.type)) {
         return defaultOutPort.link(node2.getPort("left"));
       }
     } else if (node1.type === "decision") {
@@ -616,7 +638,19 @@ export class WorkflowDiagram {
       if (node2.type === "decision") {
         return currentPort.link(node2.getPort("inputPort"));
       }
-      if (["fork", "join", "end", "dynamic"].includes(node2.type)) {
+      if (["fork", "join", "end", "dynamic", "while", "while_end"].includes(node2.type)) {
+        return currentPort.link(node2.getPort("left"));
+      }
+    } else if (node1.type === "while" || node1.type === "while_end") {
+      const currentPort = node1.getPort(whichPort);
+
+      if (node2.type === "default") {
+        return currentPort.link(node2.getInPorts()[0]);
+      }
+      if (node2.type === "decision") {
+        return currentPort.link(node2.getPort("inputPort"));
+      }
+      if (["fork", "join", "end", "dynamic", "while", "while_end"].includes(node2.type)) {
         return currentPort.link(node2.getPort("left"));
       }
     }
@@ -771,6 +805,29 @@ export class WorkflowDiagram {
         });
         break;
       }
+      case "DO_WHILE": {
+        const { x, y } = this.calculatePosition(branchX, branchY);
+        const node = this.placeDowhileNode(task, x, y);
+        this.diagramModel.addNode(node);
+
+        task.loopOver.forEach(loopedOverTask => {
+          this.createNode(loopedOverTask, branchX, branchY, forkDepth);
+        })
+
+        const endTask = {
+          name: task.name + "_end",
+          taskReferenceName: task.taskReferenceName + "_end",
+          type: 'DO_WHILE_END',
+        }
+        let endPos = this.calculatePosition(branchX, branchY);
+        const nodeEnd = this.placeDowhileEndNode(endTask, endPos.x, endPos.y);
+        this.diagramModel.addNode(nodeEnd);
+        break;
+      }
+      case "DO_WHILE_END": {
+        // WHILE_END is not a real node and will never appear in workflow definition
+        break;
+      }
       case "JOIN": {
         const { x, y } = this.calculatePosition(branchX, branchY);
         const node = this.placeJoinNode(task, x, y);
@@ -839,6 +896,124 @@ export class WorkflowDiagram {
     }
   }
 
+  getLoopedNodeRightLink(node) {
+    let nextNodePorts = node.ports;
+
+    let nextLinks = [];
+    let nextNodePortLinks = [];
+    if (nextNodePorts["right"]) {
+      nextNodePortLinks = nextNodePorts["right"].getLinks();
+    } else if (Object.keys(nextNodePorts).length > 1) {
+      nextNodePortLinks = nextNodePorts[Object.keys(nextNodePorts)[1]].getLinks();
+    } else if (Object.keys(nextNodePorts).length == 1) {
+      // Probably end
+      return null;
+    } else {
+      throw new Error(`Unexpected node in a do_while loop: ${node.type}:${node.taskReferenceName}`)
+    }
+    if (Object.keys(nextNodePortLinks).length > 1) {
+      throw new Error(`Unexpected node in a do_while loop: ${node.type}:${node.taskReferenceName}`)
+    }
+    // Target node links
+    for (const nextNodePortLink in nextNodePortLinks) {
+      nextLinks.push(nextNodePortLinks[nextNodePortLink])
+    }
+
+    return nextLinks[0];
+  }
+
+  parseTaskToJSON(link, parentNode, tasks) {
+    if (link.sourcePort.parent === parentNode) {
+      switch (link.targetPort.type) {
+        case "fork":
+          let {forkNode, joinNode} = handleForkNode(
+            link.targetPort.getNode()
+          );
+          tasks.push(forkNode.extras.inputs, joinNode.extras.inputs);
+          parentNode = joinNode;
+          break;
+        case "decision":
+          let {decideNode, firstNeutralNode} = handleDecideNode(
+            link.targetPort.getNode()
+          );
+          tasks.push(decideNode.extras.inputs);
+          if (firstNeutralNode) {
+            if (firstNeutralNode.extras.inputs) {
+              tasks.push(firstNeutralNode.extras.inputs);
+            }
+            parentNode = firstNeutralNode;
+          }
+          break;
+        case "while":
+          // Parse all subsequent tasks until while_end is reached
+          let loopTasks = []
+          // Move to next node
+          parentNode = link.targetPort.getNode();
+          const whileNode = parentNode;
+          const whileLink = link;
+          link = this.getLoopedNodeRightLink(parentNode)
+
+          // Process all tasks in loop until while_end
+          let isWhileEnd = () => loopTasks.length >= 1
+            && loopTasks[loopTasks.length - 1]
+            && loopTasks[loopTasks.length - 1].type === "DO_WHILE_END";
+
+          while (!isWhileEnd()) {
+            // Recursively parse nested task in loop
+            parentNode = this.parseTaskToJSON(link, parentNode, loopTasks);
+            // Proper link has to be found, since above call moved nodes N steps forward
+            // while we are stuck on the first link in while
+            link = this.getLoopedNodeRightLink(parentNode);
+          }
+
+          if (isWhileEnd()) {
+            // Remove loop end indicator
+            loopTasks.pop();
+          }
+
+          // Error checking
+          if (loopTasks.length == 0) {
+            throw new Error("While loop is empty");
+          } else if (loopTasks.filter(subTask => subTask.type === "DO_WHILE").length > 0) {
+            throw new Error("Nested while loops are not supported");
+          } else if (loopTasks.filter(subTask => subTask.type === "SUB_WORKFLOW").length > 0) {
+            throw new Error("Subworkflows in while loops are not supported");
+          }
+
+          console.log("HERE")
+          console.log(parentNode)
+          console.log(link)
+
+          whileNode.extras.inputs.loopOver = loopTasks;
+          tasks.push(whileNode.extras.inputs);
+          break;
+        case "end":
+          parentNode = link.targetPort.parent;
+          break;
+        default:
+          parentNode = link.targetPort.parent;
+          if (parentNode.name === "graphQL") {
+            // In case of graphQL task, we need to put graphQLBody param into body param
+            // so that we conform to HTTP task API ... and from now on, this will be treated
+            // as graphQL task
+            if (parentNode.extras.inputs.inputParameters?.http_request?.graphQLBody != null) {
+              parentNode.extras.inputs.inputParameters.http_request.body =
+                parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
+              delete parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
+            } else {
+              tasks.push(parentNode.extras.inputs);
+            }
+          } else if (parentNode.name === "RAW") {
+            tasks.push(handleRawNode(parentNode.extras.inputs));
+          } else {
+            tasks.push(parentNode.extras.inputs);
+          }
+          break;
+      }
+    }
+    return parentNode;
+  }
+
   /**
    * Traverses diagram nodes (links) to create JSON definition
    * @param finalWorkflow
@@ -861,52 +1036,7 @@ export class WorkflowDiagram {
     while (parentNode.type !== "end" && i !== limit) {
       for (let i = 0; i < linksArray.length; i++) {
         let link = linksArray[i];
-
-        if (link.sourcePort.parent === parentNode) {
-          switch (link.targetPort.type) {
-            case "fork":
-              let { forkNode, joinNode } = handleForkNode(
-                link.targetPort.getNode()
-              );
-              tasks.push(forkNode.extras.inputs, joinNode.extras.inputs);
-              parentNode = joinNode;
-              break;
-            case "decision":
-              let { decideNode, firstNeutralNode } = handleDecideNode(
-                link.targetPort.getNode()
-              );
-              tasks.push(decideNode.extras.inputs);
-              if (firstNeutralNode) {
-                if (firstNeutralNode.extras.inputs) {
-                  tasks.push(firstNeutralNode.extras.inputs);
-                }
-                parentNode = firstNeutralNode;
-              }
-              break;
-            case "end":
-              parentNode = link.targetPort.parent;
-              break;
-            default:
-              parentNode = link.targetPort.parent;
-              if (parentNode.name === "graphQL") {
-                // In case of graphQL task, we need to put graphQLBody param into body param
-                // so that we conform to HTTP task API ... and from now on, this will be treated
-                // as graphQL task
-                if (parentNode.extras.inputs.inputParameters?.http_request?.graphQLBody != null) {
-                  parentNode.extras.inputs.inputParameters.http_request.body =
-                      parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
-                  delete parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
-                } else {
-                  tasks.push(parentNode.extras.inputs);
-                }
-              } else if (parentNode.name === "RAW") {
-                tasks.push(handleRawNode(parentNode.extras.inputs));
-              } else {
-                tasks.push(parentNode.extras.inputs);
-              }
-              break;
-          }
-        }
+        parentNode = this.parseTaskToJSON(link, parentNode, tasks);
       }
       i = i + 1;
     }

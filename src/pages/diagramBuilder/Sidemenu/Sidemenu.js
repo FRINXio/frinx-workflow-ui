@@ -59,6 +59,14 @@ const icons = taskDef => {
       return (
         <div className="join-icon">{task.substring(0, 1).toUpperCase()}</div>
       );
+    case 'while':
+      return (
+        <div className="while-icon">W</div>
+      );
+    case 'while_end':
+      return (
+        <div className="while_end-icon">E</div>
+      );
     case 'decision':
       return (
         <div className="decision-icon">
@@ -116,6 +124,30 @@ const systemTasks = (type, props) => {
         taskReferenceName: 'joinTaskRef_' + hash(),
         type: 'JOIN',
         joinOn: [],
+        optional: false,
+        startDelay: 0,
+      };
+    }
+    case 'while': {
+      let taskReferenceName = 'whileTaskRef_' + hash();
+      return {
+        name: 'whileTask',
+        taskReferenceName: taskReferenceName,
+        type: 'DO_WHILE',
+        loopOver: [],
+        loopCondition: `$.${taskReferenceName}['iteration'] < $.iterations`,
+        inputParameters: {
+          iterations: 10,
+        },
+        optional: false,
+        startDelay: 0,
+      };
+    }
+    case 'while_end': {
+      return {
+        name: 'whileTask_end',
+        taskReferenceName: 'while_end' + hash(),
+        type: 'WHILE_END',
         optional: false,
         startDelay: 0,
       };

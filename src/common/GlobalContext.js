@@ -7,7 +7,7 @@ export const globalConstants = {
   backendApiUrlPrefix: '/uniflow/api/conductor',
   frontendUrlPrefix: '/uniflow/ui',
   enableScheduling: true,
-  disabledTasks: ['js', 'py', 'graphQL'],
+  disabledTasks: ['js', 'py', 'graphQL', 'while', 'while_end'],
   prefixHttpTask: '',
   // Uncomment below settings when testing frinx-workflow-ui running on host and talking to workflow-proxy in net-auto
   /*

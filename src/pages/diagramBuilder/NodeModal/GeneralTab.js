@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {Accordion, Icon} from 'semantic-ui-react';
 import {Button, ButtonGroup, Col, Form, InputGroup} from 'react-bootstrap';
 import {taskDescriptions} from '../../../constants';
+import AceEditor from "react-ace";
 
 const HIDDEN = [
   'type',
@@ -13,6 +14,7 @@ const HIDDEN = [
   'forkTasks',
   'inputParameters',
   'defaultCase',
+  'loopOver'
 ];
 
 const GeneralTab = props => {
@@ -137,6 +139,35 @@ const GeneralTab = props => {
     );
   };
 
+  const renderCodeField = (item, i, lang = 'javascript') => {
+    return (
+      <Col sm={12} key={`colGeneral-param-${i}`}>
+        <Form.Group>
+          <Form.Label>{item[0]}</Form.Label>
+          <AceEditor
+            mode={lang}
+            theme="tomorrow"
+            width="100%"
+            height="300px"
+            onChange={val => props.handleInput(val, item[0])}
+            fontSize={16}
+            value={item[1]}
+            wrapEnabled={true}
+            setOptions={{
+              showPrintMargin: true,
+              highlightActiveLine: true,
+              showLineNumbers: true,
+              tabSize: 2,
+            }}
+          />
+          <Form.Text className="text-muted">
+            {taskDescriptions[item[0]]}
+          </Form.Text>
+        </Form.Group>
+      </Col>
+    );
+  };
+
   const renderParam = (item, i) => {
     return (
       <Col sm={6} key={`colGeneral-param-${i}`}>
@@ -161,9 +192,13 @@ const GeneralTab = props => {
 
   const handleGeneralParams = (item, i) => {
     const BOOLEAN_PARAMS = ['optional', 'asyncComplete'];
+    const CODEFIELD_KEYWORDS = ['loopCondition'];
 
     if (BOOLEAN_PARAMS.includes(item[0])) {
       return renderBooleanParam(item, i);
+    }
+    if (CODEFIELD_KEYWORDS.includes(item[0])) {
+      return renderCodeField(item);
     }
 
     switch (item[0]) {
