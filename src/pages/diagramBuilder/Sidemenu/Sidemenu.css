@@ -63,7 +63,29 @@
     text-align: center;
 }
 
+.while_end-icon {
+    position: relative;
+    height: 30px;
+    width: 30px;
+    background-color: rgb(11, 60, 139);
+    color: white;
+    line-height: 30px;
+    clip-path: polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%);
+    text-align: center;
+}
+
 .fork-icon {
+    position: relative;
+    height: 30px;
+    width: 30px;
+    background-color: rgb(11, 60, 139);
+    color: white;
+    line-height: 30px;
+    clip-path: polygon(25% 0%, 100% 1%, 100% 100%, 25% 100%, 0% 50%);
+    text-align: center;
+}
+
+.while-icon {
     position: relative;
     height: 30px;
     width: 30px;
