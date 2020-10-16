@@ -906,7 +906,6 @@ export class WorkflowDiagram {
     } else if (Object.keys(nextNodePorts).length > 1) {
       nextNodePortLinks = nextNodePorts[Object.keys(nextNodePorts)[1]].getLinks();
     } else if (Object.keys(nextNodePorts).length == 1) {
-      // Probably end
       return null;
     } else {
       throw new Error(`Unexpected node in a do_while loop: ${node.type}:${node.taskReferenceName}`)
@@ -950,13 +949,12 @@ export class WorkflowDiagram {
           // Move to next node
           parentNode = link.targetPort.getNode();
           const whileNode = parentNode;
-          const whileLink = link;
           link = this.getLoopedNodeRightLink(parentNode)
 
           // Process all tasks in loop until while_end
           let isWhileEnd = () => loopTasks.length >= 1
             && loopTasks[loopTasks.length - 1]
-            && loopTasks[loopTasks.length - 1].type === "DO_WHILE_END";
+            && loopTasks[loopTasks.length - 1].type === "WHILE_END";
 
           while (!isWhileEnd()) {
             // Recursively parse nested task in loop
@@ -979,10 +977,6 @@ export class WorkflowDiagram {
           } else if (loopTasks.filter(subTask => subTask.type === "SUB_WORKFLOW").length > 0) {
             throw new Error("Subworkflows in while loops are not supported");
           }
-
-          console.log("HERE")
-          console.log(parentNode)
-          console.log(link)
 
           whileNode.extras.inputs.loopOver = loopTasks;
           tasks.push(whileNode.extras.inputs);
