@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from "react";
+import React, {useEffect, useRef} from "react";
 import logo from "./logo-min.png";
 import x from "./X_icon_RGB-min.png";
 import { Navbar } from "react-bootstrap";
@@ -258,7 +258,9 @@ const ControlsButton = props => (
 );
 
 const BuilderHeader = props => {
-  useEffect(() => {
+    const inputFileRef = useRef( null );
+
+    useEffect(() => {
     document.addEventListener("click", handleClickInside, true);
     return () => {
       document.removeEventListener("click", handleClickInside, true);
@@ -283,12 +285,12 @@ const BuilderHeader = props => {
       props.workflowDiagram.renderDiagram();
     }
   };
+  const onFileChange = e => {
+    props.submitFile(e);
+  };
 
   const openFileUpload = () => {
-    document.getElementById("upload-file").click();
-    document
-      .getElementById("upload-file")
-      .addEventListener("change", props.submitFile);
+    inputFileRef.current.click();
   };
 
   return (
@@ -314,7 +316,8 @@ const BuilderHeader = props => {
         setZoomLevel={props.setZoomLevel}
         setLocked={props.setLocked}
       />
-      <input id="upload-file" type="file" hidden />
+        <input type="file" hidden ref={inputFileRef} onClick={e => e.target.value = null}
+               onChange={onFileChange}/>
       <Navbar.Collapse className="justify-content-end">
         <Button
           key='exit-btn'
