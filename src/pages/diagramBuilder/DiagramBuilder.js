@@ -315,8 +315,8 @@ class DiagramBuilder extends Component {
     this.parseDiagramToJSON();
   }
 
-  importFile() {
-    const fileToLoad = document.getElementById('upload-file').files[0];
+  importFile(e) {
+    const fileToLoad = e.target.files[0];
     const fileReader = new FileReader();
 
     fileReader.onload = (() => {
