@@ -38,6 +38,15 @@ function App(props) {
       <Provider store={store}>
         <BrowserRouter>
           <Switch>
+            <Redirect
+              exact
+              from={[
+                (props.frontendUrlPrefix || frontendUrlPrefix) + '/builder',
+                (props.frontendUrlPrefix || frontendUrlPrefix) +
+                  '/builder/:h/:vno',
+              ]}
+              to={(props.frontendUrlPrefix || frontendUrlPrefix) + '/defs'}
+            />
             <Route
               exact
               path={[

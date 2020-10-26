@@ -385,7 +385,7 @@ const tasks = props => {
             ? task.description
             : '',
         }}
-        name={task.name}
+        name={task.name.replace(props.prefixHttpTask, '')}
       />
     );
   });
