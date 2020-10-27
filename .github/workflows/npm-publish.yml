@@ -2,14 +2,12 @@ name: Release & Publish
 
 on:
   push:
-    branches:
-      - master
-
     tags:
       - v*
 
 jobs:
   publish:
+    if: github.ref == 'refs/heads/master'
     name: "Publish to npm"
     runs-on: ubuntu-latest
     steps:
