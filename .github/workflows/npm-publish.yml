@@ -1,32 +1,37 @@
-# When someone changes the version in package.json to 1.2.3
-# and pushes a commit with the message Release 1.2.3, the npm-publish
-# action will create a new tag v1.2.3 and publish the package to the npm registry.
-
-name: npm-publish
+name: Release & Publish
 
 on:
   push:
     branches:
       - master
 
+    tags:
+      - v*
+
 jobs:
-  npm-publish:
-    name: npm-publish
+  publish:
+    name: "Publish to npm"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@master
       - name: Set up Node.js
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v1
         with:
-          node-version: 10.0.0
-      - name: Publish if version has been updated
-        uses: pascalgn/npm-publish-action@06e0830ea83eea10ed4a62654eeaedafb8bf50fc
-        with: # All of theses inputs are optional
-          tag_name: "v%s"
-          tag_message: "v%s"
-          commit_pattern: "^Release (\\S+)"
-          workspace: "."
+          node-version: '12'
+      - name: install babel
+        run: |
+          npm install --save-dev @babel/core @babel/cli
+      - name: npm run transpile
+        run: |
+          ls -l
+          npm run transpile
+      - name: publish
+        run: |
+          cd build
+          ls -l
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this as is, it's automatically generated
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} # You need to set this in your repo settings
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
