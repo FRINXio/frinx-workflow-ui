@@ -3,7 +3,7 @@
   "version": "1.1.60",
   "main": "lib/App.js",
   "author": "frinx",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.9.0",
