@@ -64,6 +64,14 @@ const InputsTab = props => {
     setCustomParam('');
   };
 
+  const removeInputParam = e => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    props.removeInputParam(customParam);
+    setCustomParam('');
+  };
+
   const createTextField = (entry, item) => {
     let value = entry[1];
 
@@ -300,7 +308,7 @@ const InputsTab = props => {
   const createAdditionalFieldsPrompt = () => {
     return (
       <Row>
-        <Form onSubmit={addNewInputParam}>
+        <Form onSubmit={addNewInputParam} onReset={removeInputParam}>
           <InputGroup style={{padding: '10px 215px 10px'}}>
             <Form.Control
               value={customParam}
@@ -310,6 +318,14 @@ const InputsTab = props => {
             <InputGroup.Append>
               <Button type="submit" variant="outline-primary">
                 Add
+              </Button>
+              <Button
+                disabled={
+                  !props.inputs?.inputParameters?.hasOwnProperty(customParam)
+                }
+                type="reset"
+                variant="outline-secondary">
+                Remove
               </Button>
             </InputGroup.Append>
           </InputGroup>

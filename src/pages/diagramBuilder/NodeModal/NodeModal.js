@@ -64,6 +64,23 @@ function NodeModal(props) {
     setInputs(updatedInputs);
   }
 
+  function removeInputParam(param) {
+    const inputParameters = {...inputs.inputParameters};
+
+    const updatedInputs = {
+      ...inputs,
+      inputParameters: {
+        ...inputParameters,
+      },
+    };
+
+    if (updatedInputs.inputParameters.hasOwnProperty(param)) {
+      delete updatedInputs.inputParameters[param]
+    }
+
+    setInputs(updatedInputs);
+  }
+
   function addRemoveHeader(handleOperation, i) {
     const updatedInputs = {...inputs};
     const headers = updatedInputs['inputParameters']['http_request']['headers'];
@@ -241,6 +258,7 @@ function NodeModal(props) {
               name={name}
               handleInput={handleInput}
               addNewInputParam={addNewInputParam}
+              removeInputParam={removeInputParam}
               inputParameters={inputParameters}
               addRemoveHeader={addRemoveHeader}
             />
