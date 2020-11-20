@@ -1,10 +1,10 @@
 // @flow
 
 import AceEditor from 'react-ace';
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import superagent from 'superagent';
-import {Button, Form, Modal} from 'react-bootstrap';
-import {GlobalContext} from '../../../../common/GlobalContext';
+import { Button, Form, Modal } from 'react-bootstrap';
+import { GlobalContext } from '../../../../common/GlobalContext';
 
 const SchedulingModal = props => {
   const global = useContext(GlobalContext);
@@ -49,9 +49,7 @@ const SchedulingModal = props => {
     setError(null);
     setStatus('Submitting');
     const path = global.backendApiUrlPrefix + '/schedule/' + props.name;
-    const req = superagent
-      .put(path, schedule)
-      .set('Content-Type', 'application/json');
+    const req = superagent.put(path, schedule).set('Content-Type', 'application/json');
     req.end((err, res) => {
       if (res && res.ok) {
         handleClose();
@@ -140,10 +138,7 @@ const SchedulingModal = props => {
   const deleteButton = () => {
     if (found) {
       return (
-        <Button
-          variant="danger"
-          onClick={handleDelete}
-          disabled={status != null}>
+        <Button variant="danger" onClick={handleDelete} disabled={status != null}>
           Delete
         </Button>
       );
@@ -151,12 +146,7 @@ const SchedulingModal = props => {
   };
 
   return (
-    <Modal
-      size="lg"
-      dialogClassName="modal-70w"
-      show={props.show}
-      onHide={handleClose}
-      onShow={handleShow}>
+    <Modal size="lg" dialogClassName="modal-70w" show={props.show} onHide={handleClose} onShow={handleShow}>
       <Modal.Header>
         <Modal.Title>Schedule Details - {props.name}</Modal.Title>
       </Modal.Header>
@@ -174,11 +164,7 @@ const SchedulingModal = props => {
           </Form.Group>
           <Form.Group>
             <Form.Label>Enabled</Form.Label>
-            <Form.Control
-              type="checkbox"
-              onChange={e => setEnabled(e.target.checked)}
-              checked={getEnabled()}
-            />
+            <Form.Control type="checkbox" onChange={e => setEnabled(e.target.checked)} checked={getEnabled()} />
           </Form.Group>
           <Form.Group>
             <Form.Label>Workflow Input</Form.Label>
@@ -203,10 +189,7 @@ const SchedulingModal = props => {
       </Modal.Body>
       <Modal.Footer>
         <pre>{error}</pre>
-        <Button
-          variant="primary"
-          onClick={submitForm}
-          disabled={status != null}>
+        <Button variant="primary" onClick={submitForm} disabled={status != null}>
           {found ? 'Update' : 'Create'}
         </Button>
         {deleteButton()}

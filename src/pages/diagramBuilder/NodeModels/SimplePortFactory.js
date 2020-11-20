@@ -1,5 +1,5 @@
 // @flow
-import {AbstractPortFactory, PortModel} from '@projectstorm/react-diagrams';
+import { AbstractPortFactory, PortModel } from '@projectstorm/react-diagrams';
 
 export class SimplePortFactory extends AbstractPortFactory {
   cb: initialConfig => PortModel;

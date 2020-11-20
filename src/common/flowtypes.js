@@ -9,5 +9,5 @@ export type Task = {
   pollCount: number,
   logs: {},
   inputData: {},
-  outputData: {}
+  outputData: {},
 };

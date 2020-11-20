@@ -1,7 +1,7 @@
 // @flow
 import 'react-contexify/dist/ReactContexify.min.css';
 import * as React from 'react';
-import {IconFont, Item, Menu, MenuProvider, Separator} from 'react-contexify';
+import { IconFont, Item, Menu, MenuProvider, Separator } from 'react-contexify';
 
 export class NodeContextMenu extends React.Component {
   deleteNode = (node, diagramEngine) => {
@@ -62,11 +62,7 @@ export class LinkContextMenu extends React.Component {
 
 export function LinkMenuProvider(props) {
   return (
-    <MenuProvider
-      id={props.link.id}
-      component="g"
-      event="onContextMenu"
-      storeRef={false}>
+    <MenuProvider id={props.link.id} component="g" event="onContextMenu" storeRef={false}>
       {props.children}
     </MenuProvider>
   );

@@ -1,9 +1,9 @@
 // @flow
-import React, {useState} from 'react';
-import {Accordion, Icon} from 'semantic-ui-react';
-import {Button, ButtonGroup, Col, Form, InputGroup} from 'react-bootstrap';
-import {taskDescriptions} from '../../../constants';
-import AceEditor from "react-ace";
+import React, { useState } from 'react';
+import { Accordion, Icon } from 'semantic-ui-react';
+import { Button, ButtonGroup, Col, Form, InputGroup } from 'react-bootstrap';
+import { taskDescriptions } from '../../../constants';
+import AceEditor from 'react-ace';
 
 const HIDDEN = [
   'type',
@@ -14,7 +14,7 @@ const HIDDEN = [
   'forkTasks',
   'inputParameters',
   'defaultCase',
-  'loopOver'
+  'loopOver',
 ];
 
 const GeneralTab = props => {
@@ -53,9 +53,7 @@ const GeneralTab = props => {
           value={item}
         />
       </InputGroup>
-      <Form.Text className="text-muted">
-        {taskDescriptions['taskReferenceName']}
-      </Form.Text>
+      <Form.Text className="text-muted">{taskDescriptions['taskReferenceName']}</Form.Text>
     </Form.Group>
   );
 
@@ -68,14 +66,10 @@ const GeneralTab = props => {
         <Form.Control type="input" value={item[1]} onChange={() => {}} />
         <InputGroup.Append>
           <ButtonGroup>
-            <Button
-              variant="outline-primary"
-              onClick={() => props.handleInput(left[1], item[0])}>
+            <Button variant="outline-primary" onClick={() => props.handleInput(left[1], item[0])}>
               {left[0]}
             </Button>
-            <Button
-              variant="outline-primary"
-              onClick={() => props.handleInput(right[1], item[0])}>
+            <Button variant="outline-primary" onClick={() => props.handleInput(right[1], item[0])}>
               {right[0]}
             </Button>
           </ButtonGroup>
@@ -94,15 +88,9 @@ const GeneralTab = props => {
               <InputGroup.Prepend>
                 <InputGroup.Text>is equal to</InputGroup.Text>
               </InputGroup.Prepend>
-              <Form.Control
-                type="input"
-                onChange={e => props.handleInput(e.target.value, item)}
-                value={entry[0]}
-              />
+              <Form.Control type="input" onChange={e => props.handleInput(e.target.value, item)} value={entry[0]} />
             </InputGroup>
-            <Form.Text className="text-muted">
-              {taskDescriptions[item[0]]}
-            </Form.Text>
+            <Form.Text className="text-muted">{taskDescriptions[item[0]]}</Form.Text>
           </Form.Group>
         </Col>,
       );
@@ -125,15 +113,9 @@ const GeneralTab = props => {
             <InputGroup.Prepend>
               <InputGroup.Text>if</InputGroup.Text>
             </InputGroup.Prepend>
-            <Form.Control
-              type="input"
-              onChange={e => props.handleInput(e.target.value, item[0])}
-              value={item[1]}
-            />
+            <Form.Control type="input" onChange={e => props.handleInput(e.target.value, item[0])} value={item[1]} />
           </InputGroup>
-          <Form.Text className="text-muted">
-            {taskDescriptions[item[0]]}
-          </Form.Text>
+          <Form.Text className="text-muted">{taskDescriptions[item[0]]}</Form.Text>
         </Form.Group>
       </Col>,
     );
@@ -160,9 +142,7 @@ const GeneralTab = props => {
               tabSize: 2,
             }}
           />
-          <Form.Text className="text-muted">
-            {taskDescriptions[item[0]]}
-          </Form.Text>
+          <Form.Text className="text-muted">{taskDescriptions[item[0]]}</Form.Text>
         </Form.Group>
       </Col>
     );
@@ -176,15 +156,9 @@ const GeneralTab = props => {
             <InputGroup.Prepend>
               <InputGroup.Text>{item[0]}:</InputGroup.Text>
             </InputGroup.Prepend>
-            <Form.Control
-              type="input"
-              onChange={e => props.handleInput(e.target.value, item[0])}
-              value={item[1]}
-            />
+            <Form.Control type="input" onChange={e => props.handleInput(e.target.value, item[0])} value={item[1]} />
           </InputGroup>
-          <Form.Text className="text-muted">
-            {taskDescriptions[item[0]]}
-          </Form.Text>
+          <Form.Text className="text-muted">{taskDescriptions[item[0]]}</Form.Text>
         </Form.Group>
       </Col>
     );
@@ -220,9 +194,7 @@ const GeneralTab = props => {
         {decisionCases}
       </Form.Row>
       <Accordion>
-        <Accordion.Title
-          active={showAdvancedParams}
-          onClick={() => setShowAdvancedParams(!showAdvancedParams)}>
+        <Accordion.Title active={showAdvancedParams} onClick={() => setShowAdvancedParams(!showAdvancedParams)}>
           <Icon name="dropdown" />
           Advanced parameters
         </Accordion.Title>

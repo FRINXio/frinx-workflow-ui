@@ -1,22 +1,18 @@
 // @flow
 import * as _ from 'lodash';
-import {DefaultPortModel} from './DefaultPortModel';
-import {DiagramEngine, NodeModel, Toolkit} from '@projectstorm/react-diagrams';
+import { DefaultPortModel } from './DefaultPortModel';
+import { DiagramEngine, NodeModel, Toolkit } from '@projectstorm/react-diagrams';
 
 export class DefaultNodeModel extends NodeModel {
   name: string;
   color: string;
   inputs: {};
 
-  constructor(
-    name: string = 'Untitled',
-    color: string = 'rgb(0,192,255)',
-    inputs: {},
-  ) {
+  constructor(name: string = 'Untitled', color: string = 'rgb(0,192,255)', inputs: {}) {
     super('default');
     this.name = name;
     this.color = color;
-    super.extras = {inputs: inputs};
+    super.extras = { inputs: inputs };
 
     this.addInPort('In');
     this.addOutPort('Out');

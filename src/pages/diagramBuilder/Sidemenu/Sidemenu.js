@@ -1,20 +1,11 @@
 // @flow
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Divider,
-  Dropdown,
-  Grid,
-  Icon,
-  Input,
-  Menu,
-  Popup,
-  Sidebar,
-} from 'semantic-ui-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Divider, Dropdown, Grid, Icon, Input, Menu, Popup, Sidebar } from 'semantic-ui-react';
 
 import './Sidemenu.css';
 import SideMenuItem from './SideMenuItem';
-import {getTaskInputsRegex, getWfInputsRegex, hash} from '../builder-utils';
-import {version} from '../../../../package.json';
+import { getTaskInputsRegex, getWfInputsRegex, hash } from '../builder-utils';
+import { version } from '../../../../package.json';
 
 const jsonParse = json => {
   try {
@@ -28,57 +19,33 @@ const icons = taskDef => {
   const task = taskDef.name;
   switch (task) {
     case 'start':
-      return (
-        <div className="circle-icon">{task.substring(0, 1).toUpperCase()}</div>
-      );
+      return <div className="circle-icon">{task.substring(0, 1).toUpperCase()}</div>;
     case 'end':
-      return (
-        <div className="circle-icon">{task.substring(0, 1).toUpperCase()}</div>
-      );
+      return <div className="circle-icon">{task.substring(0, 1).toUpperCase()}</div>;
     case 'terminate':
     case 'http':
     case 'raw':
     case 'event':
     case 'wait':
     case 'lambda':
-      return (
-        <div className="default-icon">{task.substring(0, 1).toUpperCase()}</div>
-      );
+      return <div className="default-icon">{task.substring(0, 1).toUpperCase()}</div>;
     case 'js':
     case 'py':
-      return (
-        <div className="default-icon">{task.substring(0, 2).toUpperCase()}</div>
-      );
+      return <div className="default-icon">{task.substring(0, 2).toUpperCase()}</div>;
     case 'graphQL':
       return <div className="default-icon">gQL</div>;
     case 'fork':
-      return (
-        <div className="fork-icon">{task.substring(0, 1).toUpperCase()}</div>
-      );
+      return <div className="fork-icon">{task.substring(0, 1).toUpperCase()}</div>;
     case 'join':
-      return (
-        <div className="join-icon">{task.substring(0, 1).toUpperCase()}</div>
-      );
+      return <div className="join-icon">{task.substring(0, 1).toUpperCase()}</div>;
     case 'while':
-      return (
-        <div className="while-icon">W</div>
-      );
+      return <div className="while-icon">W</div>;
     case 'while_end':
-      return (
-        <div className="while_end-icon">E</div>
-      );
+      return <div className="while_end-icon">E</div>;
     case 'decision':
-      return (
-        <div className="decision-icon">
-          {task.substring(0, 1).toUpperCase()}
-        </div>
-      );
+      return <div className="decision-icon">{task.substring(0, 1).toUpperCase()}</div>;
     case 'dynamic_fork':
-      return (
-        <div className="dynamicFork-icon">
-          {task.substring(0, 1).toUpperCase()}F
-        </div>
-      );
+      return <div className="dynamicFork-icon">{task.substring(0, 1).toUpperCase()}F</div>;
     default:
       break;
   }
@@ -341,9 +308,7 @@ const favorites = props => {
               type: 'default',
               wfObject,
               name: wf.name,
-              description: wf.hasOwnProperty('description')
-                ? wf.description
-                : '',
+              description: wf.hasOwnProperty('description') ? wf.description : '',
             }}
             name={wf.name}
           />
@@ -381,9 +346,7 @@ const tasks = props => {
           type: 'default',
           wfObject,
           name: task.name,
-          description: task.hasOwnProperty('description')
-            ? task.description
-            : '',
+          description: task.hasOwnProperty('description') ? task.description : '',
         }}
         name={task.name.replace(props.prefixHttpTask, '')}
       />
@@ -403,9 +366,7 @@ const system = props => {
             type: task.name,
             wfObject,
             name: task.name,
-            description: task.hasOwnProperty('description')
-              ? task.description
-              : '',
+            description: task.hasOwnProperty('description') ? task.description : '',
           }}
           name={task.name.toUpperCase()}
           icon={icons(task)}
@@ -426,9 +387,7 @@ const custom = (props, custom) => {
               type: 'default',
               wfObject,
               name: wf.name,
-              description: wf.hasOwnProperty('description')
-                ? wf.description
-                : '',
+              description: wf.hasOwnProperty('description') ? wf.description : '',
             }}
             name={wf.name}
           />
@@ -506,8 +465,8 @@ const Sidemenu = props => {
 
   const shortcutsInfo = () => {
     return (
-      <Grid columns="equal" style={{width: '350px'}}>
-        <Grid.Column style={{textAlign: 'right'}}>
+      <Grid columns="equal" style={{ width: '350px' }}>
+        <Grid.Column style={{ textAlign: 'right' }}>
           <p>
             Save <kbd>Ctrl</kbd>+<kbd>S</kbd>
           </p>
@@ -521,7 +480,7 @@ const Sidemenu = props => {
             Expand <kbd>Ctrl</kbd>+<kbd>X</kbd>
           </p>
         </Grid.Column>
-        <Grid.Column style={{textAlign: 'right'}}>
+        <Grid.Column style={{ textAlign: 'right' }}>
           <p>
             Delete <kbd>LMB</kbd>+<kbd>Delete</kbd>
           </p>
@@ -536,12 +495,12 @@ const Sidemenu = props => {
     );
   };
 
-  const handleLabelChange = (e, {_, value}) => {
+  const handleLabelChange = (e, { _, value }) => {
     props.updateQuery(null, value);
   };
 
   return (
-    <div style={{zIndex: 11}}>
+    <div style={{ zIndex: 11 }}>
       <Sidebar
         id="sidebar-primary"
         as={Menu}
@@ -549,47 +508,33 @@ const Sidemenu = props => {
         onHide={() => setVisible(true)}
         visible={visible}
         vertical
-        icon>
-        <Menu.Item
-          as="a"
-          title="Workflows"
-          active={open === 'Workflows'}
-          onClick={() => handleOpen('Workflows')}>
+        icon
+      >
+        <Menu.Item as="a" title="Workflows" active={open === 'Workflows'} onClick={() => handleOpen('Workflows')}>
           <Icon name="folder open" />
         </Menu.Item>
-        <Menu.Item
-          as="a"
-          title="Tasks"
-          active={open === 'Tasks'}
-          onClick={() => handleOpen('Tasks')}>
+        <Menu.Item as="a" title="Tasks" active={open === 'Tasks'} onClick={() => handleOpen('Tasks')}>
           <Icon name="tasks" />
         </Menu.Item>
         <Menu.Item
           as="a"
           title="System Tasks"
           active={open === 'System Tasks'}
-          onClick={() => handleOpen('System Tasks')}>
+          onClick={() => handleOpen('System Tasks')}
+        >
           <Icon name="code" />
         </Menu.Item>
-        <Menu.Item
-          as="a"
-          title="Favorites"
-          active={open === 'Favorites'}
-          onClick={() => handleOpen('Favorites')}>
+        <Menu.Item as="a" title="Favorites" active={open === 'Favorites'} onClick={() => handleOpen('Favorites')}>
           <Icon name="favorite" />
         </Menu.Item>
         {customs.map((custom, i) => (
-          <Menu.Item
-            as="a"
-            title={`${custom}`}
-            active={open === custom}
-            onClick={() => handleOpen(custom)}>
+          <Menu.Item as="a" title={`${custom}`} active={open === custom} onClick={() => handleOpen(custom)}>
             {i + 1}
           </Menu.Item>
         ))}
         <div className="bottom">
           <Popup
-            style={{transform: 'translate3d(60px, 82vh, 0px)'}}
+            style={{ transform: 'translate3d(60px, 82vh, 0px)' }}
             basic
             content={shortcutsInfo}
             on="click"
@@ -603,34 +548,21 @@ const Sidemenu = props => {
             as="a"
             title="Help"
             onClick={() =>
-              window.open(
-                'https://docs.frinx.io/frinx-machine/workflow-builder/workflow-builder.html',
-                '_blank',
-              )
-            }>
+              window.open('https://docs.frinx.io/frinx-machine/workflow-builder/workflow-builder.html', '_blank')
+            }
+          >
             <Icon name="help circle" />
           </Menu.Item>
-          <Menu.Item style={{wordWrap: 'break-word', padding: '10px 0 10px 0'}}>
+          <Menu.Item style={{ wordWrap: 'break-word', padding: '10px 0 10px 0' }}>
             <small>{version}</small>
           </Menu.Item>
         </div>
       </Sidebar>
 
-      <Sidebar
-        id="sidebar-secondary"
-        as={Menu}
-        animation="overlay"
-        direction="left"
-        vertical
-        visible={expanded}>
+      <Sidebar id="sidebar-secondary" as={Menu} animation="overlay" direction="left" vertical visible={expanded}>
         <div className="sidebar-header">
           <h3>{open}</h3>
-          <Input
-            fluid
-            onChange={e => props.updateQuery(e.target.value, null)}
-            icon="search"
-            placeholder="Search..."
-          />
+          <Input fluid onChange={e => props.updateQuery(e.target.value, null)} icon="search" placeholder="Search..." />
           <br />
           <Dropdown
             placeholder="Labels"
@@ -650,13 +582,10 @@ const Sidemenu = props => {
                   .filter(item => item !== null),
               ),
             ].map((label, i) => {
-              return {key: i, text: label, value: label};
+              return { key: i, text: label, value: label };
             })}
           />
-          <small>
-            Combine search and labels to find{' '}
-            {open ? open.toLowerCase() : 'workflows'}
-          </small>
+          <small>Combine search and labels to find {open ? open.toLowerCase() : 'workflows'}</small>
         </div>
         <Divider horizontal section>
           {content.length} results

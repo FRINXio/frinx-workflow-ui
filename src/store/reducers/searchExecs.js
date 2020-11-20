@@ -5,18 +5,18 @@ import {
   UPDATE_QUERY,
   UPDATE_LABEL,
   DATA_SIZE,
-  CHECKED_WORKFLOWS
-} from "../actions/searchExecs";
+  CHECKED_WORKFLOWS,
+} from '../actions/searchExecs';
 
 const initialState = {
   isFetching: false,
   data: [],
-  query: "",
+  query: '',
   label: [],
   parents: [],
   children: [],
   size: 0,
-  checkedWfs: [0]
+  checkedWfs: [0],
 };
 
 const reducer = (state = initialState, action) => {

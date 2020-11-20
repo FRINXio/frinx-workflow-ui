@@ -1,20 +1,15 @@
 // @flow
 import * as _ from 'lodash';
-import {DefaultLinkModel} from '@projectstorm/react-diagrams';
-import {DiagramEngine} from '@projectstorm/react-diagrams';
-import {LinkModel} from '@projectstorm/react-diagrams';
-import {PortModel} from '@projectstorm/react-diagrams';
+import { DefaultLinkModel } from '@projectstorm/react-diagrams';
+import { DiagramEngine } from '@projectstorm/react-diagrams';
+import { LinkModel } from '@projectstorm/react-diagrams';
+import { PortModel } from '@projectstorm/react-diagrams';
 
 export class DynamicNodePortModel extends PortModel {
   in: boolean;
   label: string;
 
-  constructor(
-    isInput: boolean,
-    name: string,
-    label: string = null,
-    id?: string,
-  ) {
+  constructor(isInput: boolean, name: string, label: string = null, id?: string) {
     super(name, 'dynamic', id);
     this.in = isInput;
     this.label = label || name;

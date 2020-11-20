@@ -1,5 +1,5 @@
 // @flow
-import React, {createContext, useEffect, useState} from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 
 export const GlobalContext = createContext();
 
@@ -23,12 +23,8 @@ export const GlobalProvider = props => {
   const [global, setGlobal] = useState(globalConstants);
 
   useEffect(() => {
-    setGlobal({...global, ...props});
+    setGlobal({ ...global, ...props });
   }, [props]);
 
-  return (
-    <GlobalContext.Provider value={global}>
-      {props.children}
-    </GlobalContext.Provider>
-  );
+  return <GlobalContext.Provider value={global}>{props.children}</GlobalContext.Provider>;
 };

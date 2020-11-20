@@ -1,18 +1,15 @@
 // @flow
 import * as React from 'react';
 import * as SRD from '@projectstorm/react-diagrams';
-import {DecisionNode} from './DecisionNode';
-import {DecisionNodeModel} from './DecisionNodeModel';
+import { DecisionNode } from './DecisionNode';
+import { DecisionNodeModel } from './DecisionNodeModel';
 
 export class DecisionNodeFactory extends SRD.AbstractNodeFactory {
   constructor() {
     super('decision');
   }
 
-  generateReactWidget(
-    diagramEngine: SRD.DiagramEngine,
-    node: SRD.NodeModel,
-  ): JSX.Element {
+  generateReactWidget(diagramEngine: SRD.DiagramEngine, node: SRD.NodeModel): JSX.Element {
     return <DecisionNode node={node} diagramEngine={diagramEngine} />;
   }
 
