@@ -193,7 +193,7 @@ function TaskList() {
       }
     });
     if (taskBody["name"] !== "") {
-      const newTask = { ...taskBody, ownerEmail: "example@example.com" };g
+      const newTask = { ...taskBody, ownerEmail: "example@example.com" };
       http.post(global.backendApiUrlPrefix + "/metadata/taskdef", [newTask]).then(() => {
         window.location.reload();
       });
