@@ -206,8 +206,12 @@ class DiagramBuilder extends Component {
 
   saveWorkflow(e) {
     e.preventDefault();
+    const finalWorkflow = {
+      ...this.props.finalWorkflow,
+      ownerEmail: 'example@example.com',
+    };
     this.state.workflowDiagram
-      .saveWorkflow(this.props.finalWorkflow)
+      .saveWorkflow(finalWorkflow)
       .then(res => {
         this.props.showCustomAlert(
           true,
