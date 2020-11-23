@@ -59,7 +59,8 @@
     "debug": "PORT=3002 react-scripts --inspect-brk start",
     "build": "webpack --mode production",
     "flow": "flow",
-    "formatter": "prettier --write 'src/*.js' 'src/**/*.js' package.json"
+    "formatter": "prettier --write 'src/*.js' 'src/**/*.js' package.json",
+    "formatter:check": "prettier -l 'src/*.js' 'src/**/*.js' package.json"
   },
   "eslintConfig": {
     "extends": "react-app"
