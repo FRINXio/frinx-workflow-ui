@@ -166,10 +166,15 @@ function InputModal(props) {
     };
 
     workflowFormCopy.forEach(({label, value}) => {
-      input[label] =
-        typeof value === 'string' && value.startsWith('{')
-          ? JSON.parse(value)
-          : value;
+      let parsedValue = value;
+      if (typeof value === 'string' && value.trim().startsWith('{')) {
+        try {
+          parsedValue = JSON.parse(value);
+        } catch {
+          // not a valid json, use default string value
+        }
+      }
+      input[label] = parsedValue;
     });
 
     setStatus('Executing...');
