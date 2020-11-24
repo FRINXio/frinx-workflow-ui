@@ -214,7 +214,7 @@ function WorkflowDefs(props) {
   const filteredRows = () => {
     return pageItems.map(e => {
       return (
-        <Table.Row>
+        <Table.Row key={`${e.name}-${e.version}`}>
           <Table.Cell>
             <Header as="h4">
               <Header.Content>
@@ -248,7 +248,7 @@ function WorkflowDefs(props) {
               }
               header={<h4>Used directly in following workflows:</h4>}
               content={getDependencies(e).usedInWfs.map(wf => (
-                <p>{wf.name}</p>
+                <p key={wf.name}>{wf.name}</p>
               ))}
               basic
             />
