@@ -1,8 +1,8 @@
 // @flow
 import React, { useState, useEffect } from 'react';
 import { getWfInputsRegex } from '../builder-utils';
-import { Form, Row, Col, InputGroup } from 'react-bootstrap';
 import Dropdown from 'react-dropdown';
+import { Form, Row, Col, InputGroup } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -12,7 +12,7 @@ const inputParamsTemplate = {
   type: 'string',
 };
 
-const jsonParse = json => {
+const jsonParse = (json: string) => {
   try {
     return JSON.parse(json);
   } catch (e) {
@@ -22,9 +22,9 @@ const jsonParse = json => {
 
 const getInputParameters = props => {
   const inputParameters = jsonParse(props.finalWf.inputParameters ? props.finalWf.inputParameters[0] : null);
-  let inputParametersKeys = Object.keys(getWfInputsRegex(props.finalWf)) || [];
+  const inputParametersKeys = Object.keys(getWfInputsRegex(props.finalWf)) || [];
 
-  let inputParams = inputParametersKeys.map(key => ({
+  const inputParams = inputParametersKeys.map(key => ({
     label: key,
     ...(inputParameters ? (inputParameters[key] ? inputParameters[key] : inputParamsTemplate) : inputParamsTemplate),
   }));
@@ -42,19 +42,12 @@ const getInputParameters = props => {
 };
 
 const DefaultsDescsTab = props => {
-  const [inputParams, setInputParams] = useState([]);
-  const [selectedParam, setSelectedParam] = useState(getInputParameters(props)[0]?.label);
-  const [selectedParamObj, setSelectedParamObj] = useState({});
+  const inputParams = getInputParameters(props);
+  const [selectedParam, setSelectedParam] = useState(inputParams[0]?.label);
+  const selectedParamObj = _.find(inputParams, { label: selectedParam });
 
-  useEffect(() => {
-    selectParameter(selectedParam);
-  }, [props]);
-
-  const selectParameter = label => {
-    let inputParams = getInputParameters(props);
-    setInputParams(inputParams);
-    setSelectedParam(label);
-    setSelectedParamObj(_.find(inputParams, { label: label }));
+  const handleInputParamSelect = (event: SyntheticEvent<HTMLSelectElement>) => {
+    setSelectedParam(event.currentTarget.value);
   };
 
   const renderInputFields = (param, i) => {
@@ -68,7 +61,9 @@ const DefaultsDescsTab = props => {
               <Form.Label>{param[0]}</Form.Label>
               <Dropdown
                 options={types}
-                onChange={e => props.handleInputParams(selectedParam, selectedParamObj, param[0], e.value)}
+                onChange={e => {
+                  props.handleInputParams(selectedParam, selectedParamObj, param[0], e.value);
+                }}
                 value={param[1]}
               />
             </Form.Group>
@@ -98,12 +93,13 @@ const DefaultsDescsTab = props => {
               <InputGroup.Text>Available input parameters:</InputGroup.Text>
             </InputGroup.Prepend>
             <Form.Control
+              value={selectedParam}
               disabled={inputParams.length === 0}
-              onClick={e => selectParameter(e.target.value)}
+              onChange={handleInputParamSelect}
               as="select"
             >
               {inputParams.map(param => (
-                <option>{param.label}</option>
+                <option value={param.label}>{param.label}</option>
               ))}
             </Form.Control>
           </InputGroup>
