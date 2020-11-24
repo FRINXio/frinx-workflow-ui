@@ -1,11 +1,6 @@
 // @flow
 import * as _ from 'lodash';
-import {
-  DefaultLinkModel,
-  DiagramEngine,
-  LinkModel,
-  PortModel,
-} from '@projectstorm/react-diagrams';
+import { DefaultLinkModel, DiagramEngine, LinkModel, PortModel } from '@projectstorm/react-diagrams';
 
 export class DowhileNodePortModel extends PortModel {
   position: string | 'top' | 'bottom' | 'left' | 'right';

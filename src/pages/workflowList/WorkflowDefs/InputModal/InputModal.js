@@ -1,21 +1,13 @@
 // @flow
 import Dropdown from 'react-dropdown';
-import React, {useContext, useEffect, useState} from 'react';
-import {
-  Button,
-  Col,
-  Form,
-  Modal,
-  Row,
-  ToggleButton,
-  ToggleButtonGroup,
-} from 'react-bootstrap';
-import {GlobalContext} from '../../../../common/GlobalContext';
-import {Typeahead} from 'react-bootstrap-typeahead';
-import {getMountedDevices} from '../../../../store/actions/mountedDevices';
-import {HttpClient as http} from '../../../../common/HttpClient';
-import {storeWorkflowId} from '../../../../store/actions/builder';
-import {useDispatch, useSelector} from 'react-redux';
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, Col, Form, Modal, Row, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import { GlobalContext } from '../../../../common/GlobalContext';
+import { Typeahead } from 'react-bootstrap-typeahead';
+import { getMountedDevices } from '../../../../store/actions/mountedDevices';
+import { HttpClient as http } from '../../../../common/HttpClient';
+import { storeWorkflowId } from '../../../../store/actions/builder';
+import { useDispatch, useSelector } from 'react-redux';
 
 const jsonParse = json => {
   try {
@@ -51,15 +43,12 @@ function InputModal(props) {
   const version = Number(props.wf.version);
   const wfdesc =
     jsonParse(props.wf.description)?.description ||
-    (jsonParse(props.wf.description)?.description !== '' &&
-      props.wf.description);
+    (jsonParse(props.wf.description)?.description !== '' && props.wf.description);
 
   useEffect(() => {
     const definition = JSON.stringify(props.wf, null, 2);
     const labels = getInputs(definition);
-    const inputParams = jsonParse(
-      props.wf.inputParameters ? props.wf.inputParameters[0] : null,
-    );
+    const inputParams = jsonParse(props.wf.inputParameters ? props.wf.inputParameters[0] : null);
 
     const workflowForm = labels.map(label => ({
       label: label,
@@ -83,41 +72,28 @@ function InputModal(props) {
     return new Promise((resolve, reject) => {
       const waitingWfs = [];
       const q = 'status:"RUNNING"';
-      http
-        .get(
-          global.backendApiUrlPrefix +
-            '/executions/?q=&h=&freeText=' +
-            q +
-            '&start=' +
-            0 +
-            '&size=',
-        )
-        .then(res => {
-          const runningWfs = res.result?.hits || [];
-          const promises = runningWfs.map(wf => {
-            return http.get(
-              global.backendApiUrlPrefix + '/id/' + wf.workflowId,
-            );
-          });
-
-          Promise.all(promises).then(results => {
-            results.forEach(r => {
-              const workflow = r.result;
-              const waitTasks = workflow?.tasks
-                .filter(task => task.taskType === 'WAIT')
-                .map(t => t.referenceTaskName);
-              if (waitTasks.length > 0) {
-                const waitingWf = {
-                  id: workflow.workflowId,
-                  name: workflow.workflowName,
-                  waitingTasks: waitTasks,
-                };
-                waitingWfs.push(waitingWf);
-              }
-            });
-            resolve(waitingWfs);
-          });
+      http.get(global.backendApiUrlPrefix + '/executions/?q=&h=&freeText=' + q + '&start=' + 0 + '&size=').then(res => {
+        const runningWfs = res.result?.hits || [];
+        const promises = runningWfs.map(wf => {
+          return http.get(global.backendApiUrlPrefix + '/id/' + wf.workflowId);
         });
+
+        Promise.all(promises).then(results => {
+          results.forEach(r => {
+            const workflow = r.result;
+            const waitTasks = workflow?.tasks.filter(task => task.taskType === 'WAIT').map(t => t.referenceTaskName);
+            if (waitTasks.length > 0) {
+              const waitingWf = {
+                id: workflow.workflowId,
+                name: workflow.workflowName,
+                waitingTasks: waitTasks,
+              };
+              waitingWfs.push(waitingWf);
+            }
+          });
+          resolve(waitingWfs);
+        });
+      });
     });
   };
 
@@ -127,13 +103,10 @@ function InputModal(props) {
 
   const handleInput = (e, i) => {
     const workflowFormCopy = [...workflowForm];
-    const warningCopy = {...warning};
+    const warningCopy = { ...warning };
 
     workflowFormCopy[i].value = e.target.value;
-    warningCopy[i] = !!(
-      workflowFormCopy[i].value.match(/^\s.*$/) ||
-      workflowFormCopy[i].value.match(/^.*\s$/)
-    );
+    warningCopy[i] = !!(workflowFormCopy[i].value.match(/^\s.*$/) || workflowFormCopy[i].value.match(/^.*\s$/));
 
     setWorkflowForm(workflowFormCopy);
     setWarning(warningCopy);
@@ -165,26 +138,21 @@ function InputModal(props) {
       input,
     };
 
-    workflowFormCopy.forEach(({label, value}) => {
-      input[label] =
-        typeof value === 'string' && value.startsWith('{')
-          ? JSON.parse(value)
-          : value;
+    workflowFormCopy.forEach(({ label, value }) => {
+      input[label] = typeof value === 'string' && value.startsWith('{') ? JSON.parse(value) : value;
     });
 
     setStatus('Executing...');
-    http
-      .post(global.backendApiUrlPrefix + '/workflow', JSON.stringify(payload))
-      .then(res => {
-        setStatus(res.statusText);
-        setWfId(res.body.text);
-        dispatch(storeWorkflowId(res.body.text));
-        timeoutBtn();
+    http.post(global.backendApiUrlPrefix + '/workflow', JSON.stringify(payload)).then(res => {
+      setStatus(res.statusText);
+      setWfId(res.body.text);
+      dispatch(storeWorkflowId(res.body.text));
+      timeoutBtn();
 
-        if (props.fromBuilder) {
-          handleClose(true);
-        }
-      });
+      if (props.fromBuilder) {
+        handleClose(true);
+      }
+    });
   };
 
   const timeoutBtn = () => {
@@ -206,9 +174,7 @@ function InputModal(props) {
               <div>
                 {option}
                 <div>
-                  <small>
-                    name: {waitingWfs.find(w => w.id === option)?.name}
-                  </small>
+                  <small>name: {waitingWfs.find(w => w.id === option)?.name}</small>
                 </div>
               </div>
             )}
@@ -226,13 +192,7 @@ function InputModal(props) {
               <div>
                 {option}
                 <div>
-                  <small>
-                    name:{' '}
-                    {
-                      waitingWfs.find(w => w.waitingTasks.includes(option))
-                        ?.name
-                    }
-                  </small>
+                  <small>name: {waitingWfs.find(w => w.waitingTasks.includes(option))?.name}</small>
                 </div>
               </div>
             )}
@@ -245,9 +205,7 @@ function InputModal(props) {
             onChange={e => handleTypeahead(e, i)}
             placeholder="Enter or select node id"
             options={devices}
-            selected={devices.filter(
-              device => device === workflowForm[i].value,
-            )}
+            selected={devices.filter(device => device === workflowForm[i].value)}
             onInputChange={e => handleTypeahead(e, i)}
           />
         );
@@ -274,29 +232,18 @@ function InputModal(props) {
               height: 'calc(1.5em + .75rem + 2px)',
               width: '100%',
               paddingTop: '.375rem',
-            }}>
-            <ToggleButton
-              size="sm"
-              variant="outline-primary"
-              value={item?.options[0].toString()}>
+            }}
+          >
+            <ToggleButton size="sm" variant="outline-primary" value={item?.options[0].toString()}>
               {item?.options[0].toString()}
             </ToggleButton>
-            <ToggleButton
-              size="sm"
-              variant="outline-primary"
-              value={item?.options[1].toString()}>
+            <ToggleButton size="sm" variant="outline-primary" value={item?.options[1].toString()}>
               {item?.options[1].toString()}
             </ToggleButton>
           </ToggleButtonGroup>
         );
       case 'select':
-        return (
-          <Dropdown
-            options={item.options}
-            onChange={e => handleSwitch(e.value, i)}
-            value={item.value}
-          />
-        );
+        return <Dropdown options={item.options} onChange={e => handleSwitch(e.value, i)} value={item.value} />;
       default:
         return (
           <Form.Control
@@ -312,7 +259,7 @@ function InputModal(props) {
 
   return (
     <Modal size="lg" show={props.show} onHide={handleClose}>
-      <Modal.Body style={{padding: '30px'}}>
+      <Modal.Body style={{ padding: '30px' }}>
         <h4>
           {name} / {version}
         </h4>
@@ -332,14 +279,13 @@ function InputModal(props) {
                           fontSize: '12px',
                           float: 'right',
                           marginTop: '5px',
-                        }}>
+                        }}
+                      >
                         Unnecessary space
                       </div>
                     ) : null}
                     {inputModel(item, i)}
-                    <Form.Text className="text-muted">
-                      {item.description}
-                    </Form.Text>
+                    <Form.Text className="text-muted">{item.description}</Form.Text>
                   </Form.Group>
                 </Col>
               );
@@ -348,9 +294,7 @@ function InputModal(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <a
-          style={{float: 'left', marginRight: '50px'}}
-          href={`${global.frontendUrlPrefix}/exec/${wfId}`}>
+        <a style={{ float: 'left', marginRight: '50px' }} href={`${global.frontendUrlPrefix}/exec/${wfId}`}>
           {wfId}
         </a>
         <Button
@@ -363,11 +307,10 @@ function InputModal(props) {
               ? 'primary'
               : 'danger'
           }
-          onClick={executeWorkflow}>
+          onClick={executeWorkflow}
+        >
           {status === 'Execute' ? <i className="fas fa-play" /> : null}
-          {status === 'Executing...' ? (
-            <i className="fas fa-spinner fa-spin" />
-          ) : null}
+          {status === 'Executing...' ? <i className="fas fa-spinner fa-spin" /> : null}
           {status === 'OK' ? <i className="fas fa-check-circle" /> : null}
           &nbsp;&nbsp;{status}
         </Button>

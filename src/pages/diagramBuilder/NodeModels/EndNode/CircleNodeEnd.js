@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import {NodeContextMenu, NodeMenuProvider} from '../ContextMenu';
-import {PortWidget} from '@projectstorm/react-diagrams';
+import { NodeContextMenu, NodeMenuProvider } from '../ContextMenu';
+import { PortWidget } from '@projectstorm/react-diagrams';
 
 export class CircleNodeEnd extends React.Component {
   render() {
@@ -17,13 +17,10 @@ export class CircleNodeEnd extends React.Component {
             </g>
           </svg>
         </NodeMenuProvider>
-        <div style={{position: 'absolute', zIndex: 10, left: -10, top: 21}}>
+        <div style={{ position: 'absolute', zIndex: 10, left: -10, top: 21 }}>
           <PortWidget name="left" node={this.props.node} />
         </div>
-        <NodeContextMenu
-          node={this.props.node}
-          diagramEngine={this.props.diagramEngine}
-        />
+        <NodeContextMenu node={this.props.node} diagramEngine={this.props.diagramEngine} />
       </div>
     );
   }

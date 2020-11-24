@@ -10,7 +10,7 @@
 // enforces copyright header to be present in every file
 // eslint-disable-next-line max-len
 
-module.exports.extends = ['eslint-config-fbcnms'];
+module.exports.extends = ['eslint-config-fbcnms', 'prettier', 'prettier/react'];
 module.exports.overrides = [
   {
     env: {

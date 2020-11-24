@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import {NodeContextMenu, NodeMenuProvider} from '../ContextMenu';
-import {PortWidget} from '@projectstorm/react-diagrams';
+import { NodeContextMenu, NodeMenuProvider } from '../ContextMenu';
+import { PortWidget } from '@projectstorm/react-diagrams';
 
 export class JoinNode extends React.Component {
   constructor(props) {
@@ -19,7 +19,8 @@ export class JoinNode extends React.Component {
           position: 'relative',
           width: this.state.size,
           height: this.state.size,
-        }}>
+        }}
+      >
         <NodeMenuProvider node={this.props.node}>
           <svg
             width={this.state.size}
@@ -53,7 +54,8 @@ export class JoinNode extends React.Component {
             zIndex: 10,
             left: 5,
             top: this.state.size / 2 - 12,
-          }}>
+          }}
+        >
           <PortWidget name="left" node={this.props.node} />
         </div>
 
@@ -63,14 +65,12 @@ export class JoinNode extends React.Component {
             zIndex: 10,
             left: this.state.size - 28,
             top: this.state.size / 2 - 12,
-          }}>
+          }}
+        >
           <PortWidget name="right" node={this.props.node} />
         </div>
 
-        <NodeContextMenu
-          node={this.props.node}
-          diagramEngine={this.props.diagramEngine}
-        />
+        <NodeContextMenu node={this.props.node} diagramEngine={this.props.diagramEngine} />
       </div>
     );
   }

@@ -1,14 +1,14 @@
 // @flow
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 export const getWfInputsRegex = wf => {
   let def = JSON.stringify(wf);
-  let inputCaptureRegex = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim
-  let match = inputCaptureRegex.exec(def)
+  let inputCaptureRegex = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim;
+  let match = inputCaptureRegex.exec(def);
   let inputsArray = [];
 
   while (match != null) {
-    inputsArray.push(match[1])
+    inputsArray.push(match[1]);
     match = inputCaptureRegex.exec(def);
   }
 
@@ -17,7 +17,7 @@ export const getWfInputsRegex = wf => {
   let inputParameters = {};
 
   inputsArray.forEach(el => {
-    inputParameters[el] = "${workflow.input." + el + "}";
+    inputParameters[el] = '${workflow.input.' + el + '}';
   });
 
   return inputParameters;
@@ -27,7 +27,7 @@ export const getTaskInputsRegex = t => {
   let inputParameters = {};
   if (t.inputKeys) {
     t.inputKeys.forEach(el => {
-      inputParameters[el] = "${workflow.input." + el + "}";
+      inputParameters[el] = '${workflow.input.' + el + '}';
     });
   }
 
@@ -55,7 +55,7 @@ export const getWfInputs = wf => {
 
   taskArray.forEach(task => {
     if (task !== undefined) {
-      let nonSystemTask = fn(task, "inputParameters");
+      let nonSystemTask = fn(task, 'inputParameters');
 
       if (_.isArray(nonSystemTask)) {
         nonSystemTask.forEach(el => {
@@ -82,21 +82,21 @@ export const fn = (obj, key) => {
 
   return _.flatten(
     _.map(obj, function(v) {
-      return typeof v == "object" ? fn(v, key) : [];
+      return typeof v == 'object' ? fn(v, key) : [];
     }),
-    true
+    true,
   );
 };
 
 export const getLinksArray = (type, node) => {
   let linksArray = [];
   _.values(node.ports).forEach(port => {
-    if (type === "in" || type === "inputPort") {
-      if (port.in || port.name === "left") {
+    if (type === 'in' || type === 'inputPort') {
+      if (port.in || port.name === 'left') {
         linksArray = _.values(port.links);
       }
-    } else if (type === "out") {
-      if (!port.in || port.name === "right") {
+    } else if (type === 'out') {
+      if (!port.in || port.name === 'right') {
         linksArray = _.values(port.links);
       }
     }
@@ -107,7 +107,7 @@ export const getLinksArray = (type, node) => {
 export const getStartNode = links => {
   for (let i = 0; i < _.values(links).length; i++) {
     let link = _.values(links)[i];
-    if (link.sourcePort.type === "start") {
+    if (link.sourcePort.type === 'start') {
       return link.sourcePort.parent;
     }
   }
@@ -116,15 +116,15 @@ export const getStartNode = links => {
 export const getEndNode = links => {
   for (let i = 0; i < _.values(links).length; i++) {
     let link = _.values(links)[i];
-    if (link.targetPort.type === "end") {
+    if (link.targetPort.type === 'end') {
       return link.targetPort.parent;
     }
   }
 };
 
-export const handleRawNode = (rawNode) => {
+export const handleRawNode = rawNode => {
   if (!rawNode.inputParameters.raw) {
-    throw new Error("Invalid raw task definition. No content");
+    throw new Error('Invalid raw task definition. No content');
   }
 
   try {
@@ -149,31 +149,28 @@ export const handleForkNode = forkNode => {
 
     //iterate trough tasks in each branch till join node
     while (current) {
-      let outputLinks = getLinksArray("out", current);
+      let outputLinks = getLinksArray('out', current);
       switch (current.type) {
-        case "join":
+        case 'join':
           joinOn.push(parent.extras.inputs.taskReferenceName);
           joinNode = current;
           current = null;
           break;
-        case "fork":
+        case 'fork':
           let innerForkNode = handleForkNode(current).forkNode;
           let innerJoinNode = handleForkNode(current).joinNode;
-          let innerJoinOutLinks = getLinksArray("out", innerJoinNode);
-          tmpBranch.push(
-            innerForkNode.extras.inputs,
-            innerJoinNode.extras.inputs
-          );
+          let innerJoinOutLinks = getLinksArray('out', innerJoinNode);
+          tmpBranch.push(innerForkNode.extras.inputs, innerJoinNode.extras.inputs);
           parent = innerJoinNode;
           current = innerJoinOutLinks[0].targetPort.getNode();
           break;
-        case "decision":
+        case 'decision':
           let { decideNode, firstNeutralNode } = handleDecideNode(current);
           tmpBranch.push(decideNode.extras.inputs);
           current = firstNeutralNode;
           break;
-        case "dynamic":
-        case "default":
+        case 'dynamic':
+        case 'default':
           tmpBranch.push(current.extras.inputs);
           parent = current;
           if (outputLinks.length > 0) {
@@ -205,35 +202,23 @@ export const handleDecideNode = decideNode => {
 
     if (branch) {
       let currentNode = branch.targetPort.getNode();
-      let inputLinks = getLinksArray("in", currentNode);
-      let outputLink = getLinksArray("out", currentNode)[0];
+      let inputLinks = getLinksArray('in', currentNode);
+      let outputLink = getLinksArray('out', currentNode)[0];
 
-      while (
-        (inputLinks.length === 1 ||
-          currentNode.type === "join" ||
-          currentNode.type === "fork") &&
-        outputLink
-      ) {
+      while ((inputLinks.length === 1 || currentNode.type === 'join' || currentNode.type === 'fork') && outputLink) {
         switch (currentNode.type) {
-          case "fork":
+          case 'fork':
             let { forkNode, joinNode } = handleForkNode(currentNode);
             branchArray.push(forkNode.extras.inputs, joinNode.extras.inputs);
-            currentNode = getLinksArray(
-              "out",
-              joinNode
-            )[0].targetPort.getNode();
+            currentNode = getLinksArray('out', joinNode)[0].targetPort.getNode();
             break;
-          case "decision":
+          case 'decision':
             let innerDecideNode = handleDecideNode(currentNode).decideNode;
-            let innerFirstNeutralNode = handleDecideNode(currentNode)
-              .firstNeutralNode;
+            let innerFirstNeutralNode = handleDecideNode(currentNode).firstNeutralNode;
             branchArray.push(innerDecideNode.extras.inputs);
             if (innerFirstNeutralNode && innerFirstNeutralNode.extras.inputs) {
               branchArray.push(innerFirstNeutralNode.extras.inputs);
-              currentNode = getLinksArray(
-                "out",
-                innerFirstNeutralNode
-              )[0].targetPort.getNode();
+              currentNode = getLinksArray('out', innerFirstNeutralNode)[0].targetPort.getNode();
             } else {
               currentNode = innerFirstNeutralNode;
             }
@@ -243,8 +228,8 @@ export const handleDecideNode = decideNode => {
             currentNode = outputLink.targetPort.getNode();
             break;
         }
-        inputLinks = getLinksArray("in", currentNode);
-        outputLink = getLinksArray("out", currentNode)[0];
+        inputLinks = getLinksArray('in', currentNode);
+        outputLink = getLinksArray('out', currentNode)[0];
       }
 
       firstNeutralNode = currentNode;
@@ -268,63 +253,59 @@ export const handleDecideNode = decideNode => {
 };
 
 export const linkNodes = (node1, node2, whichPort) => {
-  if (
-    node1.type === "fork" ||
-    node1.type === "join" ||
-    node1.type === "start"
-  ) {
-    const fork_join_start_outPort = node1.getPort("right");
+  if (node1.type === 'fork' || node1.type === 'join' || node1.type === 'start') {
+    const fork_join_start_outPort = node1.getPort('right');
 
-    if (node2.type === "default") {
+    if (node2.type === 'default') {
       return fork_join_start_outPort.link(node2.getInPorts()[0]);
     }
-    if (node2.type === "fork") {
-      return fork_join_start_outPort.link(node2.getPort("left"));
+    if (node2.type === 'fork') {
+      return fork_join_start_outPort.link(node2.getPort('left'));
     }
-    if (node2.type === "join") {
-      return fork_join_start_outPort.link(node2.getPort("left"));
+    if (node2.type === 'join') {
+      return fork_join_start_outPort.link(node2.getPort('left'));
     }
-    if (node2.type === "decision") {
-      return fork_join_start_outPort.link(node2.getPort("inputPort"));
+    if (node2.type === 'decision') {
+      return fork_join_start_outPort.link(node2.getPort('inputPort'));
     }
-    if (node2.type === "end") {
-      return fork_join_start_outPort.link(node2.getPort("left"));
+    if (node2.type === 'end') {
+      return fork_join_start_outPort.link(node2.getPort('left'));
     }
-  } else if (node1.type === "default") {
+  } else if (node1.type === 'default') {
     const defaultOutPort = node1.getOutPorts()[0];
 
-    if (node2.type === "default") {
+    if (node2.type === 'default') {
       return defaultOutPort.link(node2.getInPorts()[0]);
     }
-    if (node2.type === "fork") {
-      return defaultOutPort.link(node2.getPort("left"));
+    if (node2.type === 'fork') {
+      return defaultOutPort.link(node2.getPort('left'));
     }
-    if (node2.type === "join") {
-      return defaultOutPort.link(node2.getPort("left"));
+    if (node2.type === 'join') {
+      return defaultOutPort.link(node2.getPort('left'));
     }
-    if (node2.type === "decision") {
-      return defaultOutPort.link(node2.getPort("inputPort"));
+    if (node2.type === 'decision') {
+      return defaultOutPort.link(node2.getPort('inputPort'));
     }
-    if (node2.type === "end") {
-      return defaultOutPort.link(node2.getPort("left"));
+    if (node2.type === 'end') {
+      return defaultOutPort.link(node2.getPort('left'));
     }
-  } else if (node1.type === "decision") {
+  } else if (node1.type === 'decision') {
     const currentPort = node1.getPort(whichPort);
 
-    if (node2.type === "default") {
+    if (node2.type === 'default') {
       return currentPort.link(node2.getInPorts()[0]);
     }
-    if (node2.type === "fork") {
-      return currentPort.link(node2.getPort("left"));
+    if (node2.type === 'fork') {
+      return currentPort.link(node2.getPort('left'));
     }
-    if (node2.type === "join") {
-      return currentPort.link(node2.getPort("left"));
+    if (node2.type === 'join') {
+      return currentPort.link(node2.getPort('left'));
     }
-    if (node2.type === "decision") {
-      return currentPort.link(node2.getPort("inputPort"));
+    if (node2.type === 'decision') {
+      return currentPort.link(node2.getPort('inputPort'));
     }
-    if (node2.type === "end") {
-      return currentPort.link(node2.getPort("left"));
+    if (node2.type === 'end') {
+      return currentPort.link(node2.getPort('left'));
     }
   }
 };

@@ -1,8 +1,8 @@
 // @flow
-import React from "react";
-import { NodeContextMenu, NodeMenuProvider } from "../ContextMenu";
-import { PortWidget } from "@projectstorm/react-diagrams";
-import "./DynamicNode.css";
+import React from 'react';
+import { NodeContextMenu, NodeMenuProvider } from '../ContextMenu';
+import { PortWidget } from '@projectstorm/react-diagrams';
+import './DynamicNode.css';
 
 function DynamicNode(props) {
   return (
@@ -18,7 +18,7 @@ function DynamicNode(props) {
       <div
         className="srd-node-glow"
         style={{
-          position: "absolute",
+          position: 'absolute',
           zIndex: -1,
           left: 45,
           top: 30,

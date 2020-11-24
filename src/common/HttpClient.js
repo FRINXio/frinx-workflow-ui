@@ -1,12 +1,12 @@
 // @flow
-const request = require("superagent");
+const request = require('superagent');
 
 const HttpClient = {
   get: (path: string, token: string) =>
     new Promise<string>((resolve, reject) => {
-      const req = request.get(path).accept("application/json");
+      const req = request.get(path).accept('application/json');
       if (token) {
-        req.set("Authorization", token);
+        req.set('Authorization', token);
       }
       req.end((err, res) => {
         if (err) {
@@ -26,10 +26,10 @@ const HttpClient = {
     new Promise<string>((resolve, reject) => {
       const req = request
         .delete(path, data)
-        .accept("application/json")
-        .query("archiveWorkflow=false");
+        .accept('application/json')
+        .query('archiveWorkflow=false');
       if (token) {
-        req.set("Authorization", token);
+        req.set('Authorization', token);
       }
       req.end((err, res) => {
         if (err) {
@@ -45,15 +45,13 @@ const HttpClient = {
 
   post: (path: string, data: [{}], token: string) =>
     new Promise<string>((resolve, reject) => {
-      const req = request
-        .post(path, data)
-        .set("Content-Type", "application/json");
+      const req = request.post(path, data).set('Content-Type', 'application/json');
       if (token) {
-        req.set("Authorization", token);
+        req.set('Authorization', token);
       }
       req.end((err, res) => {
         if (err || !res.ok) {
-          console.error("Error on post! " + res);
+          console.error('Error on post! ' + res);
           reject(err);
         } else {
           if (res) {
@@ -65,10 +63,10 @@ const HttpClient = {
 
   put: (path: string, data: [{}], token: string) =>
     new Promise<string>((resolve, reject) => {
-      const req = request.put(path, data).set("Accept", "application/json");
+      const req = request.put(path, data).set('Accept', 'application/json');
 
       if (token) {
-        req.set("Authorization", token);
+        req.set('Authorization', token);
       }
 
       req
@@ -78,7 +76,7 @@ const HttpClient = {
         .catch(error => {
           reject(error);
         });
-    })
+    }),
 };
 
 exports.HttpClient = HttpClient;

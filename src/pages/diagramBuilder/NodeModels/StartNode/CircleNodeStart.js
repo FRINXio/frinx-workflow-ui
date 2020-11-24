@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import * as _ from 'lodash';
-import {NodeContextMenu, NodeMenuProvider} from '../ContextMenu';
-import {PortWidget} from '@projectstorm/react-diagrams';
+import { NodeContextMenu, NodeMenuProvider } from '../ContextMenu';
+import { PortWidget } from '@projectstorm/react-diagrams';
 
 export class CircleNodeStart extends React.Component {
   render() {
@@ -18,13 +18,10 @@ export class CircleNodeStart extends React.Component {
             </g>
           </svg>
         </NodeMenuProvider>
-        <div style={{position: 'absolute', zIndex: 10, left: 54, top: 21}}>
+        <div style={{ position: 'absolute', zIndex: 10, left: 54, top: 21 }}>
           <PortWidget name="right" node={this.props.node} />
         </div>
-        <NodeContextMenu
-          node={this.props.node}
-          diagramEngine={this.props.diagramEngine}
-        />
+        <NodeContextMenu node={this.props.node} diagramEngine={this.props.diagramEngine} />
       </div>
     );
   }

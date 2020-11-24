@@ -1,16 +1,16 @@
 // @flow
-import React, { useContext } from "react";
-import { Button } from "semantic-ui-react";
-import { Modal } from "react-bootstrap";
-import { Tree, TreeNode } from "react-organizational-chart";
-import { withRouter } from "react-router-dom";
-import "./DependencyModal.css";
-import { GlobalContext } from '../../../../common/GlobalContext'
+import React, { useContext } from 'react';
+import { Button } from 'semantic-ui-react';
+import { Modal } from 'react-bootstrap';
+import { Tree, TreeNode } from 'react-organizational-chart';
+import { withRouter } from 'react-router-dom';
+import './DependencyModal.css';
+import { GlobalContext } from '../../../../common/GlobalContext';
 
-const DependencyModal = (props) => {
-  const global = useContext(GlobalContext)
+const DependencyModal = props => {
+  const global = useContext(GlobalContext);
 
-  const createDepTree = (rootWorkflow) => {
+  const createDepTree = rootWorkflow => {
     let tree = [];
     let parents = getWorkflowParents(rootWorkflow);
     let rootNode = {
@@ -37,8 +37,8 @@ const DependencyModal = (props) => {
     return tree;
   };
 
-  const getWorkflowParents = (workflow) => {
-    const usedInWfs = props.data.filter((wf) => {
+  const getWorkflowParents = workflow => {
+    const usedInWfs = props.data.filter(wf => {
       let wfJSON = JSON.stringify(wf, null, 2);
       let wfMatch = `"name": "${workflow.name}"`;
       let wfMatchDF = `"expectedName": "${workflow.name}"`;
@@ -47,8 +47,8 @@ const DependencyModal = (props) => {
     return usedInWfs;
   };
 
-  const nestBranch = (wf) => {
-    return wf.parents.map((p) => {
+  const nestBranch = wf => {
+    return wf.parents.map(p => {
       return (
         <TreeNode
           label={
@@ -56,12 +56,10 @@ const DependencyModal = (props) => {
               className="tree-node"
               title="Edit"
               onClick={() =>
-                props.history.push(
-                  `${global.frontendUrlPrefix}/builder/${p.workflow.name}/${p.workflow.version}`
-                )
+                props.history.push(`${global.frontendUrlPrefix}/builder/${p.workflow.name}/${p.workflow.version}`)
               }
             >
-              {p.workflow.name + " / " + p.workflow.version}
+              {p.workflow.name + ' / ' + p.workflow.version}
             </div>
           }
         >
@@ -72,7 +70,7 @@ const DependencyModal = (props) => {
   };
 
   const DependencyTree = () => {
-    return createDepTree(props.wf).map((wf) => {
+    return createDepTree(props.wf).map(wf => {
       return (
         <Tree
           label={
@@ -80,12 +78,10 @@ const DependencyModal = (props) => {
               className="root-node tree-node"
               title="Edit"
               onClick={() =>
-                props.history.push(
-                  `${global.frontendUrlPrefix}/builder/${wf.workflow.name}/${wf.workflow.version}`
-                )
+                props.history.push(`${global.frontendUrlPrefix}/builder/${wf.workflow.name}/${wf.workflow.version}`)
               }
             >
-              {wf.workflow.name + " / " + wf.workflow.version}
+              {wf.workflow.name + ' / ' + wf.workflow.version}
             </div>
           }
         >
@@ -100,9 +96,7 @@ const DependencyModal = (props) => {
       <Modal.Header>
         <Modal.Title>Workflow Dependency Tree</Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ overflowX: "scroll" }}>
-        {DependencyTree()}
-      </Modal.Body>
+      <Modal.Body style={{ overflowX: 'scroll' }}>{DependencyTree()}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={props.modalHandler}>
           Close

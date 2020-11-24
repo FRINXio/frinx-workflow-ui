@@ -1,11 +1,11 @@
 // @flow
 import GeneralTab from './GeneralTab';
 import InputsTab from './InputsTab';
-import React, {useEffect, useState, useContext} from 'react';
-import {Button, Modal, Tab, Tabs} from 'react-bootstrap';
-import {hash} from '../builder-utils';
-import {HttpClient as http} from '../../../common/HttpClient';
-import {GlobalContext} from '../../../common/GlobalContext';
+import React, { useEffect, useState, useContext } from 'react';
+import { Button, Modal, Tab, Tabs } from 'react-bootstrap';
+import { hash } from '../builder-utils';
+import { HttpClient as http } from '../../../common/HttpClient';
+import { GlobalContext } from '../../../common/GlobalContext';
 
 const OBJECT_KEYWORDS = ['template', 'body'];
 
@@ -28,20 +28,16 @@ function NodeModal(props) {
     setName(props.inputs.inputs.name);
     setInputs(props.inputs.inputs);
 
-    const {subWorkflowParam} = props.inputs.inputs;
+    const { subWorkflowParam } = props.inputs.inputs;
 
     if (subWorkflowParam) {
-      const {name, version} = subWorkflowParam;
+      const { name, version } = subWorkflowParam;
       setName(name);
       setVersion(version);
 
-      http
-        .get(
-          global.backendApiUrlPrefix + '/metadata/workflow/' + name + '/' + version,
-        )
-        .then(res => {
-          setInputParameters(res.result.inputParameters);
-        });
+      http.get(global.backendApiUrlPrefix + '/metadata/workflow/' + name + '/' + version).then(res => {
+        setInputParameters(res.result.inputParameters);
+      });
     }
   }, [props.inputs]);
 
@@ -51,7 +47,7 @@ function NodeModal(props) {
   }
 
   function addNewInputParam(param) {
-    const inputParameters = {...inputs.inputParameters};
+    const inputParameters = { ...inputs.inputParameters };
 
     const updatedInputs = {
       ...inputs,
@@ -65,7 +61,7 @@ function NodeModal(props) {
   }
 
   function removeInputParam(param) {
-    const inputParameters = {...inputs.inputParameters};
+    const inputParameters = { ...inputs.inputParameters };
 
     const updatedInputs = {
       ...inputs,
@@ -75,14 +71,14 @@ function NodeModal(props) {
     };
 
     if (updatedInputs.inputParameters.hasOwnProperty(param)) {
-      delete updatedInputs.inputParameters[param]
+      delete updatedInputs.inputParameters[param];
     }
 
     setInputs(updatedInputs);
   }
 
   function addRemoveHeader(handleOperation, i) {
-    const updatedInputs = {...inputs};
+    const updatedInputs = { ...inputs };
     const headers = updatedInputs['inputParameters']['http_request']['headers'];
 
     if (handleOperation) {
@@ -96,7 +92,7 @@ function NodeModal(props) {
   }
 
   function updateInputParams(value, key, entry) {
-    let updatedInputs = {...inputs};
+    let updatedInputs = { ...inputs };
     const inputParameters = updatedInputs.inputParameters;
 
     if (typeof key[1] === 'object') {
@@ -121,30 +117,23 @@ function NodeModal(props) {
   }
 
   function updateHTTPHeader(value, i, headerKey) {
-    const copiedInputs = {...inputs};
+    const copiedInputs = { ...inputs };
     const headers = copiedInputs['inputParameters']['http_request']['headers'];
     const header = Object.keys(headers)[i];
 
     if (headerKey) {
-      copiedInputs['inputParameters']['http_request']['headers'] = renameObjKey(
-        headers,
-        header,
-        value,
-      );
+      copiedInputs['inputParameters']['http_request']['headers'] = renameObjKey(headers, header, value);
     } else {
-      copiedInputs['inputParameters']['http_request']['headers'][
-        header
-      ] = value;
+      copiedInputs['inputParameters']['http_request']['headers'][header] = value;
     }
 
     return copiedInputs['inputParameters']['http_request']['headers'];
   }
 
   function updateGraphQLRequest(value, key, entry) {
-    let copiedInputs = {...inputs};
+    let copiedInputs = { ...inputs };
     let graphql_request = copiedInputs.inputParameters.graphql_request;
     const inputParameters = copiedInputs.inputParameters;
-
 
     copiedInputs = {
       ...copiedInputs,
@@ -161,7 +150,7 @@ function NodeModal(props) {
   }
 
   function updateHTTPRequest(value, key, entry, i, headerKey) {
-    let copiedInputs = {...inputs};
+    let copiedInputs = { ...inputs };
     let http_request = copiedInputs.inputParameters.http_request;
     const inputParameters = copiedInputs.inputParameters;
 
@@ -178,8 +167,7 @@ function NodeModal(props) {
     }
 
     if (entry[0] === 'method') {
-      if (value === 'PUT' || value === 'POST')
-        http_request = {...http_request, body: http_request.body};
+      if (value === 'PUT' || value === 'POST') http_request = { ...http_request, body: http_request.body };
       else delete http_request['body'];
     }
 
@@ -198,8 +186,8 @@ function NodeModal(props) {
   }
 
   function updateDecisionCase(value) {
-    const copiedInputs = {...inputs};
-    let decisionCases = {...copiedInputs.decisionCases};
+    const copiedInputs = { ...inputs };
+    let decisionCases = { ...copiedInputs.decisionCases };
     const keyNames = Object.keys(decisionCases);
     const falseCase = decisionCases[keyNames[0]] || [];
 
@@ -227,7 +215,7 @@ function NodeModal(props) {
         updateDecisionCase(value);
         break;
       default: {
-        let copiedInputs = {...inputs};
+        let copiedInputs = { ...inputs };
         copiedInputs = {
           ...copiedInputs,
           [key]: value,
@@ -241,12 +229,12 @@ function NodeModal(props) {
   return (
     <Modal size="lg" show={props.show} onHide={props.modalHandler}>
       <Modal.Header>
-        <Modal.Title style={{fontSize: '20px'}}>
+        <Modal.Title style={{ fontSize: '20px' }}>
           {name} / {version}
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{padding: '30px'}}>
-        <Tabs style={{marginBottom: '20px'}}>
+      <Modal.Body style={{ padding: '30px' }}>
+        <Tabs style={{ marginBottom: '20px' }}>
           {name !== 'RAW' && ( // Only display general settings for non RAW tasks
             <Tab eventKey={1} title="General">
               <GeneralTab inputs={inputs} handleInput={handleInput} />

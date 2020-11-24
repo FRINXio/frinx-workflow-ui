@@ -1,26 +1,26 @@
 // @flow
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
-export const STORE_WORKFLOWS = "STORE_WORKFLOWS";
-export const STORE_TASKS = "STORE_TASKS";
-export const UPDATE_BUILDER_QUERY = "UPDATE_BUILDER_QUERY";
-export const UPDATE_BUILDER_LABELS = "UPDATE_BUILDER_LABELS";
-export const UPDATE_WORKFLOWS = "UPDATE_WORKFLOWS";
-export const UPDATE_FINAL_WORKFLOW = "UPDATE_FINAL_WORKFLOW";
-export const LOCK_WORKFLOW_NAME = "LOCK_WORKFLOW_NAME";
-export const SWITCH_SMART_ROUTING = "SWITCH_SMART_ROUTING";
-export const RESET_TO_DEFAULT_WORKFLOW = "RESET_TO_DEFAULT_WORKFLOW";
-export const STORE_WORKFLOW_ID = "STORE_WORKFLOW_ID";
-export const SHOW_CUSTOM_ALERT = "SHOW_CUSTOM_ALERT";
-export const OPEN_CARD = "OPEN_CARD";
-export const UPDATE_TASKS = "UPDATE_TASKS";
-export const UPDATE_SYSTEM = "UPDATE_SYSTEM";
+export const STORE_WORKFLOWS = 'STORE_WORKFLOWS';
+export const STORE_TASKS = 'STORE_TASKS';
+export const UPDATE_BUILDER_QUERY = 'UPDATE_BUILDER_QUERY';
+export const UPDATE_BUILDER_LABELS = 'UPDATE_BUILDER_LABELS';
+export const UPDATE_WORKFLOWS = 'UPDATE_WORKFLOWS';
+export const UPDATE_FINAL_WORKFLOW = 'UPDATE_FINAL_WORKFLOW';
+export const LOCK_WORKFLOW_NAME = 'LOCK_WORKFLOW_NAME';
+export const SWITCH_SMART_ROUTING = 'SWITCH_SMART_ROUTING';
+export const RESET_TO_DEFAULT_WORKFLOW = 'RESET_TO_DEFAULT_WORKFLOW';
+export const STORE_WORKFLOW_ID = 'STORE_WORKFLOW_ID';
+export const SHOW_CUSTOM_ALERT = 'SHOW_CUSTOM_ALERT';
+export const OPEN_CARD = 'OPEN_CARD';
+export const UPDATE_TASKS = 'UPDATE_TASKS';
+export const UPDATE_SYSTEM = 'UPDATE_SYSTEM';
 
 export const storeWorkflows = originalWorkflows => {
   return {
     type: STORE_WORKFLOWS,
     originalWorkflows,
-    workflows: originalWorkflows
+    workflows: originalWorkflows,
   };
 };
 
@@ -28,7 +28,7 @@ export const storeTasks = originalTasks => {
   return {
     type: STORE_TASKS,
     originalTasks,
-    tasks: originalTasks
+    tasks: originalTasks,
   };
 };
 
@@ -42,7 +42,7 @@ export const openCard = which => {
 export const changeOpenedCard = which => {
   return {
     type: OPEN_CARD,
-    openCard: which
+    openCard: which,
   };
 };
 
@@ -54,7 +54,7 @@ export const updateLabels = labels => {
   return { type: UPDATE_BUILDER_LABELS, labels };
 };
 
-export const showCustomAlert = (show, variant = "danger", msg) => {
+export const showCustomAlert = (show, variant = 'danger', msg) => {
   return { type: SHOW_CUSTOM_ALERT, show, variant, msg };
 };
 
@@ -92,20 +92,19 @@ export const updateFinalWorkflow = finalWorkflow => {
 
 export const requestUpdateByQuery = (queryIn, labelsIn) => {
   return (dispatch, getState) => {
-    let {
-      originalTasks,
-      originalWorkflows,
-      originalSystem,
-      openCard,
-      query,
-      labels
-    } = getState().buildReducer;
+    let { originalTasks, originalWorkflows, originalSystem, openCard, query, labels } = getState().buildReducer;
 
     let data = [];
-    switch(openCard) {
-      case "Tasks": data = originalTasks; break;
-      case "Workflows": data = originalWorkflows; break;
-      case "System Tasks": data = originalSystem; break;
+    switch (openCard) {
+      case 'Tasks':
+        data = originalTasks;
+        break;
+      case 'Workflows':
+        data = originalWorkflows;
+        break;
+      case 'System Tasks':
+        data = originalSystem;
+        break;
     }
 
     let withLabels = [];
@@ -143,11 +142,11 @@ export const requestUpdateByQuery = (queryIn, labelsIn) => {
     }
 
     // query filter
-    if (queryIn && queryIn !== "") {
+    if (queryIn && queryIn !== '') {
       withLabels.forEach(wf => {
         if (
-          wf["name"] &&
-          wf["name"]
+          wf['name'] &&
+          wf['name']
             .toString()
             .toUpperCase()
             .indexOf(queryIn.toUpperCase()) !== -1
@@ -159,11 +158,13 @@ export const requestUpdateByQuery = (queryIn, labelsIn) => {
       toBeUpdated = withLabels;
     }
 
-    switch(openCard) {
-      case "Tasks": return dispatch(updateTasks(toBeUpdated));
-      case "Workflows": return dispatch(updateWorkflows(toBeUpdated));
-      case "System Tasks": return dispatch(updateSystem(toBeUpdated));
+    switch (openCard) {
+      case 'Tasks':
+        return dispatch(updateTasks(toBeUpdated));
+      case 'Workflows':
+        return dispatch(updateWorkflows(toBeUpdated));
+      case 'System Tasks':
+        return dispatch(updateSystem(toBeUpdated));
     }
-    
   };
 };

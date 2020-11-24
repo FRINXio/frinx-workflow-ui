@@ -1,26 +1,20 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Table, Checkbox, Button, Icon, Input } from "semantic-ui-react";
-import { Modal } from "react-bootstrap";
-import AceEditor from "react-ace";
-import { HttpClient as http } from "../../../common/HttpClient";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-tomorrow";
+import React, { useState, useEffect, useContext } from 'react';
+import { Table, Checkbox, Button, Icon, Input } from 'semantic-ui-react';
+import { Modal } from 'react-bootstrap';
+import AceEditor from 'react-ace';
+import { HttpClient as http } from '../../../common/HttpClient';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/theme-tomorrow';
 import { GlobalContext } from '../../../common/GlobalContext';
-import { usePagination } from "../../../common/PaginationHook";
-import PaginationPages from "../../../common/Pagination";
+import { usePagination } from '../../../common/PaginationHook';
+import PaginationPages from '../../../common/Pagination';
 
 function EventListeners() {
   const global = useContext(GlobalContext);
   const [eventListeners, setEventListeners] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const {
-    currentPage,
-    setCurrentPage,
-    pageItems,
-    setItemList,
-    totalPages
-  } = usePagination([], 10);
+  const { currentPage, setCurrentPage, pageItems, setItemList, totalPages } = usePagination([], 10);
 
   useEffect(() => {
     getData();
@@ -29,8 +23,8 @@ function EventListeners() {
   useEffect(() => {
     const results = !searchTerm
       ? eventListeners
-      : eventListeners.filter((e) => {
-          let searchedKeys = ["name", "event"];
+      : eventListeners.filter(e => {
+          let searchedKeys = ['name', 'event'];
           for (let i = 0; i < searchedKeys.length; i += 1) {
             if (
               e[searchedKeys[i]]
@@ -47,7 +41,7 @@ function EventListeners() {
   }, [searchTerm, eventListeners]);
 
   const getData = () => {
-    http.get(global.backendApiUrlPrefix + "/event").then((res) => {
+    http.get(global.backendApiUrlPrefix + '/event').then(res => {
       if (Array.isArray(res)) {
         setEventListeners(res);
       }
@@ -60,32 +54,32 @@ function EventListeners() {
     }
 
     http
-      .post(global.backendApiUrlPrefix + "/event", event)
-      .then((res) => {
+      .post(global.backendApiUrlPrefix + '/event', event)
+      .then(res => {
         getData();
       })
-      .catch((err) => {
+      .catch(err => {
         alert(err);
       });
     setSelectedEvent(null);
   };
 
-  const deleteEvent = (name) => {
+  const deleteEvent = name => {
     http
-      .delete(global.backendApiUrlPrefix + "/event/" + name)
+      .delete(global.backendApiUrlPrefix + '/event/' + name)
       .then(() => {
         getData();
       })
-      .catch((err) => {
+      .catch(err => {
         alert(err);
       });
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     setSearchTerm(event.target.value);
   };
 
-  const parseJSON = (data) => {
+  const parseJSON = data => {
     try {
       let parsedJSON = JSON.parse(data);
       setSelectedEvent(parsedJSON);
@@ -95,11 +89,7 @@ function EventListeners() {
   };
 
   const editModal = () => (
-    <Modal
-      size="lg"
-      show={selectedEvent !== null}
-      onHide={() => setSelectedEvent(null)}
-    >
+    <Modal size="lg" show={selectedEvent !== null} onHide={() => setSelectedEvent(null)}>
       <Modal.Header>
         <Modal.Title>Edit {selectedEvent?.name}</Modal.Title>
       </Modal.Header>
@@ -109,7 +99,7 @@ function EventListeners() {
           theme="tomorrow"
           width="100%"
           height="300px"
-          onChange={(data) => parseJSON(data)}
+          onChange={data => parseJSON(data)}
           fontSize={16}
           value={JSON.stringify(selectedEvent, null, 2)}
           wrapEnabled={true}
@@ -146,33 +136,27 @@ function EventListeners() {
             <Table.HeaderCell>Workflow Name</Table.HeaderCell>
             <Table.HeaderCell>Event Task Name</Table.HeaderCell>
             <Table.HeaderCell>Action</Table.HeaderCell>
-            <Table.HeaderCell style={{ textAlign: "center" }}>
-              Actions
-            </Table.HeaderCell>
+            <Table.HeaderCell style={{ textAlign: 'center' }}>Actions</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {pageItems.map((e) => {
+          {pageItems.map(e => {
             return (
               <Table.Row key={e.event}>
-                <Table.Cell style={{ textAlign: "center" }}>
-                  <Checkbox
-                    toggle
-                    checked={e.active}
-                    onChange={() => editEvent(!e.active, e)}
-                  />
+                <Table.Cell style={{ textAlign: 'center' }}>
+                  <Checkbox toggle checked={e.active} onChange={() => editEvent(!e.active, e)} />
                 </Table.Cell>
                 <Table.Cell>{e.name}</Table.Cell>
-                <Table.Cell>{e.event.split(":")[0]}</Table.Cell>
-                <Table.Cell>{e.event.split(":")[1]}</Table.Cell>
-                <Table.Cell>{e.event.split(":")[2]}</Table.Cell>
+                <Table.Cell>{e.event.split(':')[0]}</Table.Cell>
+                <Table.Cell>{e.event.split(':')[1]}</Table.Cell>
+                <Table.Cell>{e.event.split(':')[2]}</Table.Cell>
                 <Table.Cell>{e.actions[0].action}</Table.Cell>
-                <Table.Cell style={{ textAlign: "center" }}>
+                <Table.Cell style={{ textAlign: 'center' }}>
                   <Button basic circular onClick={() => setSelectedEvent(e)}>
                     Edit
                   </Button>
                   <Button basic circular icon negative onClick={() => deleteEvent(e.name)}>
-                    <Icon name="trash"/>
+                    <Icon name="trash" />
                   </Button>
                 </Table.Cell>
               </Table.Row>
@@ -182,11 +166,7 @@ function EventListeners() {
         <Table.Footer>
           <Table.Row>
             <Table.HeaderCell colSpan="7">
-              <PaginationPages
-                totalPages={totalPages}
-                currentPage={currentPage}
-                changePageHandler={setCurrentPage}
-              />
+              <PaginationPages totalPages={totalPages} currentPage={currentPage} changePageHandler={setCurrentPage} />
             </Table.HeaderCell>
           </Table.Row>
         </Table.Footer>

@@ -9,10 +9,7 @@ export class DynamicNodeFactory extends SRD.AbstractNodeFactory {
     super('dynamic');
   }
 
-  generateReactWidget(
-    diagramEngine: SRD.DiagramEngine,
-    node: SRD.NodeModel,
-  ): JSX.Element {
+  generateReactWidget(diagramEngine: SRD.DiagramEngine, node: SRD.NodeModel): JSX.Element {
     return <DynamicNode node={node} diagramEngine={diagramEngine} />;
   }
 

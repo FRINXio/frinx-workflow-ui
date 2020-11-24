@@ -1,23 +1,23 @@
 // @flow
-import React, { useState } from "react";
-import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
+import React, { useState } from 'react';
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 
 const OutputParamsTab = props => {
-  const [customParam, setCustomParam] = useState("");
+  const [customParam, setCustomParam] = useState('');
   const outputParameters = props.finalWf.outputParameters || [];
 
   const handleCustomParam = e => {
     e.preventDefault();
     e.stopPropagation();
     props.handleCustomParam(customParam);
-    setCustomParam("");
+    setCustomParam('');
   };
 
   return (
     <div>
       <Row>
         <Form onSubmit={handleCustomParam}>
-          <InputGroup style={{ padding: "10px 215px 10px" }}>
+          <InputGroup style={{ padding: '10px 215px 10px' }}>
             <Form.Control
               value={customParam}
               onChange={e => setCustomParam(e.target.value)}
@@ -43,15 +43,13 @@ const OutputParamsTab = props => {
                         {entry[0]}&nbsp;&nbsp;
                         <i
                           className="fas fa-times clickable"
-                          style={{ color: "red" }}
+                          style={{ color: 'red' }}
                           onClick={() => props.deleteOutputParam(entry[0])}
                         />
                       </Form.Label>
                       <Form.Control
                         type="input"
-                        onChange={e =>
-                          props.handleOutputParam(entry[0], e.target.value)
-                        }
+                        onChange={e => props.handleOutputParam(entry[0], e.target.value)}
                         value={entry[1]}
                       />
                     </Form.Group>
