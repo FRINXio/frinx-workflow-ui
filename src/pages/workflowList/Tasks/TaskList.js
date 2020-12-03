@@ -1,3 +1,4 @@
+// @flow
 import React, { useState, useEffect, useContext } from 'react';
 import { Table, Button, Input, Icon, Grid } from 'semantic-ui-react';
 import TaskModal from './TaskModal';
@@ -151,7 +152,8 @@ function TaskList() {
       }
     });
     if (taskBody['name'] !== '') {
-      http.post(global.backendApiUrlPrefix + '/metadata/taskdef', [taskBody]).then(() => {
+      const newTask = { ...taskBody, ownerEmail: 'example@example.com' };
+      http.post(global.backendApiUrlPrefix + '/metadata/taskdef', [newTask]).then(() => {
         window.location.reload();
       });
     }
