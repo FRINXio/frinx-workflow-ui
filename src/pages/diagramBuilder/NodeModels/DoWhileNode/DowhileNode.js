@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import {NodeContextMenu, NodeMenuProvider} from '../ContextMenu';
-import {PortWidget} from '@projectstorm/react-diagrams';
+import { NodeContextMenu, NodeMenuProvider } from '../ContextMenu';
+import { PortWidget } from '@projectstorm/react-diagrams';
 
 export class DowhileNode extends React.Component {
   constructor(props) {
@@ -13,14 +13,13 @@ export class DowhileNode extends React.Component {
   }
 
   render() {
-    let conditionLabel = this.props.node?.extras?.inputs?.loopCondition || ""
+    let conditionLabel = this.props.node?.extras?.inputs?.loopCondition || '';
 
     conditionLabel = conditionLabel.replaceAll(
-      `$.${this.props.node?.extras?.inputs?.taskReferenceName}['iteration']`, "$iteration"
+      `$.${this.props.node?.extras?.inputs?.taskReferenceName}['iteration']`,
+      '$iteration',
     );
-    conditionLabel = conditionLabel.replaceAll(
-      `$.${this.props.node?.extras?.inputs?.taskReferenceName}`, "$this"
-    );
+    conditionLabel = conditionLabel.replaceAll(`$.${this.props.node?.extras?.inputs?.taskReferenceName}`, '$this');
     return (
       <div>
         <NodeMenuProvider node={this.props.node}>
@@ -65,7 +64,8 @@ export class DowhileNode extends React.Component {
             zIndex: 10,
             left: 7,
             top: this.state.height / 2 - 12,
-          }}>
+          }}
+        >
           <PortWidget name="left" node={this.props.node} />
         </div>
 
@@ -75,13 +75,11 @@ export class DowhileNode extends React.Component {
             zIndex: 10,
             left: this.state.width - 25,
             top: this.state.height / 2 - 12,
-          }}>
+          }}
+        >
           <PortWidget name="right" node={this.props.node} />
         </div>
-        <NodeContextMenu
-          node={this.props.node}
-          diagramEngine={this.props.diagramEngine}
-        />
+        <NodeContextMenu node={this.props.node} diagramEngine={this.props.diagramEngine} />
       </div>
     );
   }

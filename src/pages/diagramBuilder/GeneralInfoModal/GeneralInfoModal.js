@@ -1,9 +1,9 @@
 // @flow
-import React, { useState, useEffect } from "react";
-import { Modal, Button, Tab, Tabs, ButtonGroup } from "react-bootstrap";
-import DefaultsDescsTab from "./DefaultsDescsTab";
-import OutputParamsTab from "./OutputParamsTab";
-import GeneralParamsTab from "./GeneralParamsTab";
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Tab, Tabs, ButtonGroup } from 'react-bootstrap';
+import DefaultsDescsTab from './DefaultsDescsTab';
+import OutputParamsTab from './OutputParamsTab';
+import GeneralParamsTab from './GeneralParamsTab';
 
 const GeneralInfoModal = props => {
   const [isWfNameValid, setWfNameValid] = useState(false);
@@ -40,27 +40,27 @@ const GeneralInfoModal = props => {
     } catch (e) {
       return null;
     }
-  }
+  };
 
   const handleInput = (value, key) => {
     let finalWf = { ...finalWorkflow };
 
-    if (key === "name") {
+    if (key === 'name') {
       validateWorkflowName(value);
     }
 
-    if (key === "description") {
-      let innerKey = Array.isArray(value) ? "labels" : "description"
+    if (key === 'description') {
+      let innerKey = Array.isArray(value) ? 'labels' : 'description';
       value = {
         ...parseJSON(finalWf.description),
-        [innerKey]: value
-      }
-      value = JSON.stringify(value)
+        [innerKey]: value,
+      };
+      value = JSON.stringify(value);
     }
 
     finalWf = {
       ...finalWf,
-      [key]: value
+      [key]: value,
     };
 
     setFinalWf(finalWf);
@@ -78,7 +78,7 @@ const GeneralInfoModal = props => {
     setWfNameValid(isValid);
   };
 
-  const jsonParse = (json) => {
+  const jsonParse = json => {
     try {
       return JSON.parse(json);
     } catch (e) {
@@ -89,7 +89,7 @@ const GeneralInfoModal = props => {
   const getExistingLabels = () => {
     let workflows = props.workflows || [];
     let labels = [];
-    workflows.forEach((wf) => {
+    workflows.forEach(wf => {
       let wfLabels = jsonParse(wf.description)?.labels;
       if (wfLabels) {
         labels.push(...wfLabels);
@@ -106,8 +106,8 @@ const GeneralInfoModal = props => {
       ...finalWf,
       outputParameters: {
         ...outputParameters,
-        [key]: value
-      }
+        [key]: value,
+      },
     };
 
     setFinalWf(finalWf);
@@ -121,8 +121,8 @@ const GeneralInfoModal = props => {
       ...finalWf,
       outputParameters: {
         ...outputParameters,
-        [param]: "provide path"
-      }
+        [param]: 'provide path',
+      },
     };
 
     setFinalWf(finalWf);
@@ -130,16 +130,14 @@ const GeneralInfoModal = props => {
 
   const handleInputParams = (paramKey, paramObj, key, value) => {
     let finalWf = { ...finalWorkflow };
-    let inputParameters = jsonParse(
-      finalWf.inputParameters ? finalWf.inputParameters[0] : null
-    );
-    
+    let inputParameters = jsonParse(finalWf.inputParameters ? finalWf.inputParameters[0] : null);
+
     delete paramObj.label;
 
-    if (key === "options") {
-      value = value.split(",").map((e) => {
-        if (e === "true" || e === "false") {
-          return e == "true";
+    if (key === 'options') {
+      value = value.split(',').map(e => {
+        if (e === 'true' || e === 'false') {
+          return e == 'true';
         }
         return e;
       });
@@ -149,24 +147,21 @@ const GeneralInfoModal = props => {
       ...inputParameters,
       [paramKey]: {
         ...paramObj,
-        [key]: value
-      }
+        [key]: value,
+      },
     };
 
-    const optionValues = ["toggle", "select"];
-    if (
-      key === "type" &&
-      optionValues.includes(value)
-    ) {
+    const optionValues = ['toggle', 'select'];
+    if (key === 'type' && optionValues.includes(value)) {
       newInputParams = {
         ...newInputParams,
         [paramKey]: {
           ...newInputParams[paramKey],
-          options: ['value1','value2']
+          options: ['value1', 'value2'],
         },
       };
-    } else if (key === "type") {
-      delete newInputParams[paramKey].options
+    } else if (key === 'type') {
+      delete newInputParams[paramKey].options;
     }
 
     finalWf = { ...finalWf, inputParameters: [JSON.stringify(newInputParams)] };
@@ -184,18 +179,12 @@ const GeneralInfoModal = props => {
   };
 
   return (
-    <Modal
-      size="lg"
-      show={props.show}
-      onHide={isNameLocked ? handleClose : () => false}
-    >
+    <Modal size="lg" show={props.show} onHide={isNameLocked ? handleClose : () => false}>
       <Modal.Header>
-        <Modal.Title>
-          {isNameLocked ? "Edit general information" : "Create new workflow"}
-        </Modal.Title>
+        <Modal.Title>{isNameLocked ? 'Edit general information' : 'Create new workflow'}</Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ padding: "30px" }}>
-        <Tabs style={{ marginBottom: "20px" }}>
+      <Modal.Body style={{ padding: '30px' }}>
+        <Tabs style={{ marginBottom: '20px' }}>
           <Tab eventKey={1} title="General">
             <GeneralParamsTab
               finalWf={finalWorkflow}
@@ -216,13 +205,10 @@ const GeneralInfoModal = props => {
             />
           </Tab>
           <Tab eventKey={3} title="Defaults & description">
-            <DefaultsDescsTab
-              finalWf={finalWorkflow}
-              handleInputParams={handleInputParams}
-            />
+            <DefaultsDescsTab finalWf={finalWorkflow} handleInputParams={handleInputParams} />
           </Tab>
         </Tabs>
-        <ButtonGroup style={{ width: "100%", marginTop: "20px" }}>
+        <ButtonGroup style={{ width: '100%', marginTop: '20px' }}>
           {!isNameLocked ? (
             <Button variant="outline-secondary" onClick={props.redirectOnExit}>
               Cancel

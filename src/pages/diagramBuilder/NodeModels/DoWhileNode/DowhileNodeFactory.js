@@ -9,10 +9,7 @@ export class DowhileNodeFactory extends SRD.AbstractNodeFactory {
     super('while');
   }
 
-  generateReactWidget(
-    diagramEngine: SRD.DiagramEngine,
-    node: SRD.NodeModel,
-  ): JSX.Element {
+  generateReactWidget(diagramEngine: SRD.DiagramEngine, node: SRD.NodeModel): JSX.Element {
     return <DowhileNode node={node} diagramEngine={diagramEngine} />;
   }
 

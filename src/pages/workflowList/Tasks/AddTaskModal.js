@@ -1,34 +1,19 @@
-import React from "react";
-import {
-  Col,
-  Row,
-  Modal,
-  Form,
-  Button,
-  OverlayTrigger,
-  Tooltip,
-} from "react-bootstrap";
+import React from 'react';
+import { Col, Row, Modal, Form, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-const AddTaskModal = (props) => {
+const AddTaskModal = props => {
   const handleClose = () => {
     props.modalHandler();
   };
 
-  const showInfo = (i) => {
+  const showInfo = i => {
     return (
       <OverlayTrigger
         key={`info${i}`}
         placement="right"
-        overlay={
-          <Tooltip id={`tooltip-${i}`}>
-            Please use comma (",") to separate keys
-          </Tooltip>
-        }
+        overlay={<Tooltip id={`tooltip-${i}`}>Please use comma (",") to separate keys</Tooltip>}
       >
-        <i
-          style={{ color: "rgba(0, 149, 255, 0.91)" }}
-          className="clickable fas fa-info-circle"
-        />
+        <i style={{ color: 'rgba(0, 149, 255, 0.91)' }} className="clickable fas fa-info-circle" />
       </OverlayTrigger>
     );
   };
@@ -52,13 +37,9 @@ const AddTaskModal = (props) => {
                     <Form.Control
                       type="input"
                       name={Object.keys(props.taskBody)[i]}
-                      onChange={(e) => props.handleInput(e)}
+                      onChange={e => props.handleInput(e)}
                       placeholder="Enter the input"
-                      value={
-                        Object.values(props.taskBody)[i]
-                          ? Object.values(props.taskBody)[i]
-                          : ""
-                      }
+                      value={Object.values(props.taskBody)[i] ? Object.values(props.taskBody)[i] : ''}
                     />
                   </Form.Group>
                 </Col>

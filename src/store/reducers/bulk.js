@@ -5,8 +5,8 @@ import {
   RECEIVE_BULK_OPERATION_RESPONSE,
   FAIL_BULK_OPERATION,
   RESET_BULK_OPERATION_RESULT,
-  UPDATE_LOADING_BAR
-} from "../actions/bulk";
+  UPDATE_LOADING_BAR,
+} from '../actions/bulk';
 
 const initialState = {
   isFetching: false,
@@ -16,9 +16,9 @@ const initialState = {
   errorResults: {},
   data: [],
   table: [],
-  query: "",
+  query: '',
   label: [],
-  loading: 0
+  loading: 0,
 };
 
 const reducer = (state = initialState, action) => {
@@ -38,7 +38,7 @@ const reducer = (state = initialState, action) => {
         isFetching: false,
         error: null,
         successfulResults,
-        errorResults
+        errorResults,
       };
     }
     case FAIL_BULK_OPERATION: {

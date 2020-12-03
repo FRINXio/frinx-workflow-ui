@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import {NodeContextMenu, NodeMenuProvider} from '../ContextMenu';
-import {PortWidget} from '@projectstorm/react-diagrams';
+import { NodeContextMenu, NodeMenuProvider } from '../ContextMenu';
+import { PortWidget } from '@projectstorm/react-diagrams';
 
 export class ForkNode extends React.Component {
   constructor(props) {
@@ -45,7 +45,8 @@ export class ForkNode extends React.Component {
             zIndex: 10,
             left: 7,
             top: this.state.size / 2 - 12,
-          }}>
+          }}
+        >
           <PortWidget name="left" node={this.props.node} />
         </div>
 
@@ -55,14 +56,12 @@ export class ForkNode extends React.Component {
             zIndex: 10,
             left: this.state.size - 25,
             top: this.state.size / 2 - 12,
-          }}>
+          }}
+        >
           <PortWidget name="right" node={this.props.node} />
         </div>
 
-        <NodeContextMenu
-          node={this.props.node}
-          diagramEngine={this.props.diagramEngine}
-        />
+        <NodeContextMenu node={this.props.node} diagramEngine={this.props.diagramEngine} />
       </div>
     );
   }

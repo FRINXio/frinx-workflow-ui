@@ -1,8 +1,8 @@
 // @flow
-import { MOUNTED_DEVICES } from "../actions/mountedDevices";
+import { MOUNTED_DEVICES } from '../actions/mountedDevices';
 
 const initialState = {
-  devices: []
+  devices: [],
 };
 
 const reducer = (state = initialState, action) => {

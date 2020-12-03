@@ -1,23 +1,19 @@
 // @flow
 import * as _ from 'lodash';
-import {DiagramEngine} from '@projectstorm/react-diagrams';
-import {ForkNodePortModel} from './ForkNodePortModel';
-import {NodeModel} from '@projectstorm/react-diagrams';
+import { DiagramEngine } from '@projectstorm/react-diagrams';
+import { ForkNodePortModel } from './ForkNodePortModel';
+import { NodeModel } from '@projectstorm/react-diagrams';
 
 export class ForkNodeModel extends NodeModel {
   name: string;
   color: string;
   inputs: {};
 
-  constructor(
-    name: string = 'Untitled',
-    color: string = 'rgb(0,192,255)',
-    inputs: {},
-  ) {
+  constructor(name: string = 'Untitled', color: string = 'rgb(0,192,255)', inputs: {}) {
     super('fork');
     this.name = name;
     this.color = color;
-    super.extras = {inputs: inputs};
+    super.extras = { inputs: inputs };
 
     this.addPort(new ForkNodePortModel(true, 'left'));
     this.addPort(new ForkNodePortModel(false, 'right'));

@@ -1,9 +1,9 @@
 // @flow
-import defaultTo from "lodash/fp/defaultTo";
-import React, { Component } from "react";
-import { Col, Row } from "react-bootstrap";
-import Grapher from "../../../../../common/Grapher";
-import Workflow2Graph from "../../../../../common/wfegraph";
+import defaultTo from 'lodash/fp/defaultTo';
+import React, { Component } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import Grapher from '../../../../../common/Grapher';
+import Workflow2Graph from '../../../../../common/wfegraph';
 
 class WorkflowDia extends Component {
   constructor(props) {
@@ -36,10 +36,10 @@ class WorkflowDia extends Component {
     const { edges, vertices, subworkflows } = this.state;
 
     return (
-      <div style={{ overflow: "scroll" }}>
+      <div style={{ overflow: 'scroll' }}>
         {!this.props.def ? (
           <div>
-            <Row style={{ textAlign: "center" }}>
+            <Row style={{ textAlign: 'center' }}>
               <Col>
                 <h2>Execution Flow</h2>
               </Col>
@@ -48,13 +48,7 @@ class WorkflowDia extends Component {
           </div>
         ) : null}
 
-        <Grapher
-          def={this.props.def}
-          edges={edges}
-          vertices={vertices}
-          layout="TD-auto"
-          innerGraph={subworkflows}
-        />
+        <Grapher def={this.props.def} edges={edges} vertices={vertices} layout="TD-auto" innerGraph={subworkflows} />
       </div>
     );
   }

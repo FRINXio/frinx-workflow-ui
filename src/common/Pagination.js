@@ -1,5 +1,5 @@
-import React from "react";
-import { Pagination } from "semantic-ui-react";
+import React from 'react';
+import { Pagination } from 'semantic-ui-react';
 
 function PaginationPages(props) {
   return (

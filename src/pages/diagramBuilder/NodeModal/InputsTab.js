@@ -7,8 +7,8 @@ import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 import 'react-dropdown/style.css';
 import Dropdown from 'react-dropdown';
-import React, {useState} from 'react';
-import {Button, Col, Form, InputGroup, Row} from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 
 /* FIXME graphQL editor : implement schema validation*/
 // import {buildSchema} from "graphql";
@@ -20,7 +20,7 @@ import 'codemirror-graphql/mode';
 import 'codemirror/addon/display/autorefresh';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/xq-light.css';
-import {Controlled as CodeMirror} from 'react-codemirror2';
+import { Controlled as CodeMirror } from 'react-codemirror2';
 
 const TEXTFIELD_KEYWORDS = ['template', 'uri', 'body'];
 const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw', 'graphQLBody'];
@@ -45,9 +45,7 @@ const InputsTab = props => {
   const textFieldParams = [];
 
   const getDescriptionAndDefault = selectedParam => {
-    const inputParameters = jsonParse(
-      props.inputParameters ? props.inputParameters[0] : null,
-    );
+    const inputParameters = jsonParse(props.inputParameters ? props.inputParameters[0] : null);
 
     if (!inputParameters) {
       return null;
@@ -95,9 +93,9 @@ const InputsTab = props => {
           <InputGroup
             size="sm"
             style={{
-              minHeight:
-                entry[0] === 'uri' || entry[0] === 'headers' ? '60px' : '200px',
-            }}>
+              minHeight: entry[0] === 'uri' || entry[0] === 'headers' ? '60px' : '200px',
+            }}
+          >
             <Form.Control
               id={`textfield-${entry[0]}`}
               as="textarea"
@@ -106,9 +104,7 @@ const InputsTab = props => {
               value={value}
             />
           </InputGroup>
-          <Form.Text className="text-muted">
-            {getDescriptionAndDefault(entry[0])}
-          </Form.Text>
+          <Form.Text className="text-muted">{getDescriptionAndDefault(entry[0])}</Form.Text>
         </Form.Group>
       </Col>,
     );
@@ -145,9 +141,7 @@ const InputsTab = props => {
               props.handleInput(value, item, entry);
             }}
           />
-          <Form.Text className="text-muted">
-            {getDescriptionAndDefault(entry[0])}
-          </Form.Text>
+          <Form.Text className="text-muted">{getDescriptionAndDefault(entry[0])}</Form.Text>
         </Form.Group>
       </Col>,
     );
@@ -176,9 +170,7 @@ const InputsTab = props => {
               tabSize: 2,
             }}
           />
-          <Form.Text className="text-muted">
-            {getDescriptionAndDefault(entry[0])}
-          </Form.Text>
+          <Form.Text className="text-muted">{getDescriptionAndDefault(entry[0])}</Form.Text>
         </Form.Group>
       </Col>,
     );
@@ -192,14 +184,8 @@ const InputsTab = props => {
       <Col sm={6} key={`colTf-${entry[0]}`}>
         <Form.Group>
           <Form.Label>{entry[0]}</Form.Label>
-          <Dropdown
-            options={options}
-            onChange={e => props.handleInput(e.value, item, entry)}
-            value={value}
-          />
-          <Form.Text className="text-muted">
-            {getDescriptionAndDefault(entry[0])}
-          </Form.Text>
+          <Dropdown options={options} onChange={e => props.handleInput(e.value, item, entry)} value={value} />
+          <Form.Text className="text-muted">{getDescriptionAndDefault(entry[0])}</Form.Text>
         </Form.Group>
       </Col>
     );
@@ -210,10 +196,7 @@ const InputsTab = props => {
       <Col sm={12} key={`colTf-${entry[0]}`}>
         <Form.Label>
           {entry[0]}&nbsp;&nbsp;
-          <Button
-            size="sm"
-            variant="outline-primary"
-            onClick={() => props.addRemoveHeader(true)}>
+          <Button size="sm" variant="outline-primary" onClick={() => props.addRemoveHeader(true)}>
             <i className="fas fa-plus" /> Add
           </Button>
         </Form.Label>
@@ -222,41 +205,29 @@ const InputsTab = props => {
             <Row key={`header-${i}`}>
               <Col sm={6}>
                 <Form.Group controlId={`header-key-${i}`}>
-                  {i === 0 ? (
-                    <Form.Label className="text-muted">Key</Form.Label>
-                  ) : null}
+                  {i === 0 ? <Form.Label className="text-muted">Key</Form.Label> : null}
                   <Form.Control
-                    style={{marginBottom: '2px'}}
+                    style={{ marginBottom: '2px' }}
                     type="input"
-                    onChange={e =>
-                      props.handleInput(e.target.value, item, entry, i, true)
-                    }
+                    onChange={e => props.handleInput(e.target.value, item, entry, i, true)}
                     value={header[0]}
                   />
                 </Form.Group>
               </Col>
               <Col sm={5}>
                 <Form.Group controlId={`header-value-${i}`}>
-                  {i === 0 ? (
-                    <Form.Label className="text-muted">Value</Form.Label>
-                  ) : null}
+                  {i === 0 ? <Form.Label className="text-muted">Value</Form.Label> : null}
                   <Form.Control
-                    style={{marginBottom: '2px'}}
+                    style={{ marginBottom: '2px' }}
                     type="input"
-                    onChange={e =>
-                      props.handleInput(e.target.value, item, entry, i, false)
-                    }
+                    onChange={e => props.handleInput(e.target.value, item, entry, i, false)}
                     value={header[1]}
                   />
                 </Form.Group>
               </Col>
               <Col sm={1}>
-                {i === 0 ? (
-                  <Form.Label className="text-muted">Delete</Form.Label>
-                ) : null}
-                <Button
-                  variant="outline-danger"
-                  onClick={() => props.addRemoveHeader(false, i)}>
+                {i === 0 ? <Form.Label className="text-muted">Delete</Form.Label> : null}
+                <Button variant="outline-danger" onClick={() => props.addRemoveHeader(false, i)}>
                   <i className="fas fa-minus" />
                 </Button>
               </Col>
@@ -272,14 +243,8 @@ const InputsTab = props => {
       <Col sm={6} key={`colDefault-${entry[0]}`}>
         <Form.Group>
           <Form.Label>{entry[0]}</Form.Label>
-          <Form.Control
-            type="input"
-            onChange={e => props.handleInput(e.target.value, item, entry)}
-            value={entry[1]}
-          />
-          <Form.Text className="text-muted">
-            {getDescriptionAndDefault(entry[0])}
-          </Form.Text>
+          <Form.Control type="input" onChange={e => props.handleInput(e.target.value, item, entry)} value={entry[1]} />
+          <Form.Text className="text-muted">{getDescriptionAndDefault(entry[0])}</Form.Text>
         </Form.Group>
       </Col>
     );
@@ -294,9 +259,7 @@ const InputsTab = props => {
       } else {
         createCodeField(entry, item);
       }
-    } else if (
-      SELECTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))
-    ) {
+    } else if (SELECTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
       return createSelectField(entry, item);
     } else if (KEYFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
       createKeyField(entry, entry);
@@ -309,7 +272,7 @@ const InputsTab = props => {
     return (
       <Row>
         <Form onSubmit={addNewInputParam} onReset={removeInputParam}>
-          <InputGroup style={{padding: '10px 215px 10px'}}>
+          <InputGroup style={{ padding: '10px 215px 10px' }}>
             <Form.Control
               value={customParam}
               onChange={e => setCustomParam(e.target.value)}
@@ -320,11 +283,10 @@ const InputsTab = props => {
                 Add
               </Button>
               <Button
-                disabled={
-                  !props.inputs?.inputParameters?.hasOwnProperty(customParam)
-                }
+                disabled={!props.inputs?.inputParameters?.hasOwnProperty(customParam)}
                 type="reset"
-                variant="outline-secondary">
+                variant="outline-secondary"
+              >
                 Remove
               </Button>
             </InputGroup.Append>
@@ -344,12 +306,7 @@ const InputsTab = props => {
           {Object.entries(props.inputs || []).map(item => {
             if (item[0] === 'inputParameters') {
               return Object.entries(item[1]).map(entry => {
-                if (
-                  typeof entry[1] === 'object' &&
-                  !TEXTFIELD_KEYWORDS.find(keyword =>
-                    entry[0].includes(keyword),
-                  )
-                ) {
+                if (typeof entry[1] === 'object' && !TEXTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
                   return Object.entries(entry[1]).map(innerEntry => {
                     return handleInputField(innerEntry, entry);
                   });
