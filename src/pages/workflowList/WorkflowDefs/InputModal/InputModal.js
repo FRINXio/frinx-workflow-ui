@@ -173,7 +173,7 @@ function InputModal(props) {
             )}
           />
         );
-      case 'task-refname':
+      case 'task-refName':
         return (
           <Typeahead
             id={`input-${item.i}`}

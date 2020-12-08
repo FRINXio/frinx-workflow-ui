@@ -50,8 +50,8 @@ const DefaultsDescsTab = props => {
   };
 
   const renderInputFields = (param, i) => {
-    const types = ['string', 'toggle', 'select', 'textarea'];
-
+    const types = ['string', 'toggle', 'select', 'textarea', 'workflow-id', 'task-refName'];
+    
     switch (param[0]) {
       case 'type':
         return (
