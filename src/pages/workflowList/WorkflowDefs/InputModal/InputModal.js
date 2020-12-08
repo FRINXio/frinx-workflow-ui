@@ -4,10 +4,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Button, Col, Form, Modal, Row, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import { GlobalContext } from '../../../../common/GlobalContext';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import { getMountedDevices } from '../../../../store/actions/mountedDevices';
 import { HttpClient as http } from '../../../../common/HttpClient';
 import { storeWorkflowId } from '../../../../store/actions/builder';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const jsonParse = json => {
   try {
@@ -33,7 +32,6 @@ const getInputs = def => {
 function InputModal(props) {
   const global = useContext(GlobalContext);
   const dispatch = useDispatch();
-  const devices = useSelector(state => state.mountedDeviceReducer.devices);
   const [wfId, setWfId] = useState();
   const [warning, setWarning] = useState([]);
   const [status, setStatus] = useState('Execute');
@@ -61,11 +59,6 @@ function InputModal(props) {
       });
     }
     setWorkflowForm(workflowForm);
-
-    // FIXME
-    // if (workflowForm.some(({type}) => type && type === "node_id")) {
-    //   dispatch(getMountedDevices());
-    // }
   }, [props]);
 
   const getWaitingWorkflows = () => {
@@ -196,17 +189,6 @@ function InputModal(props) {
                 </div>
               </div>
             )}
-          />
-        );
-      case 'node_id':
-        return (
-          <Typeahead
-            id={`input-${i}`}
-            onChange={e => handleTypeahead(e, i)}
-            placeholder="Enter or select node id"
-            options={devices}
-            selected={devices.filter(device => device === workflowForm[i].value)}
-            onInputChange={e => handleTypeahead(e, i)}
           />
         );
       case 'textarea':

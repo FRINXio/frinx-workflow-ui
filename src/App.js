@@ -12,7 +12,6 @@ import DiagramBuilder from './pages/diagramBuilder/DiagramBuilder';
 import WorkflowList from './pages/workflowList/WorkflowList';
 import buildReducer from './store/reducers/builder';
 import bulkReducer from './store/reducers/bulk';
-import mountedDeviceReducer from './store/reducers/mountedDevices';
 import searchReducer from './store/reducers/searchExecs';
 import Header from './common/header/Header';
 import { GlobalProvider, globalConstants } from './common/GlobalContext';
@@ -20,8 +19,7 @@ import { GlobalProvider, globalConstants } from './common/GlobalContext';
 const rootReducer = combineReducers({
   bulkReducer,
   searchReducer,
-  buildReducer,
-  mountedDeviceReducer,
+  buildReducer
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

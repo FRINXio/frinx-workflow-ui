@@ -1,5 +1,4 @@
-// @flow
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { getWfInputsRegex } from '../builder-utils';
 import Dropdown from 'react-dropdown';
 import { Form, Row, Col, InputGroup } from 'react-bootstrap';
@@ -51,7 +50,7 @@ const DefaultsDescsTab = props => {
   };
 
   const renderInputFields = (param, i) => {
-    const types = ['string', 'toggle', 'select', 'textarea', 'node_id'];
+    const types = ['string', 'toggle', 'select', 'textarea'];
 
     switch (param[0]) {
       case 'type':
