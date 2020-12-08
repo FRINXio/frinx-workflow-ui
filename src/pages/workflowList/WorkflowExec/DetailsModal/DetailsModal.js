@@ -3,7 +3,7 @@ import Clipboard from 'clipboard';
 import moment from 'moment';
 import React, { Component } from 'react';
 import { Button, ButtonGroup, Card, Col, Form, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import TaskModal from '../../../../common/TaskModal';
 import './DetailsModal.css';
 import WorkflowDia from './WorkflowDia/WorkflowDia';
@@ -139,18 +139,7 @@ class DetailsModal extends Component {
           <td onClick={this.handleTaskDetail.bind(this, row)}>{row['taskType']}&nbsp;&nbsp;</td>
           <td style={{ textAlign: 'center' }}>
             {row['taskType'] === 'SUB_WORKFLOW' ? (
-              <Button
-                variant="primary"
-                onClick={() => {
-                  Object.keys(this.state.subworkflows).map(item => {
-                    return item === row['referenceTaskName']
-                      ? this.props.history.push(
-                          `${this.context.frontendUrlPrefix}/exec/${this.state.subworkflows[item].wfe.workflowId}`,
-                        )
-                      : null;
-                  });
-                }}
-              >
+              <Button variant="primary" as={Link} to={`${this.context.frontendUrlPrefix}/exec/${row.subWorkflowId}`}>
                 <i className="fas fa-arrow-circle-right" />
               </Button>
             ) : (
