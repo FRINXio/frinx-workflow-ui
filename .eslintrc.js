@@ -17,18 +17,6 @@ module.exports.overrides = [
       node: true,
     },
     files: ['*'],
-    rules: {
-      'prettier/prettier': [
-        2,
-        {
-          singleQuote: true,
-          trailingComma: 'all',
-          bracketSpacing: false,
-          jsxBracketSameLine: true,
-          parser: 'flow',
-        },
-      ],
-    },
   },
   {
     files: ['.eslintrc.js'],
@@ -41,25 +29,13 @@ module.exports.overrides = [
       jest: true,
       node: true,
     },
-    files: [
-      '**/__mocks__/**/*.js',
-      '**/__tests__/**/*.js',
-      '**/tests/*.js',
-      'testHelpers.js',
-      'testData.js',
-    ],
+    files: ['**/__mocks__/**/*.js', '**/__tests__/**/*.js', '**/tests/*.js', 'testHelpers.js', 'testData.js'],
   },
   {
     env: {
       node: true,
     },
-    files: [
-      '.eslintrc.js',
-      'babel.config.js',
-      'jest.config.js',
-      'jest.*.config.js',
-      'src/**/*.js'
-    ],
+    files: ['.eslintrc.js', 'babel.config.js', 'jest.config.js', 'jest.*.config.js', 'src/**/*.js'],
     rules: {
       'no-console': 'off',
     },

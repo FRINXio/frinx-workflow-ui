@@ -22,8 +22,8 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/xq-light.css';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
-const TEXTFIELD_KEYWORDS = ['template', 'uri', 'body'];
-const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw', 'graphQLBody'];
+const TEXTFIELD_KEYWORDS = ['template', 'uri'];
+const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw'];
 const SELECTFIELD_KEYWORDS = ['method', 'action', 'expectedType'];
 const KEYFIELD_KEYWORDS = ['headers'];
 const SELECTFIELD_OPTIONS = {
@@ -113,11 +113,10 @@ const InputsTab = props => {
   const creategraphQLField = (entry, item) => {
     /* FIXME graphQL editor : implement schema validation*/
     //  let schema = buildSchema(`...`);
-
     textFieldParams.push(
       <Col sm={12} key={`colTf-${entry[0]}`}>
         <Form.Group>
-          <Form.Label>{entry[0]}</Form.Label>
+          <Form.Label>{entry[0] === 'body' ? 'graphQLBody' : entry[0]}</Form.Label>
           <CodeMirror
             value={entry[1]}
             options={{
@@ -251,14 +250,16 @@ const InputsTab = props => {
   };
 
   const handleInputField = (entry, item) => {
-    if (TEXTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
-      createTextField(entry, item);
-    } else if (CODEFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
-      if (entry[0].includes('graphQLBody')) {
+    if (entry[0].includes('graphQLBody') || entry[0].includes('body')) {
+      if (props.taskReferenceName.includes('graphQLTaskRef_')) {
         creategraphQLField(entry, item);
       } else {
-        createCodeField(entry, item);
+        createTextField(entry, item);
       }
+    } else if (TEXTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
+      createTextField(entry, item);
+    } else if (CODEFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
+      createCodeField(entry, item);
     } else if (SELECTFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {
       return createSelectField(entry, item);
     } else if (KEYFIELD_KEYWORDS.find(keyword => entry[0].includes(keyword))) {

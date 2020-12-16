@@ -157,7 +157,10 @@ function NodeModal(props) {
     if (typeof key[1] === 'object') {
       if (entry[0] === 'headers') {
         value = updateHTTPHeader(value, i, headerKey);
-      } else if (OBJECT_KEYWORDS.find(e => entry[0].includes(e))) {
+      } else if (
+        OBJECT_KEYWORDS.find(e => entry[0].includes(e)) &&
+        !props.inputs.inputs.taskReferenceName.includes('graphQLTaskRef_')
+      ) {
         try {
           value = JSON.parse(value);
         } catch (e) {
@@ -249,6 +252,7 @@ function NodeModal(props) {
               removeInputParam={removeInputParam}
               inputParameters={inputParameters}
               addRemoveHeader={addRemoveHeader}
+              taskReferenceName={props.inputs.inputs.taskReferenceName}
             />
           </Tab>
         </Tabs>
