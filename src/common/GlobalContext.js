@@ -4,7 +4,7 @@ import React, { createContext, useEffect, useState } from 'react';
 export const GlobalContext = createContext();
 
 export const globalConstants = {
-  backendApiUrlPrefix: 'https://localhost/uniflow/api/conductor',
+  backendApiUrlPrefix: '/uniflow/api/conductor',
   frontendUrlPrefix: '/uniflow/ui',
   enableScheduling: true,
   disabledTasks: ['js', 'py', 'while', 'while_end'],
