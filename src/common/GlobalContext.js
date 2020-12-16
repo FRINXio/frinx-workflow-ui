@@ -4,10 +4,10 @@ import React, { createContext, useEffect, useState } from 'react';
 export const GlobalContext = createContext();
 
 export const globalConstants = {
-  backendApiUrlPrefix: '/uniflow/api/conductor',
+  backendApiUrlPrefix: 'https://localhost/uniflow/api/conductor',
   frontendUrlPrefix: '/uniflow/ui',
   enableScheduling: true,
-  disabledTasks: ['js', 'py', 'graphQL', 'while', 'while_end'],
+  disabledTasks: ['js', 'py', 'while', 'while_end'],
   prefixHttpTask: '',
   // Uncomment below settings when testing frinx-workflow-ui running on host and talking to workflow-proxy in net-auto
   /*

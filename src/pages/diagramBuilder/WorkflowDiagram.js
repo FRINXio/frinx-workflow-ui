@@ -679,8 +679,6 @@ export class WorkflowDiagram {
       lastNode = parentNode;
     }
 
-    console.log(branchTask);
-    console.log(lastNode.x);
     let branchPosX = lastNode.x + 150 + (this.getNodeWidth(lastNode) + 50);
 
     return { branchPosX, branchPosY };
@@ -819,7 +817,11 @@ export class WorkflowDiagram {
         } else if (task.type == 'SIMPLE' && task.name == 'GLOBAL___graphQL') {
           node = this.placeGraphQLNode(task, x, y);
         } else if (task.type == 'SIMPLE' && task.name == this.prefixHttpTask + 'HTTP_task') {
-          node = this.placeHTTPNode(task, x, y);
+          if (task.taskReferenceName.includes('graphQLTaskRef_')) {
+            node = this.placeGraphQLNode(task, x, y);
+          } else {
+            node = this.placeHTTPNode(task, x, y);
+          }
         } else if (task.name === 'DYNAMIC_FORK') {
           node = this.placeDynamicForkNode(task, x, y);
         } else {
@@ -940,9 +942,8 @@ export class WorkflowDiagram {
               parentNode.extras.inputs.inputParameters.http_request.body =
                 parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
               delete parentNode.extras.inputs.inputParameters.http_request.graphQLBody;
-            } else {
-              tasks.push(parentNode.extras.inputs);
             }
+            tasks.push(parentNode.extras.inputs);
           } else if (parentNode.name === 'RAW') {
             tasks.push(handleRawNode(parentNode.extras.inputs));
           } else {
