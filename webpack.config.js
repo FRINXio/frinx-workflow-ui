@@ -59,13 +59,13 @@ module.exports = {
         test: /\.(jpe?g|gif|png|svg|)$/i,
         use: [
           {
-            loader: 'file-loader',
+            loader: 'url-loader',
           },
         ],
       },
       {
         test: /\.(woff|woff2|ttf|eot)$/,
-        use: 'file-loader?name=fonts/[name].[ext]!static',
+        use: 'url-loader',
       },
       {
         test: /\.html$/,
