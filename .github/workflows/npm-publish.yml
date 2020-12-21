@@ -3,11 +3,11 @@ name: Release & Publish
 on:
   push:
     tags:
-      - v*        # Publish `v1.2.3` tags as (npm) releases.
+      - v* # Publish `v1.2.3` tags as (npm) releases.
 
 jobs:
   publish:
-    name: "Publish to npm"
+    name: 'Publish to npm'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -16,17 +16,15 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12'
-      - name: install babel
+      - name: install deps
         run: |
-          npm install --save-dev @babel/core @babel/cli
-      - name: npm run transpile
+          npm install
+      - name: npm run build
         run: |
           ls -l
-          npm run transpile
+          npm run build
       - name: publish
         run: |
-          cd build
-          ls -l
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:

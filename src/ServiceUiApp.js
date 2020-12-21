@@ -10,7 +10,6 @@ import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import buildReducer from './store/reducers/builder';
 import bulkReducer from './store/reducers/bulk';
-import mountedDeviceReducer from './store/reducers/mountedDevices';
 import searchReducer from './store/reducers/searchExecs';
 import Header from './common/header/Header';
 import { GlobalProvider, globalConstants } from './common/GlobalContext';
@@ -20,7 +19,6 @@ const rootReducer = combineReducers({
   bulkReducer,
   searchReducer,
   buildReducer,
-  mountedDeviceReducer,
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -29,7 +27,7 @@ const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)))
 
 const { frontendUrlPrefix } = globalConstants;
 
-function App(props) {
+function ServiceUIApp(props) {
   return (
     <GlobalProvider {...props}>
       <Provider store={store}>
@@ -65,4 +63,4 @@ function App(props) {
   );
 }
 
-export default App;
+export default ServiceUIApp;
