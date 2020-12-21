@@ -1,5 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+// @flow
 import App from './App';
+import ServiceUIApp from './ServiceUiApp';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+export { ServiceUIApp };
+export { App as WorkflowApp };
