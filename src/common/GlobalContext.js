@@ -1,9 +1,15 @@
 // @flow
 import React, { createContext, useEffect, useState } from 'react';
 
-export const GlobalContext = createContext();
+type GlobalConstants = {
+  backendApiUrlPrefix: string,
+  frontendUrlPrefix: string,
+  enableScheduling: boolean,
+  disabledTasks: string[],
+  prefixHttpTask: string,
+};
 
-export const globalConstants = {
+export const globalConstants: GlobalConstants = {
   backendApiUrlPrefix: '/uniflow/api/conductor',
   frontendUrlPrefix: '/uniflow/ui',
   enableScheduling: true,
@@ -19,11 +25,13 @@ export const globalConstants = {
  */
 };
 
-export const GlobalProvider = props => {
-  const [global, setGlobal] = useState(globalConstants);
+export const GlobalContext = createContext<GlobalConstants>(globalConstants);
+
+export const GlobalProvider = (props: GlobalConstants & { children: React$Node }) => {
+  const [global, setGlobal] = useState<GlobalConstants>(globalConstants);
 
   useEffect(() => {
-    setGlobal({ ...global, ...props });
+    setGlobal(state => ({ ...state, ...props }));
   }, [props]);
 
   return <GlobalContext.Provider value={global}>{props.children}</GlobalContext.Provider>;
