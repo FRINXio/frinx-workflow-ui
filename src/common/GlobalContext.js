@@ -28,11 +28,6 @@ export const globalConstants: GlobalConstants = {
 export const GlobalContext = createContext<GlobalConstants>(globalConstants);
 
 export const GlobalProvider = (props: GlobalConstants & { children: React$Node }) => {
-  const [global, setGlobal] = useState<GlobalConstants>(globalConstants);
-
-  useEffect(() => {
-    setGlobal(state => ({ ...state, ...props }));
-  }, [props]);
-
-  return <GlobalContext.Provider value={global}>{props.children}</GlobalContext.Provider>;
+  const { children, ...rest } = props;
+  return <GlobalContext.Provider value={{ ...globalConstants, ...rest }}>{children}</GlobalContext.Provider>;
 };
