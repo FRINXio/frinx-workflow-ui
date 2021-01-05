@@ -113,12 +113,17 @@ const InputsTab = props => {
   const creategraphQLField = (entry, item) => {
     /* FIXME graphQL editor : implement schema validation*/
     //  let schema = buildSchema(`...`);
+
+    // FIXME workaround to handle as graphql
+    item[0] = entry[0] === 'body' ? 'graphql_request' : item;
+    item[1] = 'graphql_body';
+
     textFieldParams.push(
       <Col sm={12} key={`colTf-${entry[0]}`}>
         <Form.Group>
           <Form.Label>{entry[0] === 'body' ? 'graphQLBody' : entry[0]}</Form.Label>
           <CodeMirror
-            value={entry[1]}
+            value={entry[1]?.query}
             options={{
               mode: 'graphql',
               theme: 'xq-light',

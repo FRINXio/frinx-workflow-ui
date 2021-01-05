@@ -1,11 +1,11 @@
 // @flow
 import GeneralTab from './GeneralTab';
 import InputsTab from './InputsTab';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Modal, Tab, Tabs } from 'react-bootstrap';
+import { GlobalContext } from '../../../common/GlobalContext';
 import { hash } from '../builder-utils';
 import { HttpClient as http } from '../../../common/HttpClient';
-import { GlobalContext } from '../../../common/GlobalContext';
 
 const OBJECT_KEYWORDS = ['template', 'body'];
 
@@ -132,19 +132,35 @@ function NodeModal(props) {
 
   function updateGraphQLRequest(value, key, entry) {
     let copiedInputs = { ...inputs };
-    let graphql_request = copiedInputs.inputParameters.graphql_request;
     const inputParameters = copiedInputs.inputParameters;
+    const http_request = copiedInputs.inputParameters.http_request;
 
-    copiedInputs = {
-      ...copiedInputs,
-      inputParameters: {
-        ...inputParameters,
-        graphql_request: {
-          ...graphql_request,
-          [entry[0]]: value,
+    if (entry[0] === 'body') {
+      copiedInputs = {
+        ...copiedInputs,
+        inputParameters: {
+          ...inputParameters,
+          http_request: {
+            ...http_request,
+            body: {
+              variables: {},
+              query: value,
+            },
+          },
         },
-      },
-    };
+      };
+    } else {
+      copiedInputs = {
+        ...copiedInputs,
+        inputParameters: {
+          ...inputParameters,
+          http_request: {
+            ...http_request,
+            [entry[0]]: value,
+          },
+        },
+      };
+    }
 
     setInputs(copiedInputs);
   }

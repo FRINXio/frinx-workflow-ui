@@ -96,7 +96,7 @@ const systemTasks = (type, props) => {
       };
     }
     case 'while': {
-      let taskReferenceName = 'whileTaskRef_' + hash();
+      const taskReferenceName = 'whileTaskRef_' + hash();
       return {
         name: 'whileTask',
         taskReferenceName: taskReferenceName,
@@ -192,12 +192,15 @@ else:
           http_request: {
             uri: '${workflow.input.uri}',
             method: 'POST',
-            graphQLBody: `query queryResourceTypes {
-    QueryResourceTypes{
-        ID
-        Name
-    }
-}`,
+            body: {
+              variables: {},
+              query: `query queryResourceTypes {
+     QueryResourceTypes{
+         ID
+         Name
+     }
+ }`,
+            },
             contentType: 'application/json',
             headers: {},
             timeout: 3600,
