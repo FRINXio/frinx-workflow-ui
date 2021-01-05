@@ -6,11 +6,18 @@ import { Icon } from 'semantic-ui-react';
 import { Item, Menu, MenuProvider, Separator } from 'react-contexify';
 import { useContext } from 'react';
 
+function getSubworkflowName(inputs) {
+  if (inputs == null) {
+    return null;
+  }
+  return inputs.type === 'SUB_WORKFLOW' ? inputs.name : null;
+}
+
 export const NodeContextMenu = props => {
   const global = useContext(GlobalContext);
 
   const taskRefName = props.node?.extras?.inputs?.taskReferenceName || '<no ref name>';
-  const subwfName = props.node?.extras?.inputs?.type === 'SUB_WORKFLOW' ? props.node?.extras?.inputs?.name : null;
+  const subwfName = getSubworkflowName(props.node?.extras?.inputs);
 
   const deleteNode = (node, diagramEngine) => {
     node.remove();
