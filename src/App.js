@@ -19,7 +19,7 @@ import { GlobalProvider, globalConstants } from './common/GlobalContext';
 const rootReducer = combineReducers({
   bulkReducer,
   searchReducer,
-  buildReducer
+  buildReducer,
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
