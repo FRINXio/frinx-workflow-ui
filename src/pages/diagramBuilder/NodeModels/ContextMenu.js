@@ -1,69 +1,86 @@
 // @flow
 import 'react-contexify/dist/ReactContexify.min.css';
 import * as React from 'react';
-import { IconFont, Item, Menu, MenuProvider, Separator } from 'react-contexify';
+import { GlobalContext } from '../../../common/GlobalContext';
+import { Icon } from 'semantic-ui-react';
+import { Item, Menu, MenuProvider, Separator } from 'react-contexify';
+import { useContext } from 'react';
 
-export class NodeContextMenu extends React.Component {
-  deleteNode = (node, diagramEngine) => {
+function getSubworkflowName(inputs) {
+  if (inputs == null) {
+    return null;
+  }
+  return inputs.type === 'SUB_WORKFLOW' ? inputs.name : null;
+}
+
+export const NodeContextMenu = props => {
+  const global = useContext(GlobalContext);
+
+  const taskRefName = props.node?.extras?.inputs?.taskReferenceName || '<no ref name>';
+  const subwfName = getSubworkflowName(props.node?.extras?.inputs);
+
+  const deleteNode = (node, diagramEngine) => {
     node.remove();
     diagramEngine.getDiagramModel().removeNode(node);
     diagramEngine.repaintCanvas();
   };
 
-  handleDelete = () => {
-    this.deleteNode(this.props.node, this.props.diagramEngine);
+  const handleDelete = () => {
+    deleteNode(props.node, props.diagramEngine);
   };
 
-  render() {
-    let taskRefName = '<no ref name>';
-    if (this.props.node?.extras?.inputs?.taskReferenceName) {
-      taskRefName = this.props.node?.extras?.inputs?.taskReferenceName;
-    }
+  const openSubworkflow = () => {
+    // version is hardcoded to 1 since there is no version param in node
+    window.open(`${global.frontendUrlPrefix}/builder/${subwfName}/1`);
+  };
 
-    return (
-      <Menu id={this.props.node.id}>
-        <Item disabled={true}>{taskRefName}</Item>
-        <Separator />
-        <Item onClick={this.handleDelete}>
-          <IconFont className="fa fa-trash" />
-          Delete
+  return (
+    <Menu id={props.node.id}>
+      <Item disabled={true}>{taskRefName}</Item>
+      <Separator />
+      <Item onClick={handleDelete}>
+        <Icon name="trash" />
+        Delete
+      </Item>
+      {subwfName && (
+        <Item onClick={openSubworkflow}>
+          <Icon name="external alternate" />
+          Open sub-workflow
         </Item>
-      </Menu>
-    );
-  }
-}
+      )}
+    </Menu>
+  );
+};
 
-export function NodeMenuProvider(props) {
+export const NodeMenuProvider = props => {
   return <MenuProvider id={props.node.id}>{props.children}</MenuProvider>;
-}
+};
 
-export class LinkContextMenu extends React.Component {
-  deleteLink = (link, diagramEngine) => {
+export const LinkContextMenu = props => {
+  const deleteLink = (link, diagramEngine) => {
     link.remove();
     diagramEngine.getDiagramModel().removeLink(link);
     diagramEngine.repaintCanvas();
   };
 
-  handleDelete = () => {
-    this.deleteLink(this.props.link, this.props.diagramEngine);
+  const handleDelete = () => {
+    deleteLink(props.link, props.diagramEngine);
   };
 
-  render() {
-    return (
-      <Menu id={this.props.link.id} event="onContextMenu" storeRef={false}>
-        <Item onClick={this.handleDelete}>
-          <IconFont className="fa fa-trash" />
-          Delete
-        </Item>
-      </Menu>
-    );
-  }
-}
+  return (
+    <Menu id={props.link.id} event="onContextMenu" storeRef={false}>
+      <Item onClick={handleDelete}>
+        <Icon name="trash" />
+        Delete
+      </Item>
+    </Menu>
+  );
+};
 
-export function LinkMenuProvider(props) {
+export const LinkMenuProvider = props => {
   return (
     <MenuProvider id={props.link.id} component="g" event="onContextMenu" storeRef={false}>
       {props.children}
     </MenuProvider>
   );
-}
+};
