@@ -15,14 +15,7 @@ import { HttpClient as http } from '../../../common/HttpClient';
 import { GlobalContext } from '../../../common/GlobalContext';
 import PaginationPages from '../../../common/Pagination';
 import { usePagination } from '../../../common/PaginationHook';
-
-const jsonParse = json => {
-  try {
-    return JSON.parse(json);
-  } catch (e) {
-    return null;
-  }
-};
+import {jsonParse} from "../../../common/utils";
 
 const getLabels = dataset => {
   let labelsArr = dataset.map(({ description }) => {

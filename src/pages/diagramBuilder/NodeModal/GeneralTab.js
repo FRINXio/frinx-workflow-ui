@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Accordion, Icon } from 'semantic-ui-react';
 import { Button, ButtonGroup, Col, Form, InputGroup } from 'react-bootstrap';
+import { jsonParse } from '../../../common/utils';
 import { taskDescriptions } from '../../../constants';
 import AceEditor from 'react-ace';
 
@@ -15,12 +16,14 @@ const HIDDEN = [
   'inputParameters',
   'defaultCase',
   'loopOver',
+  'description',
 ];
 
 const GeneralTab = props => {
   const [showAdvancedParams, setShowAdvancedParams] = useState(false);
   const taskName = props.inputs?.name || '';
   const taskRefName = props?.inputs?.taskReferenceName || '';
+  const description = jsonParse(props?.inputs?.description)?.description;
   const decisionCases = [];
   const caseValueParam = [];
 
@@ -54,6 +57,18 @@ const GeneralTab = props => {
         />
       </InputGroup>
       <Form.Text className="text-muted">{taskDescriptions['taskReferenceName']}</Form.Text>
+    </Form.Group>
+  );
+
+  const renderDescription = item => (
+    <Form.Group>
+      <InputGroup>
+        <InputGroup.Prepend>
+          <InputGroup.Text>description:</InputGroup.Text>
+        </InputGroup.Prepend>
+        <Form.Control type="input" onChange={e => props.handleInput(e.target.value, ['description'])} value={item} />
+      </InputGroup>
+      <Form.Text className="text-muted">{taskDescriptions['description']}</Form.Text>
     </Form.Group>
   );
 
@@ -189,6 +204,7 @@ const GeneralTab = props => {
     <Form>
       {renderTaskName(taskName)}
       {renderTaskRefName(taskRefName)}
+      {renderDescription(description)}
       <Form.Row>
         {caseValueParam}
         {decisionCases}

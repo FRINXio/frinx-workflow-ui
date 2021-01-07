@@ -6,14 +6,7 @@ import './Sidemenu.css';
 import SideMenuItem from './SideMenuItem';
 import { getTaskInputsRegex, getWfInputsRegex, hash } from '../builder-utils';
 import { version } from '../../../../package.json';
-
-const jsonParse = json => {
-  try {
-    return JSON.parse(json);
-  } catch (e) {
-    return null;
-  }
-};
+import {jsonParse} from "../../../common/utils";
 
 const icons = taskDef => {
   const task = taskDef.name;
@@ -54,6 +47,7 @@ const icons = taskDef => {
 const sub_workflow = wf => ({
   name: wf.name,
   taskReferenceName: wf.name.toLowerCase().trim() + '_ref_' + hash(),
+  description: wf.description,
   inputParameters: getWfInputsRegex(wf),
   type: 'SUB_WORKFLOW',
   subWorkflowParam: {
@@ -67,6 +61,7 @@ const sub_workflow = wf => ({
 const sub_task = t => ({
   name: t.name,
   taskReferenceName: t.name.toLowerCase().trim() + '_ref_' + hash(),
+  description: t.description,
   inputParameters: getTaskInputsRegex(t),
   type: 'SIMPLE',
   optional: false,
@@ -311,7 +306,6 @@ const favorites = props => {
               type: 'default',
               wfObject,
               name: wf.name,
-              description: wf.hasOwnProperty('description') ? wf.description : '',
             }}
             name={wf.name}
           />
@@ -331,7 +325,6 @@ const workflows = props => {
           type: 'default',
           wfObject,
           name: wf.name,
-          description: wf.hasOwnProperty('description') ? wf.description : '',
         }}
         name={wf.name}
       />
@@ -349,7 +342,6 @@ const tasks = props => {
           type: 'default',
           wfObject,
           name: task.name,
-          description: task.hasOwnProperty('description') ? task.description : '',
         }}
         name={task.name.replace(props.prefixHttpTask, '')}
       />
@@ -369,7 +361,6 @@ const system = props => {
             type: task.name,
             wfObject,
             name: task.name,
-            description: task.hasOwnProperty('description') ? task.description : '',
           }}
           name={task.name.toUpperCase()}
           icon={icons(task)}
@@ -390,7 +381,6 @@ const custom = (props, custom) => {
               type: 'default',
               wfObject,
               name: wf.name,
-              description: wf.hasOwnProperty('description') ? wf.description : '',
             }}
             name={wf.name}
           />
@@ -405,14 +395,10 @@ const getCustoms = props => {
     ...new Set(
       props.workflows
         .map(wf => {
-          if (wf.hasOwnProperty('description')) {
-            if (wf.description.match(/custom(?:\w+)?\b/gim)) {
-              return wf.description.match(/custom(?:\w+)?\b/gim);
-            }
-          }
+          const labels = jsonParse(wf.description)?.labels || [];
+          return labels.filter(l => l.toLowerCase().includes('custom'));
         })
-        .flat()
-        .filter(item => item !== undefined),
+        .flat(),
     ),
   ];
 };

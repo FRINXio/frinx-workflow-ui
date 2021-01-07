@@ -7,14 +7,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import { HttpClient as http } from '../../../../common/HttpClient';
 import { storeWorkflowId } from '../../../../store/actions/builder';
 import { useDispatch } from 'react-redux';
-
-const jsonParse = json => {
-  try {
-    return JSON.parse(json);
-  } catch (e) {
-    return null;
-  }
-};
+import {jsonParse} from "../../../../common/utils";
 
 const getInputs = def => {
   const inputCaptureRegex = /workflow\.input\.([a-zA-Z0-9-_]+)\}/gim;
