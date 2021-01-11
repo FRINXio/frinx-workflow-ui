@@ -6,7 +6,7 @@ import { Button, Modal, Tab, Tabs } from 'react-bootstrap';
 import { GlobalContext } from '../../../common/GlobalContext';
 import { hash } from '../builder-utils';
 import { HttpClient as http } from '../../../common/HttpClient';
-import {jsonParse} from "../../../common/utils";
+import { jsonParse } from '../../../common/utils';
 
 const OBJECT_KEYWORDS = ['template', 'body'];
 

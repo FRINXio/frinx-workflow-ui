@@ -4,7 +4,7 @@ import Dropdown from 'react-dropdown';
 import { Form, Row, Col, InputGroup } from 'react-bootstrap';
 
 import _ from 'lodash';
-import {jsonParse} from "../../../common/utils";
+import { jsonParse } from '../../../common/utils';
 
 const inputParamsTemplate = {
   value: '',

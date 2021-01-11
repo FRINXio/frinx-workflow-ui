@@ -6,7 +6,7 @@ import './Sidemenu.css';
 import SideMenuItem from './SideMenuItem';
 import { getTaskInputsRegex, getWfInputsRegex, hash } from '../builder-utils';
 import { version } from '../../../../package.json';
-import {jsonParse} from "../../../common/utils";
+import { jsonParse } from '../../../common/utils';
 
 const icons = taskDef => {
   const task = taskDef.name;

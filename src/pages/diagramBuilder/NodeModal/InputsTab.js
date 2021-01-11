@@ -21,7 +21,7 @@ import 'codemirror/addon/display/autorefresh';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/xq-light.css';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import {jsonParse} from "../../../common/utils";
+import { jsonParse } from '../../../common/utils';
 
 const TEXTFIELD_KEYWORDS = ['template', 'uri'];
 const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw'];

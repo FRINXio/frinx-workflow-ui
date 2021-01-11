@@ -3,7 +3,7 @@ import { Button, Col, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
 import Highlight from 'react-highlight.js';
 import { HttpClient as http } from '../../../common/HttpClient';
 import { GlobalContext } from '../../../common/GlobalContext';
-import {jsonParse} from "../../../common/utils";
+import { jsonParse } from '../../../common/utils';
 
 const TaskModal = props => {
   const global = useContext(GlobalContext);

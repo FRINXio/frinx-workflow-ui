@@ -4,7 +4,7 @@ import { Modal, Button, Tab, Tabs, ButtonGroup } from 'react-bootstrap';
 import DefaultsDescsTab from './DefaultsDescsTab';
 import OutputParamsTab from './OutputParamsTab';
 import GeneralParamsTab from './GeneralParamsTab';
-import {jsonParse} from "../../../common/utils";
+import { jsonParse } from '../../../common/utils';
 
 const GeneralInfoModal = props => {
   const [isWfNameValid, setWfNameValid] = useState(false);
