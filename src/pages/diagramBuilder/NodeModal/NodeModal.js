@@ -6,6 +6,7 @@ import { Button, Modal, Tab, Tabs } from 'react-bootstrap';
 import { GlobalContext } from '../../../common/GlobalContext';
 import { hash } from '../builder-utils';
 import { HttpClient as http } from '../../../common/HttpClient';
+import { jsonParse } from '../../../common/utils';
 
 const OBJECT_KEYWORDS = ['template', 'body'];
 
@@ -22,11 +23,16 @@ function NodeModal(props) {
   const [inputs, setInputs] = useState([]);
   const [name, setName] = useState();
   const [version, setVersion] = useState();
+  const [description, setDescription] = useState();
   const [inputParameters, setInputParameters] = useState([]);
 
   useEffect(() => {
-    setName(props.inputs.inputs.name);
-    setInputs(props.inputs.inputs);
+    const inputs = props.inputs.inputs;
+    const { name, description } = inputs;
+
+    setName(name);
+    setDescription(jsonParse(description));
+    setInputs(inputs);
 
     const { subWorkflowParam } = props.inputs.inputs;
 
@@ -218,6 +224,28 @@ function NodeModal(props) {
     setInputs(copiedInputs);
   }
 
+  function updateDescription(value) {
+    const copiedInputs = { ...inputs };
+    let descriptionObj;
+
+    try {
+      descriptionObj = JSON.parse(copiedInputs.description);
+    } catch (e) {
+      descriptionObj = {
+        description: '',
+        labels: [],
+      };
+    }
+
+    descriptionObj = {
+      ...descriptionObj,
+      description: value,
+    };
+
+    copiedInputs.description = JSON.stringify(descriptionObj);
+    setInputs(copiedInputs);
+  }
+
   function handleInput(value, key, entry, i, headerKey) {
     switch (key[0]) {
       case 'inputParameters':
@@ -232,6 +260,9 @@ function NodeModal(props) {
         break;
       case 'decisionCases':
         updateDecisionCase(value);
+        break;
+      case 'description':
+        updateDescription(value);
         break;
       default: {
         let copiedInputs = { ...inputs };
@@ -248,8 +279,11 @@ function NodeModal(props) {
   return (
     <Modal size="lg" show={props.show} onHide={props.modalHandler}>
       <Modal.Header>
-        <Modal.Title style={{ fontSize: '20px' }}>
+        <Modal.Title>
           {name} / {version}
+          <div style={{ fontSize: '18px' }}>
+            <p className="text-muted">{description?.description}</p>
+          </div>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ padding: '30px' }}>

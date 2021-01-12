@@ -21,6 +21,7 @@ import 'codemirror/addon/display/autorefresh';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/xq-light.css';
 import { Controlled as CodeMirror } from 'react-codemirror2';
+import { jsonParse } from '../../../common/utils';
 
 const TEXTFIELD_KEYWORDS = ['template', 'uri'];
 const CODEFIELD_KEYWORDS = ['scriptExpression', 'raw'];
@@ -30,14 +31,6 @@ const SELECTFIELD_OPTIONS = {
   action: ['complete_task', 'fail_task'],
   method: ['GET', 'PUT', 'POST', 'DELETE'],
   expectedType: ['SIMPLE', 'SUB_WORKFLOW'],
-};
-
-const jsonParse = json => {
-  try {
-    return JSON.parse(json);
-  } catch (e) {
-    return null;
-  }
 };
 
 const InputsTab = props => {

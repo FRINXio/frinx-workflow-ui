@@ -51,6 +51,7 @@ export const workflowDescriptions = {
 export const taskDescriptions = {
   name: 'name of the task',
   taskReferenceName: 'alias used to refer the task within the workflow (MUST be unique within workflow)',
+  description: 'current instance task description',
   optional: 'when set to true - workflow continues even if the task fails.',
   startDelay: 'time period before task executes',
 };

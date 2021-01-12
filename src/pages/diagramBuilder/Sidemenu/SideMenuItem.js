@@ -2,16 +2,20 @@
 import React from 'react';
 import { Card, Menu } from 'semantic-ui-react';
 
-const SideMenuItem = props => {
-  let description = null;
-
-  if (props.model.description) {
-    try {
-      description = JSON.parse(props.model.description)?.description;
-    } catch (e) {
-      description = props.model.description;
-    }
+const getDescription = wfObject => {
+  if (!wfObject?.description) {
+    return null;
   }
+
+  try {
+    return JSON.parse(wfObject?.description)?.description;
+  } catch (e) {
+    return wfObject.description;
+  }
+};
+
+const SideMenuItem = props => {
+  const description = getDescription(props.model.wfObject);
 
   return (
     <Menu.Item

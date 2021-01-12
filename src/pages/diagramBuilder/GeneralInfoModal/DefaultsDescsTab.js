@@ -4,19 +4,12 @@ import Dropdown from 'react-dropdown';
 import { Form, Row, Col, InputGroup } from 'react-bootstrap';
 
 import _ from 'lodash';
+import { jsonParse } from '../../../common/utils';
 
 const inputParamsTemplate = {
   value: '',
   description: '',
   type: 'string',
-};
-
-const jsonParse = (json: string) => {
-  try {
-    return JSON.parse(json);
-  } catch (e) {
-    return null;
-  }
 };
 
 const getInputParameters = props => {
