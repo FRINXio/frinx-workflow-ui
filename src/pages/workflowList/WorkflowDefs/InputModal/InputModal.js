@@ -243,6 +243,7 @@ function InputModal(props) {
         <Form onSubmit={executeWorkflow}>
           <Row>
             {workflowForm.map((item, i) => {
+              console.log(item);
               return (
                 <Col sm={6} key={`col1-${i}`}>
                   <Form.Group>
@@ -260,7 +261,15 @@ function InputModal(props) {
                       </div>
                     ) : null}
                     {inputModel(item, i)}
-                    <Form.Text className="text-muted">{item.description}</Form.Text>
+                    <Form.Text className="text-muted">
+                      {item.description}
+                      <br />
+                      {item.constraint && (
+                        <>
+                          <b>Constraint:</b> {item.constraint}
+                        </>
+                      )}
+                    </Form.Text>
                   </Form.Group>
                 </Col>
               );
