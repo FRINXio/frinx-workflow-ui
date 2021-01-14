@@ -243,7 +243,6 @@ function InputModal(props) {
         <Form onSubmit={executeWorkflow}>
           <Row>
             {workflowForm.map((item, i) => {
-              console.log(item);
               return (
                 <Col sm={6} key={`col1-${i}`}>
                   <Form.Group>
