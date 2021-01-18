@@ -6,23 +6,24 @@ import { jsonParse } from '../../../../common/utils.js';
 import { hash } from '../../../diagramBuilder/builder-utils';
 import { GlobalContext } from '../../../../common/GlobalContext.js';
 
-function createWorkflowTree(tasks, workflows) {
-  return _.flatMap(tasks, task => {
+function createWorkflowTree(tasks, allWorkflows) {
+  return tasks.map(task => {
     return {
       name: task.name,
       taskReferenceName: task.taskReferenceName,
       subWorkflowParam: task?.subWorkflowParam,
       description: jsonParse(task.description)?.description,
-      subtasks: getSubTasks(task, workflows),
+      subtasks: getSubTasks(task, allWorkflows),
     };
   });
 }
 
-function getSubTasks(task, workflows) {
+function getSubTasks(task, allWorkflows) {
   if (task.type === 'SUB_WORKFLOW') {
-    const subwf = _.find(workflows, { name: task.name });
+    const subwf = _.find(allWorkflows, { name: task.name });
 
-    return createWorkflowTree(subwf?.tasks, workflows);
+    // if we can't find subworkflow pass empty array
+    return createWorkflowTree(subwf?.tasks || [], allWorkflows);
   }
 
   if (task.type === 'DECISION') {
@@ -44,9 +45,9 @@ function getSubTasks(task, workflows) {
     return _.flatMap(decisionBranches, branch => {
       return {
         name: branch.name,
-        // we need to create unique ID to be able to hide the branch in tree
+        // we need to create unique ID to be able to expand/hide the branch in tree
         taskReferenceName: branch.name + hash(),
-        subtasks: createWorkflowTree(branch.tasks, workflows),
+        subtasks: createWorkflowTree(branch.tasks, allWorkflows),
       };
     });
   }
@@ -57,9 +58,9 @@ function getSubTasks(task, workflows) {
     return _.flatMap(forkTasks, (branch, i) => {
       return {
         name: `branch ${i}`,
-        // we need to create unique ID to be able to hide the branch in tree
+        // we need to create unique ID to be able to expand/hide the branch in tree
         taskReferenceName: `branch ${i}` + hash(),
-        subtasks: createWorkflowTree(branch, workflows),
+        subtasks: createWorkflowTree(branch, allWorkflows),
       };
     });
   }
@@ -70,19 +71,19 @@ function getSubTasks(task, workflows) {
 const WorkflowListViewModal = props => {
   const global = useContext(GlobalContext);
   const [workflowTree, setWorkflowTree] = useState([]);
-  const [hiddenTasks, setHiddenTasks] = useState([]);
+  const [expandedTasks, setexpandedTasks] = useState([]);
 
   useEffect(() => {
     const { tasks } = props.wf;
-    const workflows = props.data;
-    setWorkflowTree(createWorkflowTree(tasks, workflows));
+    const allWorkflows = props.data;
+    setWorkflowTree(createWorkflowTree(tasks, allWorkflows));
   }, []);
 
-  function showHideTask(task) {
-    if (hiddenTasks.includes(task.taskReferenceName)) {
-      setHiddenTasks(oldArray => oldArray.filter(item => item !== task.taskReferenceName));
+  function expandHideTask(task) {
+    if (expandedTasks.includes(task.taskReferenceName)) {
+      setexpandedTasks(oldArray => oldArray.filter(item => item !== task.taskReferenceName));
     } else {
-      setHiddenTasks(oldArray => [...oldArray, task.taskReferenceName]);
+      setexpandedTasks(oldArray => [...oldArray, task.taskReferenceName]);
     }
   }
 
@@ -92,7 +93,7 @@ const WorkflowListViewModal = props => {
         <a
           title="Click to open workflow in builder"
           target="_blank"
-          href={`${global.frontendUrlPrefix}/builder/${task?.subWorkflowParam?.name}/${task?.subWorkflowParam?.version}`}
+          href={`${global.frontendUrlPrefix}/builder/${task.subWorkflowParam.name}/${task.subWorkflowParam.version}`}
         >
           {task.name}
         </a>
@@ -108,13 +109,13 @@ const WorkflowListViewModal = props => {
         <List.Item key={task.taskReferenceName}>
           <List.Icon
             link
-            name={hiddenTasks.includes(task.taskReferenceName) ? 'folder open' : 'folder'}
-            onClick={() => showHideTask(task)}
+            name={expandedTasks.includes(task.taskReferenceName) ? 'folder open' : 'folder'}
+            onClick={() => expandHideTask(task)}
           />
           <List.Content>
             <List.Header>{renderHeader(task)}</List.Header>
             <List.Description>{task?.description}</List.Description>
-            {hiddenTasks.includes(task.taskReferenceName) && (
+            {expandedTasks.includes(task.taskReferenceName) && (
               <List.List>{task.subtasks.map(st => renderSubtasks(st))}</List.List>
             )}
           </List.Content>
