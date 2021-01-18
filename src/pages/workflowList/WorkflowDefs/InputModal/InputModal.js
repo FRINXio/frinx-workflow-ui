@@ -260,7 +260,15 @@ function InputModal(props) {
                       </div>
                     ) : null}
                     {inputModel(item, i)}
-                    <Form.Text className="text-muted">{item.description}</Form.Text>
+                    <Form.Text className="text-muted">
+                      {item.description}
+                      <br />
+                      {item.constraint && (
+                        <>
+                          <b>Constraint:</b> {item.constraint}
+                        </>
+                      )}
+                    </Form.Text>
                   </Form.Group>
                 </Col>
               );
