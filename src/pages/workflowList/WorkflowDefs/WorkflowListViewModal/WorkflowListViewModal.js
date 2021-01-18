@@ -42,7 +42,7 @@ function getSubTasks(task, allWorkflows) {
       },
     ];
 
-    return _.flatMap(decisionBranches, branch => {
+    return decisionBranches.map(branch => {
       return {
         name: branch.name,
         // we need to create unique ID to be able to expand/hide the branch in tree
@@ -55,7 +55,7 @@ function getSubTasks(task, allWorkflows) {
   if (task.type === 'FORK_JOIN') {
     const { forkTasks } = task;
 
-    return _.flatMap(forkTasks, (branch, i) => {
+    return forkTasks.map((branch, i) => {
       return {
         name: `branch ${i}`,
         // we need to create unique ID to be able to expand/hide the branch in tree
@@ -71,7 +71,7 @@ function getSubTasks(task, allWorkflows) {
 const WorkflowListViewModal = props => {
   const global = useContext(GlobalContext);
   const [workflowTree, setWorkflowTree] = useState([]);
-  const [expandedTasks, setexpandedTasks] = useState([]);
+  const [expandedTasks, setExpandedTasks] = useState([]);
 
   useEffect(() => {
     const { tasks } = props.wf;
@@ -81,9 +81,9 @@ const WorkflowListViewModal = props => {
 
   function expandHideTask(task) {
     if (expandedTasks.includes(task.taskReferenceName)) {
-      setexpandedTasks(oldArray => oldArray.filter(item => item !== task.taskReferenceName));
+      setExpandedTasks(oldArray => oldArray.filter(item => item !== task.taskReferenceName));
     } else {
-      setexpandedTasks(oldArray => [...oldArray, task.taskReferenceName]);
+      setExpandedTasks(oldArray => [...oldArray, task.taskReferenceName]);
     }
   }
 
