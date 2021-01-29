@@ -16,6 +16,7 @@ import { GlobalContext } from '../../../common/GlobalContext';
 import PaginationPages from '../../../common/Pagination';
 import { usePagination } from '../../../common/PaginationHook';
 import { jsonParse } from '../../../common/utils';
+import WorkflowListViewModal from './WorkflowListViewModal/WorkflowListViewModal.js';
 
 const getLabels = dataset => {
   let labelsArr = dataset.map(({ description }) => {
@@ -41,6 +42,7 @@ function WorkflowDefs(props) {
   const [dependencyModal, setDependencyModal] = useState(false);
   const [schedulingModal, setSchedulingModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
+  const [workflowListViewModal, setWorkflowListViewModal] = useState(false);
   const [allLabels, setAllLabels] = useState([]);
   const { currentPage, setCurrentPage, pageItems, setItemList, totalPages } = usePagination([], 10);
 
@@ -178,6 +180,13 @@ function WorkflowDefs(props) {
         <Button title="Diagram" basic circular icon="fork" onClick={() => showDiagramModal(dataset)} />
         <Button title="Definition" basic circular icon="file code" onClick={() => showDefinitionModal(dataset)} />
         <Button
+          title="Workflow List"
+          basic
+          circular
+          icon="list ul"
+          onClick={() => showWorkflowListViewModal(dataset)}
+        />
+        <Button
           title="Edit"
           basic
           circular
@@ -287,6 +296,11 @@ function WorkflowDefs(props) {
     setActiveWf(workflow);
   };
 
+  const showWorkflowListViewModal = workflow => {
+    setWorkflowListViewModal(!workflowListViewModal);
+    setActiveWf(workflow);
+  };
+
   const getActiveWfScheduleName = () => {
     if (activeWf != null && activeWf.expectedScheduleName != null) {
       return activeWf.expectedScheduleName;
@@ -312,6 +326,17 @@ function WorkflowDefs(props) {
 
   const renderDiagramModal = () => {
     return diagramModal ? <DiagramModal wf={activeWf} modalHandler={showDiagramModal} show={diagramModal} /> : null;
+  };
+
+  const renderWorkflowListViewModal = () => {
+    return workflowListViewModal ? (
+      <WorkflowListViewModal
+        wf={activeWf}
+        modalHandler={showWorkflowListViewModal}
+        show={workflowListViewModal}
+        data={data}
+      />
+    ) : null;
   };
 
   const renderSchedulingModal = () => {
@@ -359,6 +384,7 @@ function WorkflowDefs(props) {
       {renderDependencyModal()}
       {renderSchedulingModal()}
       {renderConfirmDeleteModal()}
+      {renderWorkflowListViewModal()}
       <Row>
         <Button
           primary
