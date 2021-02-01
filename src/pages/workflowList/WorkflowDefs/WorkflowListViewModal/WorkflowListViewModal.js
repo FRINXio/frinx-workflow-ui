@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import _ from 'lodash';
-import { Button, Modal } from 'react-bootstrap';
-import { List } from 'semantic-ui-react';
+import { Modal } from 'react-bootstrap';
+import { List, Button, Icon } from 'semantic-ui-react';
 import { jsonParse } from '../../../../common/utils.js';
 import { hash } from '../../../diagramBuilder/builder-utils';
 import { GlobalContext } from '../../../../common/GlobalContext.js';
@@ -28,14 +28,15 @@ function getSubTasks(task, allWorkflows) {
 
   if (task.type === 'DECISION') {
     const { decisionCases } = task;
-    const nonDefaultCaseName = Object.keys(decisionCases)[0];
+    const nonDefaultCaseNames = Object.keys(decisionCases);
 
-    // there are always only 2 branches in current impl
     const decisionBranches = [
-      {
-        name: nonDefaultCaseName,
-        tasks: decisionCases[nonDefaultCaseName],
-      },
+      ...nonDefaultCaseNames.map(name => {
+        return {
+          name: name,
+          tasks: decisionCases[name],
+        };
+      }),
       {
         name: 'defaultCase',
         tasks: task.defaultCase,
@@ -87,29 +88,53 @@ const WorkflowListViewModal = props => {
     }
   }
 
+  function renderExpandButton(task) {
+    return (
+      <Button basic primary compact size="mini" style={{ marginLeft: '5px' }} onClick={() => expandHideTask(task)}>
+        {expandedTasks.includes(task.taskReferenceName) ? 'Collapse' : 'Expand'}
+      </Button>
+    );
+  }
+
   function renderHeader(task) {
+    const mutedTextStyle = { fontSize: '12px', fontWeight: '400', color: 'grey' };
+
     if (task.subWorkflowParam) {
       return (
-        <a
-          title="Click to open workflow in builder"
-          target="_blank"
-          href={`${global.frontendUrlPrefix}/builder/${task.subWorkflowParam.name}/${task.subWorkflowParam.version}`}
-        >
-          {task.name}
-        </a>
+        <p>
+          {task.name} <span style={mutedTextStyle}>(workflow)</span>
+          {renderExpandButton(task)}
+          <Button
+            as="a"
+            title="Click to open workflow in builder"
+            target="_blank"
+            href={`${global.frontendUrlPrefix}/builder/${task.subWorkflowParam.name}/${task.subWorkflowParam.version}`}
+            basic
+            compact
+            size="mini"
+          >
+            <Icon name="external" />
+            Edit
+          </Button>
+        </p>
       );
     }
 
-    return task.name;
+    return (
+      <p>
+        {task.name} <span style={mutedTextStyle}>(task)</span>
+        {task.subtasks.length > 0 ? renderExpandButton(task) : null}
+      </p>
+    );
   }
 
   function renderSubtasks(task) {
     if (task?.subtasks?.length > 0) {
       return (
-        <List.Item key={task.taskReferenceName}>
+        <List.Item key={task.taskReferenceName} style={{ marginTop: '10px' }}>
           <List.Icon
             link
-            name={expandedTasks.includes(task.taskReferenceName) ? 'folder open' : 'folder'}
+            name={expandedTasks.includes(task.taskReferenceName) ? 'angle down' : 'angle right'}
             onClick={() => expandHideTask(task)}
           />
           <List.Content>
@@ -124,10 +149,10 @@ const WorkflowListViewModal = props => {
     }
 
     return (
-      <List.Item key={task.taskReferenceName}>
-        <List.Icon name="sticky note outline" />
+      <List.Item key={task.taskReferenceName} style={{ marginTop: '10px' }}>
+        <List.Icon name="angle right" style={{ opacity: 0 }} />
         <List.Content>
-          <List.Header>{task.name}</List.Header>
+          <List.Header>{renderHeader(task)}</List.Header>
           <List.Description>{task?.description}</List.Description>
         </List.Content>
       </List.Item>
