@@ -10,7 +10,7 @@ type GlobalConstants = {
 };
 
 export const globalConstants: GlobalConstants = {
-  backendApiUrlPrefix: '/api/uniflow/conductor',
+  backendApiUrlPrefix: '/api/uniflow',
   frontendUrlPrefix: '/uniflow/ui',
   enableScheduling: true,
   disabledTasks: ['js', 'py', 'while', 'while_end'],

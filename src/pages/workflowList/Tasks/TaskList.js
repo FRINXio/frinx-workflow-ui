@@ -88,7 +88,7 @@ function TaskList() {
   };
 
   const deleteTask = name => {
-    http.delete(global.backendApiUrlPrefix + '/metadata/taskdef/' + name).then(res => {
+    http.delete(global.backendApiUrlPrefix + '/metadata/taskdefs/' + name).then(res => {
       if (res.status === 200) {
         getData();
       }
@@ -153,7 +153,7 @@ function TaskList() {
     });
     if (taskBody['name'] !== '') {
       const newTask = { ...taskBody, ownerEmail: 'example@example.com' };
-      http.post(global.backendApiUrlPrefix + '/metadata/taskdef', [newTask]).then(() => {
+      http.post(global.backendApiUrlPrefix + '/metadata/taskdefs', [newTask]).then(() => {
         window.location.reload();
       });
     }

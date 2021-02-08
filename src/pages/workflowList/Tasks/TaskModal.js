@@ -12,7 +12,7 @@ const TaskModal = props => {
 
   useEffect(() => {
     const name = props.name;
-    http.get(global.backendApiUrlPrefix + '/metadata/taskdef/' + name).then(res => {
+    http.get(global.backendApiUrlPrefix + '/metadata/taskdefs/' + name).then(res => {
       if (res.result) {
         setResponse(res.result);
       }
