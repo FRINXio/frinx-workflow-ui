@@ -25,7 +25,7 @@
     "file-saver": "^2.0.2",
     "framer-motion": "^1.6.17",
     "html-loader": "^1.1.0",
-    "jszip": "^3.2.2",
+    "jszip": "^3.8.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "node-sass": "^4.14.1",
